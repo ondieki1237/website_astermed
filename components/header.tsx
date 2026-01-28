@@ -15,7 +15,7 @@ export default function Header() {
         <div className="flex items-center justify-between gap-6 max-w-full">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
-            <img src="/images/heroes-20square-two.png" alt="AsterMed" className="h-11 w-auto" />
+            <img src="/astermedlogo.png" alt="AsterMed" className="h-24 w-auto" />
           </Link>
 
           {/* Center Navigation Pill */}

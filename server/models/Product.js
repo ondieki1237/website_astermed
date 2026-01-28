@@ -9,7 +9,7 @@ const productSchema = new mongoose.Schema({
   discountPrice: { type: Number },
   discountPercentage: { type: Number },
   stock: { type: Number, default: 0 },
-  sku: { type: String, unique: true },
+  sku: { type: String, unique: true, sparse: true },
   image: String,
   images: [String],
   specifications: mongoose.Schema.Types.Mixed,
@@ -32,8 +32,21 @@ const productSchema = new mongoose.Schema({
   ],
   tags: [String],
   slug: String,
+  inStock: { type: Boolean, default: true },
+  views: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+});
+
+// Auto-generate SKU and slug when missing to avoid duplicate-null index issues
+productSchema.pre('save', function (next) {
+  if (!this.sku) {
+    this.sku = `SKU-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,6)}`
+  }
+  if (!this.slug && this.name) {
+    this.slug = this.name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '')
+  }
+  next()
 });
 
 const Product = mongoose.model('Product', productSchema);

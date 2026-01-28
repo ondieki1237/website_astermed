@@ -43,16 +43,32 @@ export default function AdminDashboard() {
   const router = useRouter()
 
   useEffect(() => {
-    try {
-      const token = localStorage.getItem('admin_token')
-      if (!token) router.push('/admin/login')
-    } catch (e) {
-      router.push('/admin/login')
+    const check = async () => {
+      try {
+        const token = localStorage.getItem('admin_token')
+        if (!token) return router.push('/admin/login')
+        const res = await fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000') + '/api/auth/me', {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        if (res.status === 401) {
+          localStorage.removeItem('admin_token')
+          return router.push('/admin/login')
+        }
+      } catch (e) {
+        localStorage.removeItem('admin_token')
+        return router.push('/admin/login')
+      }
     }
+    check()
   }, [])
+
+  function handleLogout() {
+    try { localStorage.removeItem('admin_token') } catch (e) {}
+    router.push('/admin/login')
+  }
   const [products, setProducts] = useState<Product[]>([
-    { id: '1', name: 'Blood Pressure Monitor', price: 89.99, stock: 45, isOnOffer: true, offerEndDate: '2024-02-15' },
-    { id: '2', name: 'Surgical Masks', price: 24.99, stock: 200, isOnOffer: false },
+    // placeholder until real products load
+    // will be replaced by fetched data
   ])
 
   const [blogs, setBlogs] = useState<Blog[]>([
@@ -67,12 +83,62 @@ export default function AdminDashboard() {
     { id: '1', title: 'Sales Manager', department: 'Sales', status: 'open' },
   ])
 
+  // API base
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
+
+  useEffect(() => {
+    // after token check, fetch products
+    const load = async () => {
+      try {
+        const token = localStorage.getItem('admin_token')
+        if (!token) return
+        const res = await fetch(`${API_BASE}/api/products?limit=1000`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        if (res.status === 401) {
+          localStorage.removeItem('admin_token')
+          return router.push('/admin/login')
+        }
+        const data = await res.json()
+        if (data && data.products) {
+          setProducts(data.products.map((p: any) => ({ id: p._id, name: p.name, price: p.price, stock: p.stock, isOnOffer: p.isOnOffer, offerEndDate: p.offerEndDate, inStock: p.inStock, views: p.views })))
+        } else if (Array.isArray(data)) {
+          setProducts(data.map((p: any) => ({ id: p._id, name: p.name, price: p.price, stock: p.stock, isOnOffer: p.isOnOffer, offerEndDate: p.offerEndDate, inStock: p.inStock, views: p.views })))
+        }
+      } catch (e) {
+        console.error('Failed to load admin products', e)
+      }
+    }
+    load()
+  }, [])
+
+  async function toggleStock(productId: string, current: boolean) {
+    try {
+      const token = localStorage.getItem('admin_token')
+      if (!token) return router.push('/admin/login')
+      const res = await fetch(`${API_BASE}/api/products/${productId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ inStock: !current }),
+      })
+      if (res.ok) {
+        const updated = await res.json()
+        setProducts((prev) => prev.map(p => p.id === updated._id ? { ...p, inStock: updated.inStock, stock: updated.stock } : p))
+      } else if (res.status === 401) {
+        localStorage.removeItem('admin_token')
+        router.push('/admin/login')
+      }
+    } catch (e) {
+      console.error('toggleStock failed', e)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <div className="sticky top-0 z-40 bg-primary text-primary-foreground shadow-md">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold">AsterMed Admin Dashboard</h1>
-          <Button variant="outline" className="text-primary-foreground border-primary-foreground hover:bg-primary-foreground hover:text-primary bg-transparent">
+          <Button onClick={handleLogout} variant="outline" className="text-primary-foreground border-primary-foreground hover:bg-primary-foreground hover:text-primary bg-transparent">
             Logout
           </Button>
         </div>

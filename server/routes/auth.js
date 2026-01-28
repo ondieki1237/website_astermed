@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import nodemailer from 'nodemailer';
 import User from '../models/User.js';
+import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -73,6 +74,17 @@ router.post('/login', async (req, res) => {
 });
 
 export default router;
+
+// GET /api/auth/me - verify token and return basic user info
+router.get('/me', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId).select('-password -adminCode -adminCodeExpires');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json({ id: user._id, name: user.name, email: user.email, isAdmin: user.isAdmin });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
 // Admin email OTP flow
 // POST /api/auth/admin/request-code  { email }

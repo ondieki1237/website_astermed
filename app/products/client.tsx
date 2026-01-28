@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import CategorySidebar from '@/components/category-sidebar'
 import { formatPrice } from '@/lib/currency'
 import { Star } from 'lucide-react'
 
@@ -202,25 +203,7 @@ export function ProductsContent() {
                 />
               </div>
 
-              {/* Category */}
-              <div className="mb-6">
-                <label className="text-sm font-semibold mb-2 block">Category</label>
-                <div className="space-y-2">
-                  {CATEGORIES.map((category) => (
-                    <button
-                      key={category}
-                      onClick={() => setSelectedCategory(category)}
-                      className={`block w-full text-left px-3 py-2 rounded transition ${
-                        selectedCategory === category
-                          ? 'bg-primary text-primary-foreground'
-                          : 'hover:bg-secondary'
-                      }`}
-                    >
-                      {category}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <CategorySidebar />
 
               {/* Price Range */}
               <div className="mb-6">

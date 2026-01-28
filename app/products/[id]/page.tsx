@@ -1,4 +1,4 @@
-'use client'
+ 'use client'
 
 import Header from '@/components/header'
 import Footer from '@/components/footer'
@@ -6,17 +6,18 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Star, Heart, Share2, CheckCircle, Truck, Shield, RotateCcw } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useParams } from 'next/navigation'
 import useCart from '@/hooks/use-cart'
 import { formatPrice } from '@/lib/currency'
 
 interface Product {
-  id: string
+  _id: string
   name: string
   price: number
   discountPrice?: number
   discountPercentage?: number
-  image: string
+  image?: string
   images?: string[]
   category: string
   rating: number
@@ -29,93 +30,49 @@ interface Product {
   manufacturerInfo?: string
 }
 
-const PRODUCT: Product = {
-  id: '1',
-  name: 'Fetal Doppler Ultrasound',
-  price: 45000,
-  discountPercentage: 20,
-  discountPrice: 36000,
-  image: 'https://images.unsplash.com/photo-1631217314830-4db48516e8ab?w=800&h=800&fit=crop',
-  images: [
-    'https://images.unsplash.com/photo-1631217314830-4db48516e8ab?w=800&h=800&fit=crop',
-    'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&h=800&fit=crop',
-  ],
-  category: 'Diagnostic Equipment',
-  rating: 4.5,
-  reviewCount: 128,
-  stock: 45,
-  description: 'Professional grade fetal doppler for detecting fetal heartbeat. Features advanced ultrasound technology with clear audio output.',
-  features: [
-    'Professional grade ultrasound probe',
-    'Clear digital display',
-    'Built-in speaker with volume control',
-    'Automatic frequency tuning',
-    'Low power consumption',
-    'Portable and lightweight',
-  ],
-  specifications: {
-    'Operating Frequency': '2 MHz',
-    'Display': 'Digital LED',
-    'Battery Life': '12 hours',
-    'Weight': '250g',
-    'Power': 'AC/Battery',
-    'Warranty': '2 years',
-  },
-  warranty: '2 Year Manufacturer Warranty',
-  manufacturerInfo: 'Made by premium medical equipment manufacturer',
-}
-
-const SIMILAR_PRODUCTS: Product[] = [
-  {
-    id: '2',
-    name: 'Fetal Doppler',
-    price: 35000,
-    discountPercentage: 15,
-    image: 'https://images.unsplash.com/photo-1631217314830-4db48516e8ab?w=300&h=300&fit=crop',
-    category: 'Diagnostic Equipment',
-    rating: 4.3,
-    reviewCount: 95,
-    stock: 20,
-    description: 'Professional fetal doppler',
-  },
-  {
-    id: '3',
-    name: 'Fetal Doppler Pro',
-    price: 55000,
-    discountPercentage: 10,
-    image: 'https://images.unsplash.com/photo-1631217314830-4db48516e8ab?w=300&h=300&fit=crop',
-    category: 'Diagnostic Equipment',
-    rating: 4.8,
-    reviewCount: 156,
-    stock: 15,
-    description: 'Advanced fetal doppler with LED screen',
-  },
-  {
-    id: '4',
-    name: 'Portable Ultrasound',
-    price: 95000,
-    discountPercentage: 5,
-    image: 'https://images.unsplash.com/photo-1631217314830-4db48516e8ab?w=300&h=300&fit=crop',
-    category: 'Diagnostic Equipment',
-    rating: 4.6,
-    reviewCount: 203,
-    stock: 8,
-    description: 'Portable ultrasound system',
-  },
-]
-
 export default function ProductDetailPage() {
+  const params = useParams()
+  const id = params?.id
+  const [product, setProduct] = useState<Product | null>(null)
+  const [similarProducts, setSimilarProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+
+  // UI state/hooks should be declared before any early returns
   const [quantity, setQuantity] = useState(1)
   const { addItem } = useCart()
   const [selectedImage, setSelectedImage] = useState(0)
   const [liked, setLiked] = useState(false)
   const [activeTab, setActiveTab] = useState('description')
 
+  useEffect(() => {
+    if (!id) return
+    const API_BASE = (process.env.NEXT_PUBLIC_API_URL as string) || 'http://localhost:5000'
+    setLoading(true)
+    fetch(`${API_BASE}/api/products/${id}`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Product not found')
+        return res.json()
+      })
+      .then((data) => {
+        // API returns { product, similarProducts, analytics }
+        setProduct(data.product || data)
+        setSimilarProducts(data.similarProducts || [])
+      })
+      .catch((err) => {
+        console.error(err)
+      })
+      .finally(() => setLoading(false))
+  }, [id])
+
+  if (loading) return <div className="p-8">Loading...</div>
+  if (!product) return <div className="p-8">Product not found</div>
+ 
+
   const handleShare = async () => {
     try {
       const url = window.location.href
       if (navigator.share) {
-        await navigator.share({ title: PRODUCT.name, text: PRODUCT.description, url })
+        await navigator.share({ title: product!.name, text: product!.description, url })
       } else {
         await navigator.clipboard.writeText(url)
         alert('Product link copied to clipboard')
@@ -125,9 +82,9 @@ export default function ProductDetailPage() {
     }
   }
 
-  const discountedPrice = PRODUCT.discountPercentage
-    ? PRODUCT.price * (1 - PRODUCT.discountPercentage / 100)
-    : PRODUCT.price
+  const discountedPrice = product && product.discountPercentage
+    ? product.price * (1 - product.discountPercentage / 100)
+    : (product ? product.price : 0)
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -141,7 +98,7 @@ export default function ProductDetailPage() {
             <span className="text-gray-300">/</span>
             <Link href="/products" className="text-gray-500 hover:text-primary">Products</Link>
             <span className="text-gray-300">/</span>
-            <span className="text-foreground">{PRODUCT.name}</span>
+            <span className="text-foreground">{product!.name}</span>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12 mb-16">
@@ -149,21 +106,21 @@ export default function ProductDetailPage() {
             <div>
               <div className="relative mb-4 bg-gray-50 rounded-lg overflow-hidden aspect-square flex items-center justify-center">
                 <img
-                  src={PRODUCT.images?.[selectedImage] || PRODUCT.image}
-                  alt={PRODUCT.name}
+                  src={product!.images?.[selectedImage] || product!.image}
+                  alt={product!.name}
                   className="w-full h-full object-cover"
                 />
-                {PRODUCT.discountPercentage && (
+                {product!.discountPercentage && (
                   <div className="absolute top-4 right-4 bg-accent text-white rounded-full w-14 h-14 flex items-center justify-center font-bold text-lg">
-                    {PRODUCT.discountPercentage}%
+                    {product!.discountPercentage}%
                   </div>
                 )}
               </div>
 
               {/* Thumbnail Gallery */}
-              {PRODUCT.images && PRODUCT.images.length > 1 && (
+              {product!.images && product!.images.length > 1 && (
                 <div className="flex gap-2">
-                  {PRODUCT.images.map((img, idx) => (
+                  {product!.images.map((img, idx) => (
                     <button
                       key={idx}
                       onClick={() => setSelectedImage(idx)}
@@ -181,10 +138,10 @@ export default function ProductDetailPage() {
             {/* Product Info */}
             <div>
               {/* Category & Rating */}
-              <p className="text-xs text-gray-500 mb-2">{PRODUCT.category}</p>
+              <p className="text-xs text-gray-500 mb-2">{product!.category}</p>
 
               {/* Title */}
-              <h1 className="text-3xl font-bold mb-4">{PRODUCT.name}</h1>
+              <h1 className="text-3xl font-bold mb-4">{product!.name}</h1>
 
               {/* Rating */}
               <div className="flex items-center gap-3 mb-6">
@@ -192,29 +149,29 @@ export default function ProductDetailPage() {
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star
                       key={i}
-                      className={`w-4 h-4 ${i < Math.floor(PRODUCT.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                      className={`w-4 h-4 ${i < Math.floor(product!.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
                     />
                   ))}
                 </div>
-                <span className="text-sm text-gray-600">{PRODUCT.rating} ({PRODUCT.reviewCount} reviews)</span>
+                <span className="text-sm text-gray-600">{product!.rating} ({product!.reviewCount} reviews)</span>
               </div>
 
               {/* Price */}
               <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                 <div className="flex items-baseline gap-3">
                   <p className="text-3xl font-bold text-primary">{formatPrice(discountedPrice)}</p>
-                  {PRODUCT.discountPercentage && (
-                    <p className="text-lg line-through text-gray-400">{formatPrice(PRODUCT.price)}</p>
+                  {product!.discountPercentage && (
+                    <p className="text-lg line-through text-gray-400">{formatPrice(product!.price)}</p>
                   )}
                 </div>
               </div>
 
               {/* Stock Status */}
               <div className="flex items-center gap-2 mb-6">
-                {PRODUCT.stock > 0 ? (
+                {product!.stock > 0 ? (
                   <>
                     <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span className="text-sm text-green-600">In Stock ({PRODUCT.stock} available)</span>
+                    <span className="text-sm text-green-600">In Stock ({product!.stock} available)</span>
                   </>
                 ) : (
                   <span className="text-sm text-red-600">Out of Stock</span>
@@ -222,7 +179,7 @@ export default function ProductDetailPage() {
               </div>
 
               {/* Description */}
-              <p className="text-gray-600 mb-6 text-sm leading-relaxed">{PRODUCT.description}</p>
+              <p className="text-gray-600 mb-6 text-sm leading-relaxed">{product!.description}</p>
 
               {/* Quantity & Actions */}
               <div className="flex gap-4 mb-6">
@@ -246,10 +203,10 @@ export default function ProductDetailPage() {
                   onClick={() =>
                     addItem(
                       {
-                        id: PRODUCT.id,
-                        name: PRODUCT.name,
+                        id: product!._id,
+                        name: product!.name,
                         price: discountedPrice,
-                        image: PRODUCT.image,
+                        image: product!.image,
                         quantity,
                       },
                       quantity
@@ -321,7 +278,7 @@ export default function ProductDetailPage() {
                 <div>
                   <h3 className="font-bold text-lg mb-3">Product Features</h3>
                   <ul className="space-y-2">
-                    {PRODUCT.features?.map((feature, idx) => (
+                    {product!.features?.map((feature, idx) => (
                       <li key={idx} className="flex gap-3 text-sm">
                         <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
                         <span>{feature}</span>
@@ -331,7 +288,7 @@ export default function ProductDetailPage() {
                 </div>
                 <div>
                   <h3 className="font-bold text-lg mb-3">Warranty & Support</h3>
-                  <p className="text-sm text-gray-600">{PRODUCT.warranty}</p>
+                  <p className="text-sm text-gray-600">{product!.warranty}</p>
                 </div>
               </div>
             )}
@@ -341,7 +298,7 @@ export default function ProductDetailPage() {
               <div>
                 <table className="w-full">
                   <tbody>
-                    {Object.entries(PRODUCT.specifications || {}).map(([key, value]) => (
+                    {Object.entries(product!.specifications || {}).map(([key, value]) => (
                       <tr key={key} className="border-b">
                         <td className="py-3 font-semibold text-sm text-gray-700 w-40">{key}</td>
                         <td className="py-3 text-sm text-gray-600">{value}</td>
@@ -358,26 +315,30 @@ export default function ProductDetailPage() {
                 <div>
                   <h3 className="font-bold text-lg mb-4">Customer Reviews</h3>
                   <div className="space-y-4">
-                    {[1, 2, 3].map((review) => (
-                      <div key={review} className="p-4 border border-gray-200 rounded-lg">
-                        <div className="flex items-center justify-between mb-2">
-                          <div>
-                            <p className="font-semibold text-sm">Customer {review}</p>
-                            <div className="flex items-center gap-1">
-                              {Array.from({ length: 5 }).map((_, i) => (
-                                <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                              ))}
+                    {product!.reviews && product!.reviews.length > 0 ? (
+                      product!.reviews.map((review: any, idx: number) => (
+                        <div key={idx} className="p-4 border border-gray-200 rounded-lg">
+                          <div className="flex items-center justify-between mb-2">
+                            <div>
+                              <p className="font-semibold text-sm">{review.username || 'Customer'}</p>
+                              <div className="flex items-center gap-1">
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                  <Star key={i} className={`w-3 h-3 ${i < Math.floor(review.rating || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
+                                ))}
+                              </div>
                             </div>
+                            <span className="text-xs text-gray-500">{new Date(review.createdAt || Date.now()).toLocaleDateString()}</span>
                           </div>
-                          <span className="text-xs text-gray-500">2 weeks ago</span>
+                          <p className="text-sm text-gray-600">{review.comment}</p>
                         </div>
-                        <p className="text-sm text-gray-600">Great product! Very satisfied with the quality.</p>
-                      </div>
-                    ))}
+                      ))
+                    ) : (
+                      <div className="text-sm text-muted-foreground">No reviews yet.</div>
+                    )}
                   </div>
                 </div>
 
-                {/* Write Review */}
+                {/* Write Review (requires auth) */}
                 <Button className="bg-primary hover:bg-primary/90">Write a Review</Button>
               </div>
             )}
@@ -387,8 +348,8 @@ export default function ProductDetailPage() {
           <div>
             <h2 className="text-2xl font-bold mb-6 tracking-tight">Similar Products</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {SIMILAR_PRODUCTS.map((product) => (
-                <Link key={product.id} href={`/products/${product.id}`}>
+              {similarProducts.map((product) => (
+                <Link key={product._id} href={`/products/${product._id}`}>
                   <Card className="border border-gray-300 rounded-xl overflow-hidden hover:shadow-md transition cursor-pointer h-full flex flex-col">
                     <div className="relative aspect-square overflow-hidden bg-gray-100 flex items-center justify-center">
                       <img
