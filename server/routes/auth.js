@@ -96,22 +96,32 @@ router.post('/admin/request-code', async (req, res) => {
     await user.save();
 
     // Send email if SMTP configured, otherwise log the code for dev
-    if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+    if (process.env.SMTP_HOST || process.env.SMTP_USER || process.env.SMTP_PASS) {
+      const smtpPort = parseInt(process.env.SMTP_PORT || '587', 10)
+      const secureFlag = (process.env.SMTP_SECURE === 'true') || smtpPort === 465
       const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: parseInt(process.env.SMTP_PORT || '587', 10),
-        secure: process.env.SMTP_SECURE === 'true',
+        host: process.env.SMTP_HOST || 'mail.astermedsupplies.co.ke',
+        port: smtpPort,
+        secure: secureFlag,
         auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS,
+          user: process.env.SMTP_USER || 'seth@astermedsupplies.co.ke',
+          pass: process.env.SMTP_PASS || 'seth123qP1',
+        },
+        tls: {
+          rejectUnauthorized: false,
         },
       });
 
-      const from = process.env.SMTP_FROM || process.env.SMTP_USER;
+      const from = process.env.EMAIL_FROM || process.env.SMTP_USER || 'no-reply@localhost';
       const subject = 'Your admin access code';
       const text = `Your admin access code is: ${code}. It expires in 10 minutes.`;
 
-      await transporter.sendMail({ from, to: email, subject, text });
+      try {
+        await transporter.sendMail({ from, to: email, subject, text });
+      } catch (err) {
+        console.error('Failed to send admin OTP via SMTP:', err && err.message ? err.message : err)
+        return res.status(500).json({ message: `Failed to send email: ${err && err.message ? err.message : 'unknown error'}` })
+      }
     } else {
       // fallback: print to server logs (dev only)
       console.log(`Admin OTP for ${email}: ${code}`);
