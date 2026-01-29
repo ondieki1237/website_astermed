@@ -50,7 +50,7 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     if (!id) return
-    const API_BASE = (process.env.NEXT_PUBLIC_API_URL as string) || 'http://localhost:5000'
+    const API_BASE = (process.env.NEXT_PUBLIC_API_URL as string) || 'http://localhost:5088'
     setLoading(true)
     fetch(`${API_BASE}/api/products/${id}`)
       .then((res) => {
@@ -91,7 +91,7 @@ export default function ProductDetailPage() {
     setReviewSubmitting(true)
     try {
       const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null
-      const API_BASE = (process.env.NEXT_PUBLIC_API_URL as string) || 'http://localhost:5000'
+      const API_BASE = (process.env.NEXT_PUBLIC_API_URL as string) || 'http://localhost:5088'
       const res = await fetch(`${API_BASE}/api/products/${product._id}/reviews`, {
         method: 'POST',
         headers: {
@@ -420,6 +420,23 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </main>
+
+      {/* Sticky Add to Cart bar for quick purchase */}
+      <div className="fixed left-4 right-4 bottom-4 z-50 lg:left-auto lg:right-12 lg:bottom-8">
+        <div className="max-w-4xl mx-auto bg-white border border-gray-200 rounded-lg p-3 shadow-lg flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <img src={resolveImageSrc(product!.image)} alt={product!.name} className="w-16 h-16 object-cover rounded" />
+            <div>
+              <div className="text-sm font-medium">{product!.name}</div>
+              <div className="text-sm text-gray-600">{formatPrice(discountedPrice)}</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <button onClick={() => addItem({ id: product!._id, name: product!.name, price: discountedPrice, image: product!.image }, quantity)} className="bg-primary text-white px-4 py-2 rounded-md">Add to Cart</button>
+            <Link href={`/products/${product!._id}`} className="border border-gray-300 px-4 py-2 rounded-md">View</Link>
+          </div>
+        </div>
+      </div>
 
       <Footer />
 

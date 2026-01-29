@@ -47,7 +47,7 @@ export default function AdminDashboard() {
       try {
         const token = localStorage.getItem('admin_token')
         if (!token) return router.push('/admin/login')
-        const res = await fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000') + '/api/auth/me', {
+        const res = await fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5088') + '/api/auth/me', {
           headers: { Authorization: `Bearer ${token}` },
         })
         if (res.status === 401) {
@@ -84,7 +84,7 @@ export default function AdminDashboard() {
   ])
 
   // API base
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5088'
 
   useEffect(() => {
     // after token check, fetch products

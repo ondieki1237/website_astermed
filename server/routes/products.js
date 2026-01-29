@@ -18,10 +18,17 @@ router.get('/', async (req, res) => {
     if (category) query.category = category;
     if (subcategory) query.subcategory = subcategory;
     if (search) {
+      // match any word in name, description, tags, category, features or precomputed searchText
+      const term = String(search).trim()
+      const esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const regex = new RegExp(esc, 'i')
       query.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
-        { tags: { $regex: search, $options: 'i' } },
+        { name: { $regex: regex } },
+        { description: { $regex: regex } },
+        { tags: { $regex: regex } },
+        { category: { $regex: regex } },
+        { features: { $regex: regex } },
+        { searchText: { $regex: regex } },
       ];
     }
 
@@ -54,6 +61,33 @@ router.get('/featured', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+// Suggest endpoint for search-as-you-type
+router.get('/suggest', async (req, res) => {
+  try {
+    const q = String(req.query.q || '').trim()
+    const limit = parseInt(req.query.limit || '8', 10)
+    if (!q) return res.json([])
+
+    const esc = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const regex = new RegExp(esc, 'i')
+
+    const results = await Product.find({
+      $or: [
+        { name: { $regex: regex } },
+        { category: { $regex: regex } },
+        { searchText: { $regex: regex } },
+      ]
+    })
+      .limit(limit)
+      .select('name image price discountPercentage isOnOffer')
+
+    res.json(results)
+  } catch (err) {
+    console.error('Suggest endpoint error:', err)
+    res.status(500).json({ message: err.message, stack: err.stack })
+  }
+})
 
 // Get single product
 router.get('/:id', async (req, res) => {
@@ -118,6 +152,18 @@ router.post('/', authMiddleware, adminMiddleware, upload.single('image'), async 
       body.specifications = parseSpecs(body.specsText)
     }
 
+    // Build a searchText field combining searchable fields for faster searching
+    const buildSearchText = (b) => {
+      const parts = []
+      if (b.name) parts.push(b.name)
+      if (b.description) parts.push(b.description)
+      if (b.category) parts.push(b.category)
+      if (b.tags) parts.push(Array.isArray(b.tags) ? b.tags.join(' ') : String(b.tags))
+      if (b.features) parts.push(Array.isArray(b.features) ? b.features.join(' ') : String(b.features))
+      if (b.specifications && typeof b.specifications === 'object') parts.push(Object.values(b.specifications).join(' '))
+      return parts.join(' ')
+    }
+
     // Resolve category: accept categoryId or newCategory or category name
     if (body.categoryId) {
       try {
@@ -174,6 +220,7 @@ router.post('/', authMiddleware, adminMiddleware, upload.single('image'), async 
       return res.status(400).json({ message: `Missing required fields: ${missing.join(', ')}` })
     }
 
+    body.searchText = buildSearchText(body)
     const product = new Product(body)
     await product.save()
     res.status(201).json(product)
@@ -203,6 +250,16 @@ router.put('/:id', authMiddleware, adminMiddleware, async (req, res) => {
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
+    // Rebuild searchText on update to include any changed specs/features etc.
+    const parts = []
+    if (product.name) parts.push(product.name)
+    if (product.description) parts.push(product.description)
+    if (product.category) parts.push(product.category)
+    if (product.tags) parts.push(Array.isArray(product.tags) ? product.tags.join(' ') : String(product.tags))
+    if (product.features) parts.push(Array.isArray(product.features) ? product.features.join(' ') : String(product.features))
+    if (product.specifications && typeof product.specifications === 'object') parts.push(Object.values(product.specifications).join(' '))
+    product.searchText = parts.join(' ')
+    await product.save()
     res.json(product);
   } catch (error) {
     res.status(500).json({ message: error.message });

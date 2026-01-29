@@ -27,7 +27,7 @@ export default function CategorySidebar() {
   const [errorKey, setErrorKey] = useState<string | null>(null)
 
   const API_BASE =
-    (process.env.NEXT_PUBLIC_API_URL as string) || 'http://localhost:5000'
+    (process.env.NEXT_PUBLIC_API_URL as string) || 'http://localhost:5088'
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -64,11 +64,9 @@ export default function CategorySidebar() {
   }
 
   return (
-    <aside className="w-64 bg-white border-r">
-      <div className="p-6">
-        <h2 className="text-lg font-semibold mb-5 tracking-tight">
-          Categories
-        </h2>
+    <aside className="w-64 bg-white">
+      <div className="p-4">
+        <h2 className="text-xl font-bold mb-4 tracking-tight">Category</h2>
 
         <div className="space-y-3">
           {categories.map(category => {
@@ -91,23 +89,14 @@ export default function CategorySidebar() {
                       )
                     }
                   }}
-                  className={`w-full flex items-center justify-between px-4 py-2.5 rounded-md text-sm font-medium transition
-                    ${
-                      isOpen
-                        ? 'bg-primary text-white'
-                        : 'bg-muted hover:bg-muted/70'
-                    }`}
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-sm text-base font-medium transition bg-primary text-white hover:bg-primary/90`}
                 >
-                  <span>{category.name}</span>
+                  <span className="truncate">{category.name}</span>
                   <div className="flex items-center gap-2">
                     <span className="text-xs opacity-80">
                       {category.count ?? 0}
                     </span>
-                    {isOpen ? (
-                      <ChevronDown size={16} />
-                    ) : (
-                      <ChevronRight size={16} />
-                    )}
+                    <ChevronDown size={16} className={`${isOpen ? 'rotate-180' : ''} transition-transform`} />
                   </div>
                 </button>
 
@@ -161,7 +150,7 @@ export default function CategorySidebar() {
                                 <Link
                                   key={product._id}
                                   href={`/products/${product._id}`}
-                                  className="block text-sm truncate hover:text-primary"
+                                  className="block text-base truncate hover:text-primary"
                                 >
                                   {product.name}
                                 </Link>
@@ -183,7 +172,7 @@ export default function CategorySidebar() {
                         <Link
                           key={product._id}
                           href={`/products/${product._id}`}
-                          className="block text-sm truncate hover:text-primary"
+                          className="block text-base truncate hover:text-primary"
                         >
                           {product.name}
                         </Link>

@@ -31,6 +31,7 @@ const productSchema = new mongoose.Schema({
     },
   ],
   tags: [String],
+  searchText: String,
   slug: String,
   inStock: { type: Boolean, default: true },
   views: { type: Number, default: 0 },

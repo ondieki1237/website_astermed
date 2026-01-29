@@ -106,12 +106,12 @@ project/
 
 ### Frontend (.env.local)
 ```
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
+NEXT_PUBLIC_API_URL=http://localhost:5088/api
 ```
 
 ### Backend (.env)
 ```
-PORT=5000
+PORT=5088
 MONGODB_URI=mongodb://localhost:27017/astermed
 JWT_SECRET=your_jwt_secret_key_here
 CORS_ORIGIN=http://localhost:3000
@@ -141,7 +141,7 @@ cd server
 npm install
 npm run dev
 ```
-Backend runs on: http://localhost:5000
+Backend runs on: http://localhost:5088
 
 ### 4. MongoDB Setup
 - Install MongoDB locally or use MongoDB Atlas

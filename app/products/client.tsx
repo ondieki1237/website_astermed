@@ -143,38 +143,40 @@ export function ProductsContent() {
   const [selectedCategory, setSelectedCategory] = useState('All Categories')
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState('popular')
-  const [filteredProducts, setFilteredProducts] = useState(MOCK_PRODUCTS)
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const category = searchParams.get('category')
     if (category) {
       setSelectedCategory(decodeURIComponent(category))
     }
+    const s = searchParams.get('search')
+    if (s) setSearchQuery(decodeURIComponent(s))
   }, [searchParams])
 
   useEffect(() => {
-    let products = MOCK_PRODUCTS
-
-    if (selectedCategory !== 'All Categories') {
-      products = products.filter(p => p.category === selectedCategory)
+    const fetchProducts = async () => {
+      setLoading(true)
+      try {
+        const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5088'
+        const params = new URLSearchParams()
+        params.set('limit', '48')
+        if (searchQuery) params.set('search', searchQuery)
+        if (selectedCategory && selectedCategory !== 'All Categories') params.set('category', selectedCategory)
+        // map sortBy to backend sort query if needed
+        const res = await fetch(`${API_BASE}/api/products?${params.toString()}`)
+        if (!res.ok) throw new Error('Failed to load')
+        const data = await res.json()
+        setProducts((data && data.products) ? data.products : data || [])
+      } catch (e) {
+        setProducts([])
+      } finally {
+        setLoading(false)
+      }
     }
-
-    if (searchQuery) {
-      products = products.filter(p =>
-        p.name.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    }
-
-    if (sortBy === 'price-low') {
-      products.sort((a, b) => a.price - b.price)
-    } else if (sortBy === 'price-high') {
-      products.sort((a, b) => b.price - a.price)
-    } else if (sortBy === 'rating') {
-      products.sort((a, b) => b.rating - a.rating)
-    }
-
-    setFilteredProducts(products)
-  }, [selectedCategory, searchQuery, sortBy])
+    fetchProducts()
+  }, [selectedCategory, searchQuery, sortBy, searchParams])
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -231,8 +233,8 @@ export function ProductsContent() {
           <div className="lg:col-span-3">
             {/* Sort and View Options */}
             <div className="flex justify-between items-center mb-6">
-              <p className="text-muted-foreground">
-                Showing {filteredProducts.length} products
+                <p className="text-muted-foreground">
+                Showing {loading ? '...' : products.length} products
               </p>
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger className="w-40">
@@ -249,9 +251,9 @@ export function ProductsContent() {
 
             {/* Products */}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProducts.length > 0 ? (
-                filteredProducts.map((product) => (
-                  <Link key={product.id} href={`/products/${product.id}`}>
+              {products.length > 0 ? (
+                products.map((product: any) => (
+                  <Link key={product._id} href={`/products/${product._id}`}>
                     <Card className="overflow-hidden hover:shadow-lg transition transform hover:scale-105 h-full cursor-pointer">
                       <div className="relative aspect-square overflow-hidden bg-muted">
                         <img src={resolveImageSrc(product.image)} alt={product.name} className="w-full h-full object-cover" />
@@ -282,12 +284,12 @@ export function ProductsContent() {
                             {product.isOnOffer ? (
                               <>
                                 <p className="text-lg font-bold text-accent">
-                                  ${(product.price * (1 - (product.discountPercentage || 0) / 100)).toFixed(2)}
+                                  {formatPrice(product.price * (1 - (product.discountPercentage || 0) / 100))}
                                 </p>
-                                <p className="text-sm line-through text-muted-foreground">${product.price}</p>
+                                <p className="text-sm line-through text-muted-foreground">{formatPrice(product.price)}</p>
                               </>
                             ) : (
-                              <p className="text-lg font-bold">${product.price}</p>
+                              <p className="text-lg font-bold">{formatPrice(product.price)}</p>
                             )}
                           </div>
                           <Button size="sm" className="bg-primary hover:bg-primary/90">Add</Button>

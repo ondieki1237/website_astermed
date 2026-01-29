@@ -24,7 +24,7 @@ cd server
 npm install
 
 # Create .env file with:
-PORT=5000
+PORT=5088
 MONGODB_URI=mongodb://localhost:27017/astermed
 JWT_SECRET=your_jwt_secret_key_here
 NODE_ENV=development
@@ -38,7 +38,7 @@ CORS_ORIGIN=http://localhost:3000
 # Run development server
 npm run dev
 
-# API available at: http://localhost:5000
+# API available at: http://localhost:5088
 ```
 
 ## Project Features Overview
@@ -107,13 +107,13 @@ To connect to real API, update the API base URL in components (look for `fetch('
 
 Example:
 ```typescript
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5088';
 
 export async function fetchProducts(category?: string) {
-  const url = new URL(`${API_BASE}/api/products`);
-  if (category) url.searchParams.append('category', category);
-  const res = await fetch(url);
-  return res.json();
+   const url = new URL(`${API_BASE}/api/products`);
+   if (category) url.searchParams.append('category', category);
+   const res = await fetch(url);
+   return res.json();
 }
 ```
 

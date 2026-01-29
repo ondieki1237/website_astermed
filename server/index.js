@@ -19,8 +19,9 @@ dotenv.config();
 const app = express();
 
 // Middleware
-// Allow CORS from the configured frontend origin; default to the deployed frontend domain
-app.use(cors({ origin: process.env.CORS_ORIGIN || 'https://astermedsupplies.co.ke' }));
+// Allow CORS from the configured frontend origin; default to local Next dev frontend
+// In production set `CORS_ORIGIN` to your deployed frontend (e.g. https://astermed.codewithseth.co.ke)
+app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:3000' }));
 app.use(express.json());
 
 // Serve uploaded files (images) from server public/uploads
@@ -47,7 +48,7 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'Server is running' });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5088;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
