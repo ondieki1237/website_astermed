@@ -23,6 +23,11 @@ const app = express();
 app.use(cors({ origin: process.env.CORS_ORIGIN || 'https://astermedsupplies.co.ke' }));
 app.use(express.json());
 
+// Serve uploaded files (images) from server public/uploads
+import path from 'path'
+const uploadsDir = path.join(process.cwd(), 'public', 'uploads')
+app.use('/uploads', express.static(uploadsDir))
+
 // Connect to MongoDB
 connectDB();
 

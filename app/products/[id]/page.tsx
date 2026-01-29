@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import useCart from '@/hooks/use-cart'
 import { formatPrice } from '@/lib/currency'
+import { resolveImageSrc } from '@/lib/image'
 
 interface Product {
   _id: string
@@ -43,6 +44,9 @@ export default function ProductDetailPage() {
   const [selectedImage, setSelectedImage] = useState(0)
   const [liked, setLiked] = useState(false)
   const [activeTab, setActiveTab] = useState('description')
+  const [showReviewModal, setShowReviewModal] = useState(false)
+  const [reviewSubmitting, setReviewSubmitting] = useState(false)
+  const [reviewForm, setReviewForm] = useState({ username: '', rating: 5, comment: '' })
 
   useEffect(() => {
     if (!id) return
@@ -82,6 +86,33 @@ export default function ProductDetailPage() {
     }
   }
 
+  async function submitReview() {
+    if (!product) return
+    setReviewSubmitting(true)
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null
+      const API_BASE = (process.env.NEXT_PUBLIC_API_URL as string) || 'http://localhost:5000'
+      const res = await fetch(`${API_BASE}/api/products/${product._id}/reviews`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ username: reviewForm.username || 'Anonymous', rating: reviewForm.rating, comment: reviewForm.comment }),
+      })
+      if (!res.ok) throw new Error('Failed')
+      const updated = await res.json()
+      // server returns updated product
+      setProduct(updated)
+      setShowReviewModal(false)
+      setReviewForm({ username: '', rating: 5, comment: '' })
+    } catch (e) {
+      alert('Failed to submit review')
+    } finally {
+      setReviewSubmitting(false)
+    }
+  }
+
   const discountedPrice = product && product.discountPercentage
     ? product.price * (1 - product.discountPercentage / 100)
     : (product ? product.price : 0)
@@ -106,7 +137,7 @@ export default function ProductDetailPage() {
             <div>
               <div className="relative mb-4 bg-gray-50 rounded-lg overflow-hidden aspect-square flex items-center justify-center">
                 <img
-                  src={product!.images?.[selectedImage] || product!.image}
+                  src={resolveImageSrc(product!.images?.[selectedImage] || product!.image)}
                   alt={product!.name}
                   className="w-full h-full object-cover"
                 />
@@ -120,7 +151,7 @@ export default function ProductDetailPage() {
               {/* Thumbnail Gallery */}
               {product!.images && product!.images.length > 1 && (
                 <div className="flex gap-2">
-                  {product!.images.map((img, idx) => (
+                      {product!.images.map((img, idx) => (
                     <button
                       key={idx}
                       onClick={() => setSelectedImage(idx)}
@@ -128,7 +159,7 @@ export default function ProductDetailPage() {
                         selectedImage === idx ? 'border-primary' : 'border-gray-200'
                       }`}
                     >
-                      <img src={img || "/placeholder.svg"} alt={`View ${idx + 1}`} className="w-full h-full object-cover" />
+                          <img src={resolveImageSrc(img)} alt={`View ${idx + 1}`} className="w-full h-full object-cover" />
                     </button>
                   ))}
                 </div>
@@ -339,7 +370,7 @@ export default function ProductDetailPage() {
                 </div>
 
                 {/* Write Review (requires auth) */}
-                <Button className="bg-primary hover:bg-primary/90">Write a Review</Button>
+                <Button className="bg-primary hover:bg-primary/90" onClick={() => setShowReviewModal(true)}>Write a Review</Button>
               </div>
             )}
           </div>
@@ -352,11 +383,11 @@ export default function ProductDetailPage() {
                 <Link key={product._id} href={`/products/${product._id}`}>
                   <Card className="border border-gray-300 rounded-xl overflow-hidden hover:shadow-md transition cursor-pointer h-full flex flex-col">
                     <div className="relative aspect-square overflow-hidden bg-gray-100 flex items-center justify-center">
-                      <img
-                        src={product.image || "/placeholder.svg"}
-                        alt={product.name}
-                        className="w-full h-full object-cover"
-                      />
+                          <img
+                            src={resolveImageSrc(product!.image)}
+                            alt={product!.name}
+                            className="w-full h-full object-cover"
+                          />
                       {product.discountPercentage && (
                         <div className="absolute top-3 right-3 bg-accent text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-xs">
                           {product.discountPercentage}%
@@ -391,6 +422,40 @@ export default function ProductDetailPage() {
       </main>
 
       <Footer />
+
+      {/* Review Modal */}
+      {showReviewModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-lg w-full max-w-xl p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Write a Review</h3>
+              <button onClick={() => setShowReviewModal(false)} className="text-gray-500">Close</button>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <label className="text-sm block mb-1">Name</label>
+                <input value={reviewForm.username} onChange={(e) => setReviewForm(f => ({ ...f, username: e.target.value }))} className="w-full border px-3 py-2 rounded" />
+              </div>
+              <div>
+                <label className="text-sm block mb-1">Rating</label>
+                <select value={String(reviewForm.rating)} onChange={(e) => setReviewForm(f => ({ ...f, rating: parseInt(e.target.value, 10) }))} className="w-24 border px-3 py-2 rounded">
+                  {[5,4,3,2,1].map(r => <option key={r} value={r}>{r} stars</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="text-sm block mb-1">Comment</label>
+                <textarea value={reviewForm.comment} onChange={(e) => setReviewForm(f => ({ ...f, comment: e.target.value }))} className="w-full border px-3 py-2 rounded" rows={5} />
+              </div>
+
+              <div className="flex justify-end gap-2 mt-4">
+                <button onClick={() => setShowReviewModal(false)} className="px-4 py-2 border rounded">Cancel</button>
+                <button onClick={submitReview} disabled={reviewSubmitting} className="px-4 py-2 bg-primary text-white rounded">{reviewSubmitting ? 'Submitting...' : 'Submit Review'}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }

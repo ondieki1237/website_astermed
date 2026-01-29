@@ -222,28 +222,32 @@ router.delete('/:id', authMiddleware, adminMiddleware, async (req, res) => {
   }
 });
 
-// Add review to product
-router.post('/:id/reviews', authMiddleware, async (req, res) => {
+// Add review to product (public endpoint)
+router.post('/:id/reviews', async (req, res) => {
   try {
     const { rating, comment, username } = req.body;
+    const parsedRating = parseInt(rating, 10);
+    if (isNaN(parsedRating) || parsedRating < 1 || parsedRating > 5) {
+      return res.status(400).json({ message: 'Rating must be an integer between 1 and 5' });
+    }
+
     const product = await Product.findById(req.params.id);
-    
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
     const review = {
-      userId: req.userId,
+      userId: req.userId || null,
       username: username || 'Anonymous',
-      rating: Math.min(5, Math.max(1, rating)),
-      comment,
+      rating: parsedRating,
+      comment: comment || '',
       createdAt: new Date(),
     };
 
     product.reviews.push(review);
     product.reviewCount = product.reviews.length;
-    product.rating = (product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length).toFixed(1);
-    
+    product.rating = parseFloat((product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length).toFixed(1));
+
     await product.save();
     res.status(201).json(product);
   } catch (error) {

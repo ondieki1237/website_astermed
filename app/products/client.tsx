@@ -11,6 +11,7 @@ import { useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import CategorySidebar from '@/components/category-sidebar'
 import { formatPrice } from '@/lib/currency'
+import { resolveImageSrc } from '@/lib/image'
 import { Star } from 'lucide-react'
 
 interface Product {
@@ -253,7 +254,7 @@ export function ProductsContent() {
                   <Link key={product.id} href={`/products/${product.id}`}>
                     <Card className="overflow-hidden hover:shadow-lg transition transform hover:scale-105 h-full cursor-pointer">
                       <div className="relative aspect-square overflow-hidden bg-muted">
-                        <img src={product.image || "/placeholder.svg"} alt={product.name} className="w-full h-full object-cover" />
+                        <img src={resolveImageSrc(product.image)} alt={product.name} className="w-full h-full object-cover" />
                         {product.isOnOffer && (
                           <div className="absolute top-3 right-3 bg-accent text-white px-3 py-1 rounded-lg font-bold">
                             -{product.discountPercentage}%

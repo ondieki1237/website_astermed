@@ -6,6 +6,7 @@ import CategorySidebar from '@/components/category-sidebar'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/currency'
+import { resolveImageSrc } from '@/lib/image'
 
 interface Product {
   id: string
@@ -150,8 +151,8 @@ export default function Home() {
                 <div className="bg-white border border-gray-300 rounded-xl overflow-hidden hover:shadow-md transition cursor-pointer h-full flex flex-col">
                   {/* Image Container */}
                   <div className="relative aspect-square overflow-hidden bg-gray-100 flex items-center justify-center">
-                    <img
-                      src={product.image || '/placeholder.svg'}
+                      <img
+                      src={resolveImageSrc(product.image)}
                       alt={product.name}
                       className="w-full h-full object-cover"
                     />
