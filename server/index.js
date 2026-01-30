@@ -19,9 +19,11 @@ dotenv.config();
 const app = express();
 
 // Middleware
-// Allow CORS from the configured frontend origin; default to local Next dev frontend
-// In production set `CORS_ORIGIN` to your deployed frontend (e.g. https://astermed.codewithseth.co.ke)
-app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:3000' }));
+// Allow CORS from configured frontend origins (comma-separated) or default to local Next dev frontend
+// Example production value: "https://website-astermed.vercel.app,https://astermedsupplies.co.ke"
+const rawOrigins = process.env.CORS_ORIGIN || 'http://localhost:3000'
+const allowedOrigins = rawOrigins.split(',').map(s => s.trim()).filter(Boolean)
+app.use(cors({ origin: allowedOrigins }))
 app.use(express.json());
 
 // Serve uploaded files (images) from server public/uploads
