@@ -12,6 +12,7 @@ import { useState, useEffect } from 'react'
 import CategorySidebar from '@/components/category-sidebar'
 import { formatPrice } from '@/lib/currency'
 import { resolveImageSrc } from '@/lib/image'
+import { getApiBase } from '@/lib/api'
 import { Star } from 'lucide-react'
 
 interface Product {
@@ -159,7 +160,7 @@ export function ProductsContent() {
     const fetchProducts = async () => {
       setLoading(true)
       try {
-        const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://astermed.codewithseth.co.ke'
+        const API_BASE = getApiBase()
         const params = new URLSearchParams()
         params.set('limit', '48')
         if (searchQuery) params.set('search', searchQuery)

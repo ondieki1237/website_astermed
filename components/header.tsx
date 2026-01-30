@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import useCart from '@/hooks/use-cart'
 import { resolveImageSrc } from '@/lib/image'
+import { getApiBase } from '@/lib/api'
 import { formatPrice } from '@/lib/currency'
 import CategorySidebar from './category-sidebar'
 
@@ -53,7 +54,7 @@ export default function Header() {
     setLoadingSuggest(true)
     suggestTimer.current = window.setTimeout(async () => {
       try {
-        const API_BASE = (process.env.NEXT_PUBLIC_API_URL as string) || 'https://astermed.codewithseth.co.ke'
+        const API_BASE = getApiBase()
         const res = await fetch(`${API_BASE}/api/products/suggest?q=${encodeURIComponent(searchQuery)}&limit=6`)
         if (!res.ok) throw new Error('fail')
         const data = await res.json()

@@ -6,6 +6,7 @@ import CategorySidebar from '@/components/category-sidebar'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/currency'
 import { resolveImageSrc } from '@/lib/image'
+import { getApiBase } from '@/lib/api'
 import useCart from '@/hooks/use-cart'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -22,7 +23,7 @@ export default function Home() {
     const load = async () => {
       setLoading(true)
       try {
-        const API_BASE = (process.env.NEXT_PUBLIC_API_URL as string) || 'https://astermed.codewithseth.co.ke'
+        const API_BASE = getApiBase()
         // First try to load featured (offers) - limit to 12 for square grid
         const fRes = await fetch(`${API_BASE}/api/products/featured?limit=12`)
         if (!fRes.ok) throw new Error('failed to load featured')

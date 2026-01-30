@@ -11,6 +11,7 @@ import { useParams } from 'next/navigation'
 import useCart from '@/hooks/use-cart'
 import { formatPrice } from '@/lib/currency'
 import { resolveImageSrc } from '@/lib/image'
+import { getApiBase } from '@/lib/api'
 
 interface Product {
   _id: string
@@ -50,7 +51,7 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     if (!id) return
-    const API_BASE = (process.env.NEXT_PUBLIC_API_URL as string) || 'https://astermed.codewithseth.co.ke'
+    const API_BASE = getApiBase()
     setLoading(true)
     fetch(`${API_BASE}/api/products/${id}`)
       .then((res) => {
