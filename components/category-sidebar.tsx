@@ -27,7 +27,7 @@ export default function CategorySidebar() {
   const [errorKey, setErrorKey] = useState<string | null>(null)
 
   const API_BASE =
-    (process.env.NEXT_PUBLIC_API_URL as string) || 'http://localhost:5088'
+    (process.env.NEXT_PUBLIC_API_URL as string) || 'https://astermed.codewithseth.co.ke'
 
   useEffect(() => {
     const loadCategories = async () => {

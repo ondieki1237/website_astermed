@@ -50,7 +50,7 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     if (!id) return
-    const API_BASE = (process.env.NEXT_PUBLIC_API_URL as string) || 'http://localhost:5088'
+    const API_BASE = (process.env.NEXT_PUBLIC_API_URL as string) || 'https://astermed.codewithseth.co.ke'
     setLoading(true)
     fetch(`${API_BASE}/api/products/${id}`)
       .then((res) => {
@@ -91,7 +91,7 @@ export default function ProductDetailPage() {
     setReviewSubmitting(true)
     try {
       const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null
-      const API_BASE = (process.env.NEXT_PUBLIC_API_URL as string) || 'http://localhost:5088'
+      const API_BASE = (process.env.NEXT_PUBLIC_API_URL as string) || 'https://astermed.codewithseth.co.ke'
       const res = await fetch(`${API_BASE}/api/products/${product._id}/reviews`, {
         method: 'POST',
         headers: {

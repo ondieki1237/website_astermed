@@ -53,7 +53,7 @@ export default function Header() {
     setLoadingSuggest(true)
     suggestTimer.current = window.setTimeout(async () => {
       try {
-        const API_BASE = (process.env.NEXT_PUBLIC_API_URL as string) || 'http://localhost:5088'
+        const API_BASE = (process.env.NEXT_PUBLIC_API_URL as string) || 'https://astermed.codewithseth.co.ke'
         const res = await fetch(`${API_BASE}/api/products/suggest?q=${encodeURIComponent(searchQuery)}&limit=6`)
         if (!res.ok) throw new Error('fail')
         const data = await res.json()
@@ -83,7 +83,7 @@ export default function Header() {
 
           {/* Logo - Slightly Larger and Centered */}
           <Link href="/" className="flex-shrink-0">
-            <img src="/astermedlogo.png" alt="AsterMed" className="h-10 w-auto object-contain" />
+            <img src="/astermedlogo.png" alt="AsterMed" className="h-8 w-auto object-contain" />
           </Link>
 
           {/* Mobile Cart */}
@@ -95,14 +95,14 @@ export default function Header() {
           </Link>
 
           {/* Center Navigation Pill - More Compact */}
-          <div ref={containerRef} className="hidden lg:flex items-center bg-[#1f2a7c] text-white rounded-full px-3 py-1.5 gap-2 flex-1 max-w-4xl relative">
+          <div ref={containerRef} className="hidden lg:flex items-center bg-[#1f2a7c] text-white rounded-full px-2 py-1 gap-2 flex-1 max-w-3xl relative">
             {/* Home Icon */}
-            <Link href="/" className="flex items-center justify-center hover:opacity-70 transition p-1.5 bg-white/10 rounded-full">
-              <Home className="w-4 h-4" />
+            <Link href="/" className="flex items-center justify-center hover:opacity-70 transition p-1 bg-white/10 rounded-full">
+              <Home className="w-3.5 h-3.5" />
             </Link>
 
             {/* Navigation Links */}
-            <Link href="/news" className="text-xs font-medium hover:opacity-70 transition whitespace-nowrap px-2">
+            <Link href="/news" className="text-[12px] font-medium hover:opacity-70 transition whitespace-nowrap px-2">
               Contact Us
             </Link>
             <Link href="/blogs" className="text-xs font-medium hover:opacity-70 transition whitespace-nowrap px-2">
@@ -113,7 +113,7 @@ export default function Header() {
             </Link>
 
             {/* Search Bar - White Rounded Pill */}
-            <div className="flex items-center gap-1.5 bg-white rounded-full px-3 py-1 ml-auto flex-1 max-w-sm">
+            <div className="flex items-center gap-1 bg-white rounded-full px-2 py-1 ml-auto flex-1 max-w-xs">
               <input
                 type="text"
                 placeholder="type something ..."
@@ -122,13 +122,13 @@ export default function Header() {
                 onKeyDown={(e) => { if (e.key === 'Enter') doSearch(searchQuery) }}
                 className="bg-transparent text-[11px] outline-none text-gray-800 placeholder-gray-400 w-full font-light"
               />
-              <Search onClick={() => doSearch(searchQuery)} className="w-3.5 h-3.5 text-[#1f2a7c] flex-shrink-0 cursor-pointer hover:opacity-70 transition" />
+              <Search onClick={() => doSearch(searchQuery)} className="w-3 h-3 text-[#1f2a7c] flex-shrink-0 cursor-pointer hover:opacity-70 transition" />
             </div>
 
             {/* Cart Icon - Inside Nav */}
             <Link href="/cart" className="relative flex-shrink-0 ml-2">
-              <div className="bg-white text-[#1f2a7c] rounded-full p-1.5 hover:bg-white/90 transition">
-                <ShoppingCart className="w-4 h-4" />
+              <div className="bg-white text-[#1f2a7c] rounded-full p-1 hover:bg-white/90 transition">
+                <ShoppingCart className="w-3.5 h-3.5" />
                 {count > 0 && (
                   <span className="absolute -top-1 -right-1 bg-accent text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">{count}</span>
                 )}

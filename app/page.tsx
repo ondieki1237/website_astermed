@@ -22,7 +22,7 @@ export default function Home() {
     const load = async () => {
       setLoading(true)
       try {
-        const API_BASE = (process.env.NEXT_PUBLIC_API_URL as string) || 'http://localhost:5088'
+        const API_BASE = (process.env.NEXT_PUBLIC_API_URL as string) || 'https://astermed.codewithseth.co.ke'
         // First try to load featured (offers) - limit to 12 for square grid
         const fRes = await fetch(`${API_BASE}/api/products/featured?limit=12`)
         if (!fRes.ok) throw new Error('failed to load featured')
@@ -72,7 +72,7 @@ export default function Home() {
           ) : products.length === 0 ? (
             <div className="text-center py-12 text-sm text-gray-500">No products available</div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-2">
               {products.map((product) => (
                 <div key={product.id || product._id}>
                   <div
@@ -82,7 +82,7 @@ export default function Home() {
                   transition-all duration-200 cursor-pointer flex flex-col h-full"
                   >
                     {/* Image – Fixed height aspect-square */}
-                    <div className="relative w-full aspect-square bg-[#f3f6ff] flex items-center justify-center p-1.5">
+                    <div className="relative w-full aspect-square bg-[#f3f6ff] flex items-center justify-center p-1">
                       <img
                         src={resolveImageSrc(product.image)}
                         alt={product.name}
@@ -99,8 +99,8 @@ export default function Home() {
                     </div>
 
                     {/* Info – consistent padding and fixed bottom area */}
-                    <div className="p-1.5 flex flex-col flex-1 min-h-[70px]">
-                      <h3 className="font-semibold text-[#1f2a7c] text-[10px] leading-tight mb-1 line-clamp-2 text-center h-[24px]">
+                    <div className="p-1 flex flex-col flex-1 min-h-[64px]">
+                      <h3 className="font-semibold text-[#1f2a7c] text-[9px] leading-tight mb-1 line-clamp-2 text-center h-[20px]">
                         {product.name}
                       </h3>
 
@@ -124,7 +124,7 @@ export default function Home() {
                           )}
                         </div>
 
-                        <div className="flex gap-1">
+                          <div className="flex gap-1">
                           <button
                             onClick={(e) => {
                               e.stopPropagation()
@@ -139,9 +139,7 @@ export default function Home() {
                                 1
                               )
                             }}
-                            className="flex-1 bg-[#1f2a7c] text-white
-                          text-[8.5px] font-bold px-1 py-1.5 rounded-sm
-                          hover:bg-[#162060] transition-colors h-[28px] overflow-hidden truncate"
+                            className="flex-1 bg-[#1f2a7c] text-white text-[8px] font-bold px-1 py-1 rounded-sm hover:bg-[#162060] transition-colors h-[24px] overflow-hidden truncate"
                           >
                             Add
                           </button>
@@ -149,9 +147,7 @@ export default function Home() {
                           <Link
                             href={`/products/${product._id || product.id}`}
                             onClick={(e) => e.stopPropagation()}
-                            className="flex-1 border border-[#c7d2fe]
-                          text-[#1f2a7c] text-center text-[8.5px] font-bold
-                          px-1 py-1.5 rounded-sm hover:bg-[#eef2ff] transition-colors h-[28px] flex items-center justify-center"
+                            className="flex-1 border border-[#c7d2fe] text-[#1f2a7c] text-center text-[8px] font-bold px-1 py-1 rounded-sm hover:bg-[#eef2ff] transition-colors h-[24px] flex items-center justify-center"
                           >
                             View
                           </Link>

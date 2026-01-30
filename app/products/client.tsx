@@ -159,7 +159,7 @@ export function ProductsContent() {
     const fetchProducts = async () => {
       setLoading(true)
       try {
-        const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5088'
+        const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://astermed.codewithseth.co.ke'
         const params = new URLSearchParams()
         params.set('limit', '48')
         if (searchQuery) params.set('search', searchQuery)

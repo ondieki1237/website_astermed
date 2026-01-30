@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5088'
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://astermed.codewithseth.co.ke'
 
 function AdminVerifyForm() {
   const searchParams = useSearchParams()
