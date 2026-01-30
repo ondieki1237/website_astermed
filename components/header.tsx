@@ -63,15 +63,15 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
-      <div className="px-8 py-5">
-        <div className="flex items-center justify-between gap-6 max-w-full">
+      <div className="px-6 py-3">
+        <div className="flex items-center justify-between gap-4 max-w-full">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
-            <img src="/astermedlogo.png" alt="AsterMed" className="h-28 w-auto ml-6 md:ml-12 object-contain" />
+            <img src="/astermedlogo.png" alt="AsterMed" className="h-12 w-auto ml-3 md:ml-6 object-contain" />
           </Link>
 
           {/* Center Navigation Pill */}
-          <div ref={containerRef} className="hidden lg:flex items-center bg-primary text-white rounded-full px-6 py-3 gap-6 flex-1 max-w-3xl mx-auto relative">
+          <div ref={containerRef} className="hidden lg:flex items-center bg-primary text-white rounded-full px-4 py-2 gap-4 flex-1 max-w-3xl mx-auto relative">
             {/* Home Icon */}
             <Link href="/" className="flex items-center justify-center hover:opacity-70 transition p-2">
               <Home className="w-5 h-5" />
@@ -89,7 +89,7 @@ export default function Header() {
             </Link>
 
             {/* Search Bar - White Rounded Pill */}
-            <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 ml-auto flex-1 max-w-xs">
+            <div className="flex items-center gap-2 bg-white rounded-full px-3 py-1.5 ml-auto flex-1 max-w-xs">
               <input
                 type="text"
                 placeholder="type something ..."
@@ -119,7 +119,7 @@ export default function Header() {
 
           {/* Cart Icon - Right Side */}
           <Link href="/cart" className="relative flex-shrink-0">
-            <div className="bg-primary text-white rounded-full p-3 hover:bg-primary/90 transition">
+            <div className="bg-primary text-white rounded-full p-2 hover:bg-primary/90 transition">
               <ShoppingCart className="w-5 h-5" />
               <span className="absolute -top-1 -right-1 bg-accent text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">{count || 0}</span>
             </div>
@@ -127,7 +127,7 @@ export default function Header() {
         </div>
 
         {/* Mobile Navigation */}
-        <div className="lg:hidden mt-4 flex items-center gap-2 bg-primary text-white rounded-full px-4 py-2">
+        <div className="lg:hidden mt-3 flex items-center gap-2 bg-primary text-white rounded-full px-3 py-2">
           <input
             type="text"
             placeholder="Search..."
