@@ -23,16 +23,16 @@ export default function Home() {
       setLoading(true)
       try {
         const API_BASE = (process.env.NEXT_PUBLIC_API_URL as string) || 'http://localhost:5088'
-        // First try to load featured (offers)
-        const fRes = await fetch(`${API_BASE}/api/products/featured`)
+        // First try to load featured (offers) - limit to 12 for square grid
+        const fRes = await fetch(`${API_BASE}/api/products/featured?limit=12`)
         if (!fRes.ok) throw new Error('failed to load featured')
         const featured = await fRes.json()
         if (mounted && Array.isArray(featured) && featured.length > 0) {
           setProducts(featured.map((p: any) => ({ ...p, id: p._id || p.id })))
           setUsedFallback(false)
         } else {
-          // fallback: recent products (limit 18)
-          const rRes = await fetch(`${API_BASE}/api/products?limit=18&sort=-createdAt`)
+          // fallback: recent products (limit 12 for 4x3 grid)
+          const rRes = await fetch(`${API_BASE}/api/products?limit=12&sort=-createdAt`)
           if (!rRes.ok) throw new Error('failed to load recent')
           const rData = await rRes.json()
           const recent = rData.products || []
@@ -55,7 +55,7 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
 
-      <main className="flex-1 flex gap-8 bg-white px-6 py-6">
+      <main className="flex-1 flex gap-2 bg-[#f9fbff] px-2 py-2">
         {/* Sidebar */}
         <div className="hidden lg:block flex-shrink-0">
           <CategorySidebar />
@@ -63,60 +63,116 @@ export default function Home() {
 
         {/* Main Content */}
         <div className="flex-1">
-          <h2 className="text-2xl lg:text-xl font-bold text-foreground mb-6 tracking-tight">Our Top Products:</h2>
+          <h2 className="text-[13px] font-bold text-[#1f2a7c] mb-1 tracking-tight">
+            Our Top Products:
+          </h2>
 
-          {/* Products Grid - 2 columns on phones, up to 4 on large screens */}
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-3">
-            {products.map((product) => (
-              <div key={product.id || product._id} className="h-full">
-                <div onClick={() => router.push(`/products/${product._id || product.id}`)} className="bg-white border border-gray-300 rounded-xl overflow-hidden hover:-translate-y-1 hover:shadow-md transition-transform duration-200 cursor-pointer h-full flex flex-col">
-                  {/* Image Container */}
-                  <div className="relative aspect-square overflow-hidden bg-gray-100 flex items-center justify-center">
-                    <img
-                      src={resolveImageSrc(product.image)}
-                      alt={product.name}
-                      className="w-full h-full object-contain p-4 lg:p-2"
-                    />
-                    {product.isOnOffer && (
-                      <div className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 lg:w-6 lg:h-6 flex items-center justify-center font-bold text-xs lg:text-[9px] shadow-md">
-                        -{product.discountPercentage}%
-                      </div>
-                    )}
-                  </div>
+          {loading ? (
+            <div className="text-center py-12 text-sm text-gray-500">Loading products...</div>
+          ) : products.length === 0 ? (
+            <div className="text-center py-12 text-sm text-gray-500">No products available</div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2">
+              {products.map((product) => (
+                <div key={product.id || product._id}>
+                  <div
+                    onClick={() => router.push(`/products/${product._id || product.id}`)}
+                    className="bg-white border border-[#dbe3ff] rounded-md overflow-hidden
+                  hover:-translate-y-0.5 hover:shadow-[0_3px_10px_rgba(31,42,124,0.12)]
+                  transition-all duration-200 cursor-pointer flex flex-col h-full"
+                  >
+                    {/* Image – Fixed height aspect-square */}
+                    <div className="relative w-full aspect-square bg-[#f3f6ff] flex items-center justify-center p-1.5">
+                      <img
+                        src={resolveImageSrc(product.image)}
+                        alt={product.name}
+                        className="max-w-full max-h-full object-contain"
+                      />
 
-                  {/* Product Info */}
-                  <div className="p-3 lg:p-2 flex flex-col flex-1">
-                    <h3 className="font-medium text-gray-800 text-sm lg:text-xs mb-1 truncate">{product.name}</h3>
-                    <p className="text-xs lg:text-[10px] text-gray-600 mb-2 line-clamp-1">{product.category || ''}</p>
+                      {product.isOnOffer && (
+                        <div className="absolute top-1 right-1 bg-[#e53935] text-white
+                      rounded-full w-5 h-5 flex items-center justify-center
+                      font-bold text-[8px] shadow">
+                          -{product.discountPercentage}%
+                        </div>
+                      )}
+                    </div>
 
-                    {/* Price and actions */}
-                    <div className="mt-auto">
-                      <div className="flex items-end justify-center gap-2 mb-3">
-                        {product.isOnOffer ? (
-                          <>
-                            <p className="text-[10px] lg:text-[10px] line-through text-gray-400">{formatPrice(product.price)}</p>
-                            <p className="text-sm lg:text-xs font-bold text-primary">{formatPrice(product.price * (1 - (product.discountPercentage || 0) / 100))}</p>
-                          </>
-                        ) : (
-                          <p className="text-sm lg:text-xs font-bold text-primary">{formatPrice(product.price)}</p>
-                        )}
-                      </div>
+                    {/* Info – consistent padding and fixed bottom area */}
+                    <div className="p-1.5 flex flex-col flex-1 min-h-[70px]">
+                      <h3 className="font-semibold text-[#1f2a7c] text-[10px] leading-tight mb-1 line-clamp-2 text-center h-[24px]">
+                        {product.name}
+                      </h3>
 
-                      <div className="flex gap-2">
-                        <button onClick={(e) => { e.stopPropagation(); addItem({ id: product._id || product.id, name: product.name, price: product.price, image: product.image }, 1) }} className="flex-1 bg-primary text-white text-xs px-2 py-1 lg:px-1 lg:py-0.5 rounded-sm hover:bg-primary/90">Add</button>
-                        <Link href={`/products/${product._id || product.id}`} onClick={(e) => e.stopPropagation()} className="flex-1 border border-gray-300 text-center text-xs px-2 py-1 lg:px-1 lg:py-0.5 rounded-sm hover:bg-gray-50">View</Link>
+                      <div className="mt-auto pt-1 border-t border-gray-50">
+                        <div className="flex items-center justify-center gap-1.5 mb-1.5">
+                          {product.isOnOffer ? (
+                            <>
+                              <span className="text-[7.5px] line-through text-gray-400">
+                                {formatPrice(product.price)}
+                              </span>
+                              <span className="text-[10px] font-extrabold text-[#1f2a7c]">
+                                {formatPrice(
+                                  product.price * (1 - (product.discountPercentage || 0) / 100)
+                                )}
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-[10px] font-extrabold text-[#1f2a7c]">
+                              {formatPrice(product.price)}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="flex gap-1">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              addItem(
+                                {
+                                  id: product._id || product.id,
+                                  name: product.name,
+                                  price: product.price,
+                                  image: product.image,
+                                  quantity: 1,
+                                },
+                                1
+                              )
+                            }}
+                            className="flex-1 bg-[#1f2a7c] text-white
+                          text-[8.5px] font-bold px-1 py-1.5 rounded-sm
+                          hover:bg-[#162060] transition-colors h-[28px] overflow-hidden truncate"
+                          >
+                            Add
+                          </button>
+
+                          <Link
+                            href={`/products/${product._id || product.id}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="flex-1 border border-[#c7d2fe]
+                          text-[#1f2a7c] text-center text-[8.5px] font-bold
+                          px-1 py-1.5 rounded-sm hover:bg-[#eef2ff] transition-colors h-[28px] flex items-center justify-center"
+                          >
+                            View
+                          </Link>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
-          {/* View More when showing recent fallback */}
+          {/* View More Button - Navigates to full product catalog */}
           {usedFallback && (
-            <div className="mt-6 text-center">
-              <Link href="/products" className="inline-block bg-primary text-white px-4 py-2 rounded-md">View More</Link>
+            <div className="mt-4 text-center">
+              <Link
+                href="/products"
+                className="inline-block bg-[#1f2a7c] text-white px-4 py-1.5 rounded-md text-[10px] hover:bg-[#162060] transition-colors"
+              >
+                View More
+              </Link>
             </div>
           )}
         </div>

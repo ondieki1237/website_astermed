@@ -64,11 +64,11 @@ export default function CategorySidebar() {
   }
 
   return (
-    <aside className="w-64 bg-white">
-      <div className="p-4">
-        <h2 className="text-xl font-bold mb-4 tracking-tight">Category</h2>
+    <aside className="lg:w-48 bg-white h-full">
+      <div className="p-2">
+        <h2 className="text-sm font-bold mb-2 tracking-tight">Category</h2>
 
-        <div className="space-y-3">
+        <div className="space-y-1.5">
           {categories.map(category => {
             const isOpen = expandedCategory === category.name
 
@@ -89,19 +89,19 @@ export default function CategorySidebar() {
                       )
                     }
                   }}
-                  className={`w-full flex items-center justify-between px-4 py-3 rounded-sm text-base font-medium transition bg-primary text-white hover:bg-primary/90`}
+                  className={`w-full flex items-center justify-between px-2 py-1.5 rounded-sm text-xs font-medium transition bg-[#1f2a7c] text-white hover:bg-[#162060]`}
                 >
                   <span className="truncate">{category.name}</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs opacity-80">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] opacity-80">
                       {category.count ?? 0}
                     </span>
-                    <ChevronDown size={16} className={`${isOpen ? 'rotate-180' : ''} transition-transform`} />
+                    <ChevronDown size={12} className={`${isOpen ? 'rotate-180' : ''} transition-transform`} />
                   </div>
                 </button>
 
                 {/* SUBCATEGORIES */}
-                {isOpen && category.subcategories?.length > 0 && (
+                {isOpen && category.subcategories && category.subcategories.length > 0 && (
                   <div className="mt-2 ml-3 pl-3 border-l space-y-2">
                     {category.subcategories.map(sub => {
                       const key = `${category.name}::${sub}`
@@ -122,10 +122,9 @@ export default function CategorySidebar() {
                               )
                             }}
                             className={`w-full text-left text-xs py-1 transition font-medium
-                              ${
-                                subOpen
-                                  ? 'text-primary'
-                                  : 'text-muted-foreground hover:text-primary'
+                              ${subOpen
+                                ? 'text-[#1f2a7c]'
+                                : 'text-muted-foreground hover:text-[#1f2a7c]'
                               }`}
                           >
                             {sub}
@@ -150,7 +149,7 @@ export default function CategorySidebar() {
                                 <Link
                                   key={product._id}
                                   href={`/products/${product._id}`}
-                                  className="block text-base truncate hover:text-primary"
+                                  className="block text-base truncate hover:text-[#1f2a7c]"
                                 >
                                   {product.name}
                                 </Link>
@@ -167,12 +166,12 @@ export default function CategorySidebar() {
                 {isOpen &&
                   !category.subcategories?.length &&
                   productsByKey[category.name] && (
-                    <div className="mt-2 ml-3 space-y-1">
+                    <div className="mt-1 ml-2 space-y-0.5">
                       {productsByKey[category.name].map(product => (
                         <Link
                           key={product._id}
                           href={`/products/${product._id}`}
-                          className="block text-base truncate hover:text-primary"
+                          className="block text-[9px] truncate hover:text-[#1f2a7c] text-gray-600"
                         >
                           {product.name}
                         </Link>
@@ -181,14 +180,14 @@ export default function CategorySidebar() {
                   )}
 
                 {isOpen && loadingKey === category.name && (
-                  <p className="mt-2 ml-3 text-xs text-muted-foreground">
+                  <p className="mt-1 ml-2 text-[9px] text-gray-500">
                     Loading…
                   </p>
                 )}
 
                 {isOpen && errorKey === category.name && (
-                  <p className="mt-2 ml-3 text-xs text-red-600">
-                    Failed to load products
+                  <p className="mt-1 ml-2 text-[9px] text-red-600">
+                    Failed to load
                   </p>
                 )}
               </div>

@@ -1,11 +1,11 @@
 "use client"
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5088'
 
-export default function AdminVerifyPage() {
+function AdminVerifyForm() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [code, setCode] = useState('')
@@ -63,5 +63,13 @@ export default function AdminVerifyPage() {
         </form>
       </div>
     </div>
+  )
+}
+
+export default function AdminVerifyPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <AdminVerifyForm />
+    </Suspense>
   )
 }
