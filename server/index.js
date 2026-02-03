@@ -24,7 +24,12 @@ const app = express();
 // Example production value: "https://website-astermed.vercel.app,https://astermedsupplies.co.ke"
 const rawOrigins = process.env.CORS_ORIGIN || 'http://localhost:3000'
 const allowedOrigins = rawOrigins.split(',').map(s => s.trim()).filter(Boolean)
-app.use(cors({ origin: allowedOrigins }))
+app.use(cors({ 
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}))
 app.use(express.json());
 
 // Serve uploaded files (images) from server public/uploads
