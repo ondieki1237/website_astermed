@@ -71,9 +71,14 @@ export default function Header() {
   }, [searchQuery])
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
-      <div className="px-3 py-2 max-w-7xl mx-auto">
-        <div className="flex items-center justify-between lg:justify-center gap-3 max-w-full">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-transparent border-b-0 h-12 lg:h-16">
+      <div className="px-3 max-w-7xl mx-auto relative h-full">
+        <div className="flex items-center justify-between lg:justify-center gap-3 max-w-full h-full">
+          {/* Logo - left, above categories area */}
+          <Link href="/" className="flex-shrink-0 mr-3">
+            <img src="/astermedlogo.png" alt="AsterMed" className="h-12 lg:h-24 w-auto object-contain" />
+          </Link>
+
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -81,11 +86,6 @@ export default function Header() {
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
-
-          {/* Logo - Slightly Larger and Centered */}
-          <Link href="/" className="flex-shrink-0">
-            <img src="/astermedlogo.png" alt="AsterMed" className="h-8 w-auto object-contain" />
-          </Link>
 
           {/* Mobile Cart */}
           <Link href="/cart" className="lg:hidden relative p-1.5 text-[#1f2a7c] hover:bg-gray-100 rounded-md transition">

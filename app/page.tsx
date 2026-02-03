@@ -53,10 +53,10 @@ export default function Home() {
   }, [])
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-white text-lg">
       <Header />
 
-      <main className="flex-1 flex gap-2 bg-[#f9fbff] px-2 py-2">
+      <main className="flex-1 flex gap-2 bg-[#f9fbff] px-2 py-2 pt-16">
         {/* Sidebar */}
         <div className="hidden lg:block flex-shrink-0">
           <CategorySidebar />
