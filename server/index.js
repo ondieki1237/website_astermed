@@ -13,6 +13,7 @@ import categoryRoutes from './routes/categories.js';
 import wishlistRoutes from './routes/wishlist.js';
 import mpesaRoutes from './routes/mpesa.js';
 import devRoutes from './routes/dev.js';
+import adminRoutes from './routes/admin.js';
 
 dotenv.config();
 
@@ -45,6 +46,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/mpesa', mpesaRoutes);
 app.use('/api/dev', devRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'Server is running' });

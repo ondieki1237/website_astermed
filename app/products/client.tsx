@@ -208,25 +208,6 @@ export function ProductsContent() {
               </div>
 
               <CategorySidebar />
-
-              {/* Price Range */}
-              <div className="mb-6">
-                <label className="text-sm font-semibold mb-4 block">Price Range</label>
-                <div className="space-y-2 text-sm">
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Under $50
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> $50 - $200
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> $200 - $500
-                  </label>
-                  <label className="flex items-center">
-                    <input type="checkbox" className="mr-2" /> Over $500
-                  </label>
-                </div>
-              </div>
             </Card>
           </div>
 

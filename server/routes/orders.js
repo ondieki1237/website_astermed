@@ -4,35 +4,91 @@ import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
 
-router.post('/', authMiddleware, async (req, res) => {
+// Create order (public - no auth required to capture abandoned carts)
+router.post('/', async (req, res) => {
   try {
-    const order = new Order({ userId: req.userId, ...req.body });
-    await order.save();
-    res.status(201).json(order);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+    const { customer, items, subtotal, shipping, total, paymentPhone } = req.body
 
-router.get('/user/:userId', authMiddleware, async (req, res) => {
-  try {
-    const orders = await Order.find({ userId: req.params.userId });
-    res.json(orders);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-router.get('/:id', authMiddleware, async (req, res) => {
-  try {
-    const order = await Order.findById(req.params.id);
-    if (!order || (order.userId.toString() !== req.userId && !req.isAdmin)) {
-      return res.status(403).json({ message: 'Unauthorized' });
+    // Validation
+    if (!customer || !customer.name || !customer.email || !customer.phone) {
+      return res.status(400).json({ message: 'Customer name, email, and phone are required' })
     }
-    res.json(order);
+
+    if (!items || items.length === 0) {
+      return res.status(400).json({ message: 'Order must have at least one item' })
+    }
+
+    // Generate unique order number
+    const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`
+
+    const order = new Order({
+      orderNumber,
+      customer,
+      items,
+      subtotal,
+      shipping: shipping || 0,
+      total,
+      paymentPhone: paymentPhone || customer.phone,
+      paymentStatus: 'pending',
+      orderStatus: 'pending',
+    })
+
+    await order.save()
+    res.status(201).json(order)
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Create order error:', error)
+    res.status(500).json({ message: error.message })
   }
-});
+})
+
+// Get all orders (admin only)
+router.get('/', authMiddleware, async (req, res) => {
+  try {
+    if (!req.isAdmin) {
+      return res.status(403).json({ message: 'Admin access required' })
+    }
+    
+    const orders = await Order.find().sort({ createdAt: -1 })
+    res.json(orders)
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+})
+
+// Get order by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id)
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' })
+    }
+    res.json(order)
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+})
+
+// Update order status (admin only)
+router.patch('/:id', authMiddleware, async (req, res) => {
+  try {
+    if (!req.isAdmin) {
+      return res.status(403).json({ message: 'Admin access required' })
+    }
+
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      { ...req.body, updatedAt: new Date() },
+      { new: true }
+    )
+
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' })
+    }
+
+    res.json(order)
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+})
 
 export default router;

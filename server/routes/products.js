@@ -235,21 +235,46 @@ router.post('/', authMiddleware, adminMiddleware, upload.single('image'), async 
 });
 
 // Update product (admin only)
-router.put('/:id', authMiddleware, adminMiddleware, async (req, res) => {
+router.put('/:id', authMiddleware, adminMiddleware, upload.single('image'), async (req, res) => {
   try {
+    const body = req.body || {}
+    
+    // Parse specs text if provided
+    if (body.specsText) {
+      body.specifications = parseSpecs(body.specsText)
+      delete body.specsText
+    }
+    
+    // Handle image upload
+    if (req.file) {
+      const ext = req.file.mimetype === 'image/png' ? 'png' : 'webp'
+      const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+      const dest = path.join(uploadDir, filename)
+      
+      if (ext === 'png') {
+        await fs.promises.writeFile(dest, req.file.buffer)
+      } else {
+        await sharp(req.file.buffer).webp({ quality: 85 }).toFile(dest)
+      }
+      
+      body.image = `/uploads/products/${filename}`
+    }
+    
     // If updating category, ensure it exists in Category collection
-    if (req.body && req.body.category) {
-      const cname = String(req.body.category).trim()
+    if (body.category) {
+      const cname = String(body.category).trim()
       if (cname) {
         let cat = await Category.findOne({ name: cname })
         if (!cat) cat = await new Category({ name: cname }).save()
-        req.body.category = cat.name
+        body.category = cat.name
       }
     }
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    
+    const product = await Product.findByIdAndUpdate(req.params.id, body, { new: true });
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
+    
     // Rebuild searchText on update to include any changed specs/features etc.
     const parts = []
     if (product.name) parts.push(product.name)
@@ -260,6 +285,7 @@ router.put('/:id', authMiddleware, adminMiddleware, async (req, res) => {
     if (product.specifications && typeof product.specifications === 'object') parts.push(Object.values(product.specifications).join(' '))
     product.searchText = parts.join(' ')
     await product.save()
+    
     res.json(product);
   } catch (error) {
     res.status(500).json({ message: error.message });

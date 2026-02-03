@@ -4,56 +4,70 @@ import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Plus, Edit, Trash2, BarChart3, FileText, Briefcase, AlertCircle } from 'lucide-react'
+import { 
+  ShoppingCart, 
+  Users, 
+  Package, 
+  DollarSign, 
+  AlertCircle,
+  Eye,
+  ShoppingBag,
+  Clock,
+  CheckCircle
+} from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { formatPrice } from '@/lib/currency'
 
-interface Product {
-  id: string
-  name: string
-  price: number
-  stock: number
-  isOnOffer: boolean
-  offerEndDate?: string
-}
-
-interface Blog {
-  id: string
-  title: string
-  author: string
-  published: boolean
-  createdAt: string
-}
-
-interface News {
-  id: string
-  title: string
-  published: boolean
-  featured: boolean
-}
-
-interface Job {
-  id: string
-  title: string
-  department: string
-  status: 'open' | 'closed'
+interface DashboardStats {
+  totalOrders: number
+  totalRevenue: number
+  totalProducts: number
+  totalCustomers: number
+  pendingOrders: number
+  completedOrders: number
+  abandonedCarts: number
+  lowStockProducts: number
+  topProducts: Array<{
+    _id: string
+    name: string
+    views: number
+    orderCount: number
+    revenue: number
+  }>
+  recentOrders: Array<{
+    _id: string
+    orderNumber: string
+    customer: { name: string; email: string }
+    total: number
+    status: string
+    createdAt: string
+  }>
 }
 
 export default function AdminDashboard() {
   const router = useRouter()
+  const [stats, setStats] = useState<DashboardStats | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://astermed.codewithseth.co.ke'
 
   useEffect(() => {
     const check = async () => {
       try {
         const token = localStorage.getItem('admin_token')
         if (!token) return router.push('/admin/login')
-        const res = await fetch((process.env.NEXT_PUBLIC_API_URL || 'https://astermed.codewithseth.co.ke') + '/api/auth/me', {
+        
+        const res = await fetch(`${API_BASE}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` },
         })
+        
         if (res.status === 401) {
           localStorage.removeItem('admin_token')
           return router.push('/admin/login')
         }
+        
+        await loadDashboardStats()
       } catch (e) {
         localStorage.removeItem('admin_token')
         return router.push('/admin/login')
@@ -62,340 +76,296 @@ export default function AdminDashboard() {
     check()
   }, [])
 
+  async function loadDashboardStats() {
+    try {
+      const token = localStorage.getItem('admin_token')
+      if (!token) return
+
+      const res = await fetch(`${API_BASE}/api/admin/dashboard/stats`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        setStats(data)
+      }
+    } catch (e) {
+      console.error('Failed to load dashboard stats', e)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   function handleLogout() {
     try { localStorage.removeItem('admin_token') } catch (e) {}
     router.push('/admin/login')
   }
-  const [products, setProducts] = useState<Product[]>([
-    // placeholder until real products load
-    // will be replaced by fetched data
-  ])
 
-  const [blogs, setBlogs] = useState<Blog[]>([
-    { id: '1', title: 'Tips for Home Healthcare', author: 'Dr. Smith', published: true, createdAt: '2024-01-20' },
-  ])
-
-  const [news, setNews] = useState<News[]>([
-    { id: '1', title: 'New Product Launch', published: true, featured: true },
-  ])
-
-  const [jobs, setJobs] = useState<Job[]>([
-    { id: '1', title: 'Sales Manager', department: 'Sales', status: 'open' },
-  ])
-
-  // API base
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://astermed.codewithseth.co.ke'
-
-  useEffect(() => {
-    // after token check, fetch products
-    const load = async () => {
-      try {
-        const token = localStorage.getItem('admin_token')
-        if (!token) return
-        const res = await fetch(`${API_BASE}/api/products?limit=1000`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        if (res.status === 401) {
-          localStorage.removeItem('admin_token')
-          return router.push('/admin/login')
-        }
-        const data = await res.json()
-        if (data && data.products) {
-          setProducts(data.products.map((p: any) => ({ id: p._id, name: p.name, price: p.price, stock: p.stock, isOnOffer: p.isOnOffer, offerEndDate: p.offerEndDate, inStock: p.inStock, views: p.views })))
-        } else if (Array.isArray(data)) {
-          setProducts(data.map((p: any) => ({ id: p._id, name: p.name, price: p.price, stock: p.stock, isOnOffer: p.isOnOffer, offerEndDate: p.offerEndDate, inStock: p.inStock, views: p.views })))
-        }
-      } catch (e) {
-        console.error('Failed to load admin products', e)
-      }
-    }
-    load()
-  }, [])
-
-  async function toggleStock(productId: string, current: boolean) {
-    try {
-      const token = localStorage.getItem('admin_token')
-      if (!token) return router.push('/admin/login')
-      const res = await fetch(`${API_BASE}/api/products/${productId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ inStock: !current }),
-      })
-      if (res.ok) {
-        const updated = await res.json()
-        setProducts((prev) => prev.map(p => p.id === updated._id ? { ...p, inStock: updated.inStock, stock: updated.stock } : p))
-      } else if (res.status === 401) {
-        localStorage.removeItem('admin_token')
-        router.push('/admin/login')
-      }
-    } catch (e) {
-      console.error('toggleStock failed', e)
-    }
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="inline-block w-16 h-16 border-4 border-gray-200 border-t-[#1f2a7c] rounded-full animate-spin"></div>
+          <p className="mt-4 text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="sticky top-0 z-40 bg-primary text-primary-foreground shadow-md">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">AsterMed Admin Dashboard</h1>
-          <Button onClick={handleLogout} variant="outline" className="text-primary-foreground border-primary-foreground hover:bg-primary-foreground hover:text-primary bg-transparent">
+    <div className="min-h-screen bg-gray-50">
+      <div className="sticky top-0 z-40 bg-[#1f2a7c] text-white shadow">
+        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-semibold">AsterMed Admin Dashboard</h1>
+          </div>
+          <Button 
+            onClick={handleLogout} 
+            variant="outline" 
+            className="text-white border-white hover:bg-white hover:text-[#1f2a7c] bg-transparent"
+          >
             Logout
           </Button>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
-        {/* Stats */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card className="p-6 border-none shadow-md">
-            <BarChart3 className="w-8 h-8 text-accent mb-2" />
-            <p className="text-muted-foreground text-sm">Total Products</p>
-            <p className="text-3xl font-bold">{products.length}</p>
+      <div className="container mx-auto px-6 py-8">
+        {/* Key Metrics */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card className="p-6 bg-white border border-gray-200">
+            <div className="flex items-start justify-between mb-3">
+              <DollarSign className="w-8 h-8 text-green-600" />
+            </div>
+            <p className="text-gray-600 text-sm mb-1">Total Revenue</p>
+            <p className="text-3xl font-semibold text-gray-900">{formatPrice(stats?.totalRevenue || 0)}</p>
           </Card>
-          <Card className="p-6 border-none shadow-md">
-            <FileText className="w-8 h-8 text-accent mb-2" />
-            <p className="text-muted-foreground text-sm">Blog Posts</p>
-            <p className="text-3xl font-bold">{blogs.length}</p>
+
+          <Card className="p-6 bg-white border border-gray-200">
+            <div className="flex items-start justify-between mb-3">
+              <ShoppingCart className="w-8 h-8 text-[#1f2a7c]" />
+            </div>
+            <p className="text-gray-600 text-sm mb-1">Total Orders</p>
+            <p className="text-3xl font-semibold text-gray-900">{stats?.totalOrders || 0}</p>
           </Card>
-          <Card className="p-6 border-none shadow-md">
-            <AlertCircle className="w-8 h-8 text-accent mb-2" />
-            <p className="text-muted-foreground text-sm">Active Offers</p>
-            <p className="text-3xl font-bold">{products.filter(p => p.isOnOffer).length}</p>
+
+          <Card className="p-6 bg-white border border-gray-200">
+            <div className="flex items-start justify-between mb-3">
+              <Users className="w-8 h-8 text-[#2535a0]" />
+            </div>
+            <p className="text-gray-600 text-sm mb-1">Total Customers</p>
+            <p className="text-3xl font-semibold text-gray-900">{stats?.totalCustomers || 0}</p>
           </Card>
-          <Card className="p-6 border-none shadow-md">
-            <Briefcase className="w-8 h-8 text-accent mb-2" />
-            <p className="text-muted-foreground text-sm">Open Jobs</p>
-            <p className="text-3xl font-bold">{jobs.filter(j => j.status === 'open').length}</p>
+
+          <Card className="p-6 bg-white border border-gray-200">
+            <div className="flex items-start justify-between mb-3">
+              <Package className="w-8 h-8 text-[#1f2a7c]" />
+            </div>
+            <p className="text-gray-600 text-sm mb-1">Total Products</p>
+            <p className="text-3xl font-semibold text-gray-900">{stats?.totalProducts || 0}</p>
           </Card>
         </div>
 
-        {/* Admin Sections */}
-        <Tabs defaultValue="products" className="w-full">
-          <TabsList className="grid w-full md:grid-cols-4">
+        {/* Secondary Metrics */}
+        <div className="grid md:grid-cols-4 gap-6 mb-8">
+          <Card className="p-5 bg-white border border-gray-200">
+            <div className="flex items-center gap-3">
+              <Clock className="w-7 h-7 text-orange-600" />
+              <div>
+                <p className="text-sm text-gray-600">Pending Orders</p>
+                <p className="text-2xl font-semibold text-gray-900">{stats?.pendingOrders || 0}</p>
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-5 bg-white border border-gray-200">
+            <div className="flex items-center gap-3">
+              <CheckCircle className="w-7 h-7 text-green-600" />
+              <div>
+                <p className="text-sm text-gray-600">Completed</p>
+                <p className="text-2xl font-semibold text-gray-900">{stats?.completedOrders || 0}</p>
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-5 bg-white border border-gray-200">
+            <div className="flex items-center gap-3">
+              <ShoppingBag className="w-7 h-7 text-[#e53935]" />
+              <div>
+                <p className="text-sm text-gray-600">Abandoned Carts</p>
+                <p className="text-2xl font-semibold text-gray-900">{stats?.abandonedCarts || 0}</p>
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-5 bg-white border border-gray-200">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-7 h-7 text-yellow-600" />
+              <div>
+                <p className="text-sm text-gray-600">Low Stock</p>
+                <p className="text-2xl font-semibold text-gray-900">{stats?.lowStockProducts || 0}</p>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Management Tabs */}
+        <Tabs defaultValue="overview" className="w-full">
+          <TabsList className="grid w-full md:grid-cols-6 bg-white border border-gray-200 rounded-lg p-1">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="orders">Orders</TabsTrigger>
             <TabsTrigger value="products">Products</TabsTrigger>
-            <TabsTrigger value="offers">Offers</TabsTrigger>
-            <TabsTrigger value="blogs">Blogs & News</TabsTrigger>
-            <TabsTrigger value="jobs">Jobs</TabsTrigger>
+            <TabsTrigger value="customers">Customers</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="content">Content</TabsTrigger>
           </TabsList>
 
-          {/* Products Tab */}
-          <TabsContent value="products" className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">Manage Products</h2>
-              <Link href="/admin/products/new">
-                <Button className="bg-primary hover:bg-primary/90">
-                  <Plus className="w-4 h-4 mr-2" /> Add Product
-                </Button>
-              </Link>
-            </div>
-            <Card className="p-6 border-none shadow-md">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="border-b">
-                    <tr>
-                      <th className="text-left py-3 px-4">Name</th>
-                      <th className="text-left py-3 px-4">Price</th>
-                      <th className="text-left py-3 px-4">Stock</th>
-                      <th className="text-left py-3 px-4">Status</th>
-                      <th className="text-left py-3 px-4">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {products.map(product => (
-                      <tr key={product.id} className="border-b hover:bg-secondary/50">
-                        <td className="py-3 px-4 font-medium">{product.name}</td>
-                        <td className="py-3 px-4">${product.price}</td>
-                        <td className="py-3 px-4">{product.stock}</td>
-                        <td className="py-3 px-4">
-                          {product.isOnOffer && (
-                            <span className="bg-accent text-white text-xs px-2 py-1 rounded">On Offer</span>
-                          )}
-                        </td>
-                        <td className="py-3 px-4">
-                          <div className="flex gap-2">
-                            <Button size="sm" variant="outline">
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button size="sm" variant="outline" className="text-accent hover:text-red-700 bg-transparent">
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </Card>
-          </TabsContent>
-
-          {/* Offers Tab */}
-          <TabsContent value="offers" className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">Manage Offers</h2>
-              <Link href="/admin/offers/new">
-                <Button className="bg-primary hover:bg-primary/90">
-                  <Plus className="w-4 h-4 mr-2" /> Create Offer
-                </Button>
-              </Link>
-            </div>
-            <Card className="p-6 border-none shadow-md">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="border-b">
-                    <tr>
-                      <th className="text-left py-3 px-4">Product</th>
-                      <th className="text-left py-3 px-4">Discount</th>
-                      <th className="text-left py-3 px-4">Start Date</th>
-                      <th className="text-left py-3 px-4">End Date</th>
-                      <th className="text-left py-3 px-4">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {products.filter(p => p.isOnOffer).map(product => (
-                      <tr key={product.id} className="border-b hover:bg-secondary/50">
-                        <td className="py-3 px-4 font-medium">{product.name}</td>
-                        <td className="py-3 px-4">20%</td>
-                        <td className="py-3 px-4">2024-01-15</td>
-                        <td className="py-3 px-4">{product.offerEndDate}</td>
-                        <td className="py-3 px-4">
-                          <div className="flex gap-2">
-                            <Button size="sm" variant="outline">
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button size="sm" variant="outline" className="text-accent bg-transparent">
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </Card>
-          </TabsContent>
-
-          {/* Blogs & News Tab */}
-          <TabsContent value="blogs" className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">Blog Posts & News</h2>
-              <div className="flex gap-2">
-                <Link href="/admin/blogs/new">
-                  <Button className="bg-primary hover:bg-primary/90">
-                    <Plus className="w-4 h-4 mr-2" /> New Blog
-                  </Button>
-                </Link>
-                <Link href="/admin/news/new">
-                  <Button className="bg-primary hover:bg-primary/90">
-                    <Plus className="w-4 h-4 mr-2" /> New News
-                  </Button>
-                </Link>
-              </div>
-            </div>
-            <div className="grid md:grid-cols-2 gap-6">
-              <Card className="p-6 border-none shadow-md">
-                <h3 className="text-lg font-bold mb-4">Blog Posts</h3>
+          <TabsContent value="overview" className="space-y-6 mt-6">
+            <div className="grid lg:grid-cols-2 gap-6">
+              <Card className="p-6 bg-white border border-gray-200">
+                <h3 className="text-lg font-semibold mb-4 text-gray-900">Recent Orders</h3>
                 <div className="space-y-3">
-                  {blogs.map(blog => (
-                    <div key={blog.id} className="border rounded p-4 hover:bg-secondary/50">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-semibold">{blog.title}</p>
-                          <p className="text-xs text-muted-foreground">By {blog.author}</p>
-                        </div>
-                        <span className={`text-xs px-2 py-1 rounded ${blog.published ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                          {blog.published ? 'Published' : 'Draft'}
-                        </span>
+                  {stats?.recentOrders?.slice(0, 5).map((order) => (
+                    <div key={order._id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                      <div>
+                        <p className="font-medium text-gray-900">#{order.orderNumber}</p>
+                        <p className="text-sm text-gray-600">{order.customer?.name || 'Guest'}</p>
+                        <p className="text-xs text-gray-500">{new Date(order.createdAt).toLocaleDateString()}</p>
                       </div>
-                      <div className="flex gap-2 mt-3">
-                        <Button size="sm" variant="outline">
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button size="sm" variant="outline" className="text-accent bg-transparent">
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                      <div className="text-right">
+                        <p className="font-semibold text-gray-900">{formatPrice(order.total)}</p>
+                        <span className={`text-xs px-2 py-1 rounded ${
+                          order.status === 'completed' ? 'bg-green-100 text-green-700' :
+                          order.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                          'bg-gray-100 text-gray-700'
+                        }`}>
+                          {order.status}
+                        </span>
                       </div>
                     </div>
                   ))}
                 </div>
+                <Link href="/admin/orders">
+                  <Button className="w-full mt-4 bg-gradient-to-r from-[#1f2a7c] to-[#2535a0]">
+                    View All Orders
+                  </Button>
+                </Link>
               </Card>
-              <Card className="p-6 border-none shadow-md">
-                <h3 className="text-lg font-bold mb-4">News</h3>
-                <div className="space-y-3">
-                  {news.map(item => (
-                    <div key={item.id} className="border rounded p-4 hover:bg-secondary/50">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-semibold">{item.title}</p>
-                          {item.featured && <p className="text-xs text-accent">Featured</p>}
-                        </div>
-                        <span className={`text-xs px-2 py-1 rounded ${item.published ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                          {item.published ? 'Published' : 'Draft'}
-                        </span>
-                      </div>
-                      <div className="flex gap-2 mt-3">
-                        <Button size="sm" variant="outline">
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button size="sm" variant="outline" className="text-accent bg-transparent">
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            </div>
-          </TabsContent>
 
-          {/* Jobs Tab */}
-          <TabsContent value="jobs" className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">Job Postings</h2>
-              <Link href="/admin/jobs/new">
-                <Button className="bg-primary hover:bg-primary/90">
-                  <Plus className="w-4 h-4 mr-2" /> Post Job
-                </Button>
-              </Link>
-            </div>
-            <Card className="p-6 border-none shadow-md">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="border-b">
-                    <tr>
-                      <th className="text-left py-3 px-4">Title</th>
-                      <th className="text-left py-3 px-4">Department</th>
-                      <th className="text-left py-3 px-4">Status</th>
-                      <th className="text-left py-3 px-4">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {jobs.map(job => (
-                      <tr key={job.id} className="border-b hover:bg-secondary/50">
-                        <td className="py-3 px-4 font-medium">{job.title}</td>
-                        <td className="py-3 px-4">{job.department}</td>
-                        <td className="py-3 px-4">
-                          <span className={`text-xs px-2 py-1 rounded ${job.status === 'open' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>
-                            {job.status}
+              <Card className="p-6 bg-white border border-gray-200">
+                <h3 className="text-lg font-semibold mb-4 text-gray-900">Top Products</h3>
+                <div className="space-y-3">
+                  {stats?.topProducts?.slice(0, 5).map((product, idx) => (
+                    <div key={product._id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="w-8 h-8 bg-[#1f2a7c] text-white rounded-full flex items-center justify-center font-semibold text-sm">
+                        {idx + 1}
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-900">{product.name}</p>
+                        <div className="flex items-center gap-3 text-xs text-gray-600 mt-1">
+                          <span className="flex items-center gap-1">
+                            <Eye className="w-3 h-3" /> {product.views || 0}
                           </span>
-                        </td>
-                        <td className="py-3 px-4">
-                          <div className="flex gap-2">
-                            <Button size="sm" variant="outline">
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button size="sm" variant="outline" className="text-accent bg-transparent">
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                          <span className="flex items-center gap-1">
+                            <ShoppingCart className="w-3 h-3" /> {product.orderCount || 0}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold text-gray-900">{formatPrice(product.revenue || 0)}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="orders" className="mt-6">
+            <Card className="p-6 bg-white border border-gray-200">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold text-gray-900">All Orders</h2>
+                <Link href="/admin/orders">
+                  <Button className="bg-[#1f2a7c] hover:bg-[#2535a0]">
+                    Manage Orders
+                  </Button>
+                </Link>
               </div>
+              <p className="text-gray-600">View and manage all customer orders</p>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="products" className="mt-6">
+            <Card className="p-6 bg-white border border-gray-200">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold text-gray-900">Products</h2>
+                <Link href="/admin/products">
+                  <Button className="bg-[#1f2a7c] hover:bg-[#2535a0]">
+                    Manage Products
+                  </Button>
+                </Link>
+              </div>
+              <p className="text-gray-600">Manage your product catalog</p>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="customers" className="mt-6">
+            <Card className="p-6 bg-white border border-gray-200">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold text-gray-900">Customers</h2>
+                <Link href="/admin/customers">
+                  <Button className="bg-[#1f2a7c] hover:bg-[#2535a0]">
+                    View Customers
+                  </Button>
+                </Link>
+              </div>
+              <p className="text-gray-600">View customer profiles and abandoned carts</p>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="analytics" className="mt-6">
+            <Card className="p-6 bg-white border border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Analytics</h2>
+              <p className="text-gray-600 mb-6">View detailed analytics</p>
+              <Link href="/admin/analytics">
+                <Button className="bg-[#1f2a7c] hover:bg-[#2535a0]">
+                  View Analytics
+                </Button>
+              </Link>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="content" className="mt-6">
+            <div className="grid md:grid-cols-3 gap-6">
+              <Card className="p-6 bg-white border border-gray-200">
+                <h3 className="text-base font-semibold mb-2">Blogs</h3>
+                <p className="text-sm text-gray-600 mb-4">Manage blog content</p>
+                <Link href="/admin/blogs">
+                  <Button className="w-full bg-[#1f2a7c] hover:bg-[#2535a0]">
+                    Manage Blogs
+                  </Button>
+                </Link>
+              </Card>
+
+              <Card className="p-6 bg-white border border-gray-200">
+                <h3 className="text-base font-semibold mb-2">News</h3>
+                <p className="text-sm text-gray-600 mb-4">Manage news</p>
+                <Link href="/admin/news">
+                  <Button className="w-full bg-[#1f2a7c] hover:bg-[#2535a0]">
+                    Manage News
+                  </Button>
+                </Link>
+              </Card>
+
+              <Card className="p-6 bg-white border border-gray-200">
+                <h3 className="text-base font-semibold mb-2">Jobs</h3>
+                <p className="text-sm text-gray-600 mb-4">Manage job postings</p>
+                <Link href="/admin/jobs">
+                  <Button className="w-full bg-[#1f2a7c] hover:bg-[#2535a0]">
+                    Manage Jobs
+                  </Button>
+                </Link>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

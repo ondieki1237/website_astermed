@@ -16,6 +16,11 @@ export default function CheckoutPage() {
   const [orderPlaced, setOrderPlaced] = useState(false)
   const { items, subtotal, clearCart } = useCart()
   const [orderTotal, setOrderTotal] = useState(0)
+  const [orderId, setOrderId] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://astermed.codewithseth.co.ke'
 
   const counties = [
     'Mombasa','Kwale','Kilifi','Tana River','Lamu','Taita-Taveta','Garissa','Wajir','Mandera','Marsabit','Isiolo','Meru','Tharaka-Nithi','Embu','Kitui','Machakos','Makueni','Nyandarua','Nyeri','Kirinyaga',"Murang'a",'Kiambu','Turkana','West Pokot','Samburu','Trans-Nzoia','Uasin Gishu','Elgeyo-Marakwet','Nandi','Baringo','Laikipia','Nakuru','Narok','Kajiado','Kericho','Bomet','Kakamega','Vihiga','Bungoma','Busia','Siaya','Kisumu','Homa Bay','Migori','Kisii','Nyamira','Nairobi'
@@ -36,6 +41,63 @@ export default function CheckoutPage() {
     setOrderTotal(amount)
     clearCart()
     setOrderPlaced(true)
+  }
+
+  // Create order and save to database
+  const createOrder = async () => {
+    try {
+      setLoading(true)
+      setError('')
+
+      // Validation
+      if (!form.name || !form.email || !form.contact) {
+        setError('Please fill in all required fields')
+        setLoading(false)
+        return null
+      }
+
+      const orderData = {
+        customer: {
+          name: form.name,
+          email: form.email,
+          phone: form.contact,
+          role: form.role,
+          facility: form.facility,
+          county: form.county,
+          location: form.location,
+        },
+        items: items.map(item => ({
+          productId: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          image: item.image,
+        })),
+        subtotal,
+        shipping,
+        total,
+        paymentPhone: form.phoneForPayment || form.contact,
+      }
+
+      const response = await fetch(`${API_BASE}/api/orders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData),
+      })
+
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to create order')
+      }
+
+      setLoading(false)
+      return data._id
+    } catch (err: any) {
+      setError(err.message || 'Failed to create order')
+      setLoading(false)
+      return null
+    }
   }
 
   const computeShipping = () => {
@@ -62,22 +124,42 @@ export default function CheckoutPage() {
 
   const handleMpesaPush = async () => {
     try {
-      const amount = total
-      const resp = await fetch('/api/mpesa/stk', {
+      setLoading(true)
+      setError('')
+
+      // Step 1: Create order and save to database (captures abandoned cart)
+      const newOrderId = await createOrder()
+      if (!newOrderId) {
+        return // Error already set by createOrder
+      }
+
+      setOrderId(newOrderId)
+
+      // Step 2: Initiate M-Pesa STK Push
+      const response = await fetch(`${API_BASE}/api/mpesa/stk`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: form.phoneForPayment, amount, reference: form.facility || 'ASTERMED' }),
+        body: JSON.stringify({
+          phone: form.phoneForPayment || form.contact,
+          amount: total,
+          orderId: newOrderId,
+        }),
       })
-      const data = await resp.json()
-      if (resp.ok) {
-        setOrderTotal(amount)
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setOrderTotal(total)
         clearCart()
         setOrderPlaced(true)
+        setLoading(false)
       } else {
-        alert(data.message || 'Payment failed')
+        setError(data.message || 'Payment initiation failed')
+        setLoading(false)
       }
-    } catch (e) {
-      alert('Payment request failed')
+    } catch (err: any) {
+      setError(err.message || 'Payment request failed')
+      setLoading(false)
     }
   }
 
@@ -230,6 +312,13 @@ export default function CheckoutPage() {
               <TabsContent value="review">
                 <Card className="p-6 border-none shadow-md">
                   <h2 className="text-2xl font-bold mb-6">Review Your Order</h2>
+                  
+                  {error && (
+                    <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded text-red-700">
+                      {error}
+                    </div>
+                  )}
+                  
                   <div className="space-y-4 mb-6">
                     <div className="p-4 bg-secondary/50 rounded">
                       <p className="font-semibold mb-2">Shipping Address</p>
@@ -242,7 +331,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="p-4 bg-secondary/50 rounded">
                       <p className="font-semibold mb-2">Payment Method</p>
-                      <p className="text-sm text-muted-foreground">M-Pesa STK Push to {form.phoneForPayment}</p>
+                      <p className="text-sm text-muted-foreground">M-Pesa STK Push to {form.phoneForPayment || form.contact}</p>
                     </div>
                   </div>
                   <div className="flex gap-4">
@@ -250,14 +339,16 @@ export default function CheckoutPage() {
                       variant="outline"
                       onClick={() => setStep('payment')}
                       className="flex-1"
+                      disabled={loading}
                     >
                       Back
                     </Button>
                     <Button
                       onClick={handleMpesaPush}
                       className="flex-1 bg-accent hover:bg-accent/90"
+                      disabled={loading}
                     >
-                      Pay with M-Pesa
+                      {loading ? 'Processing...' : 'Pay with M-Pesa'}
                     </Button>
                   </div>
                 </Card>

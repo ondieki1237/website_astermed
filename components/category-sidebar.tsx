@@ -64,16 +64,19 @@ export default function CategorySidebar() {
   }
 
   return (
-    <aside className="lg:w-48 bg-white h-full">
-      <div className="p-2">
-        <h2 className="text-sm font-bold mb-2 tracking-tight">Category</h2>
+    <aside className="lg:w-64 bg-white rounded-2xl shadow-lg border border-gray-100 h-full overflow-hidden">
+      <div className="p-4">
+        <h2 className="text-lg font-bold mb-4 tracking-tight text-[#1f2a7c] flex items-center gap-2">
+          <div className="w-1 h-6 bg-gradient-to-b from-[#1f2a7c] to-[#e53935] rounded-full"></div>
+          Categories
+        </h2>
 
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           {categories.map(category => {
             const isOpen = expandedCategory === category.name
 
             return (
-              <div key={category._id}>
+              <div key={category._id} className="animate-fade-in">
                 {/* CATEGORY BUTTON */}
                 <button
                   onClick={() => {
@@ -89,20 +92,26 @@ export default function CategorySidebar() {
                       )
                     }
                   }}
-                  className={`w-full flex items-center justify-between px-2 py-1.5 rounded-sm text-xs font-medium transition bg-[#1f2a7c] text-white hover:bg-[#162060]`}
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                    isOpen 
+                      ? 'bg-gradient-to-r from-[#1f2a7c] to-[#2535a0] text-white shadow-lg shadow-[#1f2a7c]/20' 
+                      : 'bg-gradient-to-r from-gray-50 to-white text-gray-700 hover:from-[#f9fbff] hover:to-[#eef2ff] hover:text-[#1f2a7c] hover:shadow-md'
+                  }`}
                 >
                   <span className="truncate">{category.name}</span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] opacity-80">
+                  <div className="flex items-center gap-2">
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                      isOpen ? 'bg-white/20' : 'bg-gray-200'
+                    }`}>
                       {category.count ?? 0}
                     </span>
-                    <ChevronDown size={12} className={`${isOpen ? 'rotate-180' : ''} transition-transform`} />
+                    <ChevronDown size={16} className={`${isOpen ? 'rotate-180' : ''} transition-transform duration-200`} />
                   </div>
                 </button>
 
                 {/* SUBCATEGORIES */}
                 {isOpen && category.subcategories && category.subcategories.length > 0 && (
-                  <div className="mt-2 ml-3 pl-3 border-l space-y-2">
+                  <div className="mt-3 ml-4 pl-4 border-l-2 border-gray-200 space-y-2 animate-slide-in-left">
                     {category.subcategories.map(sub => {
                       const key = `${category.name}::${sub}`
                       const subOpen = expandedSub === key
@@ -121,10 +130,10 @@ export default function CategorySidebar() {
                                 )}&limit=20`
                               )
                             }}
-                            className={`w-full text-left text-xs py-1 transition font-medium
+                            className={`w-full text-left text-sm py-2 px-3 rounded-lg transition-all duration-200 font-medium
                               ${subOpen
-                                ? 'text-[#1f2a7c]'
-                                : 'text-muted-foreground hover:text-[#1f2a7c]'
+                                ? 'text-[#1f2a7c] bg-[#f9fbff] shadow-sm'
+                                : 'text-gray-600 hover:text-[#1f2a7c] hover:bg-gray-50'
                               }`}
                           >
                             {sub}
@@ -132,15 +141,15 @@ export default function CategorySidebar() {
 
                           {/* PRODUCTS */}
                           {subOpen && (
-                            <div className="mt-2 ml-3 space-y-1">
+                            <div className="mt-2 ml-3 space-y-1.5 animate-fade-in">
                               {loadingKey === key && (
-                                <p className="text-xs text-muted-foreground">
-                                  Loading…
+                                <p className="text-xs text-gray-500 px-3 py-2">
+                                  Loading products...
                                 </p>
                               )}
 
                               {errorKey === key && (
-                                <p className="text-xs text-red-600">
+                                <p className="text-xs text-red-600 px-3 py-2">
                                   Failed to load products
                                 </p>
                               )}
@@ -149,7 +158,7 @@ export default function CategorySidebar() {
                                 <Link
                                   key={product._id}
                                   href={`/products/${product._id}`}
-                                  className="block text-base truncate hover:text-[#1f2a7c]"
+                                  className="block text-xs truncate hover:text-[#1f2a7c] text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-all duration-200"
                                 >
                                   {product.name}
                                 </Link>
@@ -166,12 +175,12 @@ export default function CategorySidebar() {
                 {isOpen &&
                   !category.subcategories?.length &&
                   productsByKey[category.name] && (
-                    <div className="mt-1 ml-2 space-y-0.5">
+                    <div className="mt-2 ml-2 space-y-1 animate-fade-in">
                       {productsByKey[category.name].map(product => (
                         <Link
                           key={product._id}
                           href={`/products/${product._id}`}
-                          className="block text-[9px] truncate hover:text-[#1f2a7c] text-gray-600"
+                          className="block text-xs truncate hover:text-[#1f2a7c] text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-all duration-200"
                         >
                           {product.name}
                         </Link>
@@ -180,14 +189,14 @@ export default function CategorySidebar() {
                   )}
 
                 {isOpen && loadingKey === category.name && (
-                  <p className="mt-1 ml-2 text-[9px] text-gray-500">
-                    Loading…
+                  <p className="mt-2 ml-2 text-xs text-gray-500 px-3 py-2">
+                    Loading products...
                   </p>
                 )}
 
                 {isOpen && errorKey === category.name && (
-                  <p className="mt-1 ml-2 text-[9px] text-red-600">
-                    Failed to load
+                  <p className="mt-2 ml-2 text-xs text-red-600 px-3 py-2">
+                    Failed to load products
                   </p>
                 )}
               </div>
