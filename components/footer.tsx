@@ -19,15 +19,15 @@ export default function Footer() {
               Premium medical supplies and equipment for healthcare professionals across Kenya and beyond.
             </p>
             <div className="flex gap-4 pt-2">
-              <div className="w-10 h-10 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-110 group">
+              <a href="https://facebook.com/astermedKe" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-110 group">
                 <Facebook className="w-5 h-5 group-hover:text-[#e53935] transition-colors" />
-              </div>
-              <div className="w-10 h-10 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-110 group">
+              </a>
+              <a href="https://twitter.com/astermedKe" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-110 group">
                 <Twitter className="w-5 h-5 group-hover:text-[#e53935] transition-colors" />
-              </div>
-              <div className="w-10 h-10 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-110 group">
+              </a>
+              <a href="https://linkedin.com/company/astermedKe" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-110 group">
                 <Linkedin className="w-5 h-5 group-hover:text-[#e53935] transition-colors" />
-              </div>
+              </a>
             </div>
           </div>
 

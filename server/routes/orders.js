@@ -1,6 +1,7 @@
 import express from 'express';
 import Order from '../models/Order.js';
 import { authMiddleware } from '../middleware/auth.js';
+import { sendQuoteNotification, sendQuoteConfirmationToCustomer } from '../utils/email.js';
 
 const router = express.Router();
 
@@ -34,6 +35,31 @@ router.post('/', async (req, res) => {
     })
 
     await order.save()
+    
+    // Send email notifications for quote requests
+    if (type === 'quote' && status === 'quote_requested') {
+      try {
+        // Send notification to admin
+        await sendQuoteNotification({
+          customer,
+          items,
+          orderNumber,
+        })
+        
+        // Send confirmation to customer
+        await sendQuoteConfirmationToCustomer({
+          customer,
+          items,
+          orderNumber,
+        })
+        
+        console.log(`Quote notification emails sent for ${orderNumber}`)
+      } catch (emailError) {
+        // Log error but don't fail the request
+        console.error('Email notification error:', emailError)
+      }
+    }
+    
     res.status(201).json(order)
   } catch (error) {
     console.error('Create order error:', error)
