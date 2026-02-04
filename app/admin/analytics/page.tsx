@@ -75,19 +75,19 @@ export default function AnalyticsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-8 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8 flex items-center justify-center">
         <div className="text-xl text-gray-600">Loading analytics...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-[#1f2a7c] to-[#2535a0] bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-[#d0dc36] to-[#c5d030] bg-clip-text text-transparent">
               Analytics Dashboard
             </h1>
             <p className="text-gray-600 mt-2">
@@ -99,7 +99,7 @@ export default function AnalyticsPage() {
               onClick={() => setTimeRange('7d')}
               className={`px-4 py-2 rounded-lg transition-all ${
                 timeRange === '7d'
-                  ? 'bg-gradient-to-r from-[#1f2a7c] to-[#2535a0] text-white'
+                  ? 'bg-gradient-to-r from-[#d0dc36] to-[#c5d030] text-white'
                   : 'bg-white text-gray-600 hover:bg-gray-50'
               }`}
             >
@@ -109,7 +109,7 @@ export default function AnalyticsPage() {
               onClick={() => setTimeRange('30d')}
               className={`px-4 py-2 rounded-lg transition-all ${
                 timeRange === '30d'
-                  ? 'bg-gradient-to-r from-[#1f2a7c] to-[#2535a0] text-white'
+                  ? 'bg-gradient-to-r from-[#d0dc36] to-[#c5d030] text-white'
                   : 'bg-white text-gray-600 hover:bg-gray-50'
               }`}
             >
@@ -119,7 +119,7 @@ export default function AnalyticsPage() {
               onClick={() => setTimeRange('90d')}
               className={`px-4 py-2 rounded-lg transition-all ${
                 timeRange === '90d'
-                  ? 'bg-gradient-to-r from-[#1f2a7c] to-[#2535a0] text-white'
+                  ? 'bg-gradient-to-r from-[#d0dc36] to-[#c5d030] text-white'
                   : 'bg-white text-gray-600 hover:bg-gray-50'
               }`}
             >
@@ -139,7 +139,7 @@ export default function AnalyticsPage() {
                 <TrendingUp className="w-5 h-5 text-green-500" />
               </div>
               <p className="text-sm text-gray-600">Total Revenue</p>
-              <p className="text-3xl font-bold text-[#1f2a7c] mt-1">
+              <p className="text-3xl font-bold text-[#d0dc36] mt-1">
                 KSH {stats?.totalRevenue.toLocaleString() || '0'}
               </p>
               <p className="text-sm text-green-500 mt-2">+12.5% from last period</p>
@@ -149,13 +149,13 @@ export default function AnalyticsPage() {
           <Card className="shadow-lg rounded-2xl border-0 bg-white hover:shadow-xl transition-all">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="p-3 bg-gradient-to-br from-[#1f2a7c] to-[#2535a0] rounded-xl">
+                <div className="p-3 bg-gradient-to-br from-[#d0dc36] to-[#c5d030] rounded-xl">
                   <ShoppingCart className="w-6 h-6 text-white" />
                 </div>
                 <TrendingUp className="w-5 h-5 text-green-500" />
               </div>
               <p className="text-sm text-gray-600">Average Order Value</p>
-              <p className="text-3xl font-bold text-[#1f2a7c] mt-1">
+              <p className="text-3xl font-bold text-[#d0dc36] mt-1">
                 KSH {Number(avgOrderValue).toLocaleString()}
               </p>
               <p className="text-sm text-green-500 mt-2">+8.2% from last period</p>
@@ -171,7 +171,7 @@ export default function AnalyticsPage() {
                 <TrendingUp className="w-5 h-5 text-green-500" />
               </div>
               <p className="text-sm text-gray-600">Conversion Rate</p>
-              <p className="text-3xl font-bold text-[#1f2a7c] mt-1">{conversionRate}%</p>
+              <p className="text-3xl font-bold text-[#d0dc36] mt-1">{conversionRate}%</p>
               <p className="text-sm text-green-500 mt-2">+3.1% from last period</p>
             </CardContent>
           </Card>
@@ -185,7 +185,7 @@ export default function AnalyticsPage() {
                 <TrendingUp className="w-5 h-5 text-green-500" />
               </div>
               <p className="text-sm text-gray-600">Customer Lifetime Value</p>
-              <p className="text-3xl font-bold text-[#1f2a7c] mt-1">
+              <p className="text-3xl font-bold text-[#d0dc36] mt-1">
                 KSH {Number(customerLifetimeValue).toLocaleString()}
               </p>
               <p className="text-sm text-green-500 mt-2">+15.3% from last period</p>
@@ -196,19 +196,19 @@ export default function AnalyticsPage() {
         {/* Tabs for Different Analytics Views */}
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList className="bg-white shadow-md rounded-xl p-1">
-            <TabsTrigger value="overview" className="rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#1f2a7c] data-[state=active]:to-[#2535a0] data-[state=active]:text-white">
+            <TabsTrigger value="overview" className="rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#d0dc36] data-[state=active]:to-[#c5d030] data-[state=active]:text-white">
               <BarChart3 className="w-4 h-4 mr-2" />
               Overview
             </TabsTrigger>
-            <TabsTrigger value="sales" className="rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#1f2a7c] data-[state=active]:to-[#2535a0] data-[state=active]:text-white">
+            <TabsTrigger value="sales" className="rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#d0dc36] data-[state=active]:to-[#c5d030] data-[state=active]:text-white">
               <DollarSign className="w-4 h-4 mr-2" />
               Sales
             </TabsTrigger>
-            <TabsTrigger value="products" className="rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#1f2a7c] data-[state=active]:to-[#2535a0] data-[state=active]:text-white">
+            <TabsTrigger value="products" className="rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#d0dc36] data-[state=active]:to-[#c5d030] data-[state=active]:text-white">
               <Package className="w-4 h-4 mr-2" />
               Products
             </TabsTrigger>
-            <TabsTrigger value="customers" className="rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#1f2a7c] data-[state=active]:to-[#2535a0] data-[state=active]:text-white">
+            <TabsTrigger value="customers" className="rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#d0dc36] data-[state=active]:to-[#c5d030] data-[state=active]:text-white">
               <Users className="w-4 h-4 mr-2" />
               Customers
             </TabsTrigger>
@@ -220,7 +220,7 @@ export default function AnalyticsPage() {
               {/* Order Status Distribution */}
               <Card className="shadow-lg rounded-2xl border-0 bg-white">
                 <CardHeader>
-                  <CardTitle className="text-[#1f2a7c]">Order Status Distribution</CardTitle>
+                  <CardTitle className="text-[#d0dc36]">Order Status Distribution</CardTitle>
                   <CardDescription>Current status of all orders</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -253,7 +253,7 @@ export default function AnalyticsPage() {
               {/* Key Metrics */}
               <Card className="shadow-lg rounded-2xl border-0 bg-white">
                 <CardHeader>
-                  <CardTitle className="text-[#1f2a7c]">Performance Metrics</CardTitle>
+                  <CardTitle className="text-[#d0dc36]">Performance Metrics</CardTitle>
                   <CardDescription>Key business indicators</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -299,7 +299,7 @@ export default function AnalyticsPage() {
             {/* Revenue Trend (Placeholder) */}
             <Card className="shadow-lg rounded-2xl border-0 bg-white">
               <CardHeader>
-                <CardTitle className="text-[#1f2a7c]">Revenue Trend</CardTitle>
+                <CardTitle className="text-[#d0dc36]">Revenue Trend</CardTitle>
                 <CardDescription>Revenue over time (Last {timeRange === '7d' ? '7 days' : timeRange === '30d' ? '30 days' : '90 days'})</CardDescription>
               </CardHeader>
               <CardContent>
@@ -325,19 +325,19 @@ export default function AnalyticsPage() {
                     </div>
                   </div>
                   <p className="text-sm text-gray-600">Total Sales</p>
-                  <p className="text-3xl font-bold text-[#1f2a7c] mt-1">{stats?.totalOrders || 0}</p>
+                  <p className="text-3xl font-bold text-[#d0dc36] mt-1">{stats?.totalOrders || 0}</p>
                 </CardContent>
               </Card>
 
               <Card className="shadow-lg rounded-2xl border-0 bg-white">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl">
+                    <div className="p-3 bg-gradient-to-br from-[#d0dc36] to-[#c5d030] rounded-xl">
                       <Calendar className="w-6 h-6 text-white" />
                     </div>
                   </div>
                   <p className="text-sm text-gray-600">Daily Average</p>
-                  <p className="text-3xl font-bold text-[#1f2a7c] mt-1">
+                  <p className="text-3xl font-bold text-[#d0dc36] mt-1">
                     {stats ? Math.round(stats.totalOrders / 30) : 0}
                   </p>
                 </CardContent>
@@ -351,18 +351,18 @@ export default function AnalyticsPage() {
                     </div>
                   </div>
                   <p className="text-sm text-gray-600">Growth Rate</p>
-                  <p className="text-3xl font-bold text-[#1f2a7c] mt-1">+12.5%</p>
+                  <p className="text-3xl font-bold text-[#d0dc36] mt-1">+12.5%</p>
                 </CardContent>
               </Card>
             </div>
 
             <Card className="shadow-lg rounded-2xl border-0 bg-white">
               <CardHeader>
-                <CardTitle className="text-[#1f2a7c]">Sales Performance</CardTitle>
+                <CardTitle className="text-[#d0dc36]">Sales Performance</CardTitle>
                 <CardDescription>Detailed sales analytics</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-64 flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl">
+                <div className="h-64 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl">
                   <div className="text-center">
                     <PieChart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                     <p className="text-gray-500">Sales chart visualization coming soon</p>
@@ -377,15 +377,15 @@ export default function AnalyticsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Card className="shadow-lg rounded-2xl border-0 bg-white">
                 <CardHeader>
-                  <CardTitle className="text-[#1f2a7c]">Product Performance</CardTitle>
+                  <CardTitle className="text-[#d0dc36]">Product Performance</CardTitle>
                   <CardDescription>Top performing products</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    <div className="p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl">
+                    <div className="p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl">
                       <div className="flex justify-between items-center">
                         <span className="font-medium">Total Products</span>
-                        <span className="text-2xl font-bold text-[#1f2a7c]">{stats?.totalProducts || 0}</span>
+                        <span className="text-2xl font-bold text-[#d0dc36]">{stats?.totalProducts || 0}</span>
                       </div>
                     </div>
                     <div className="p-4 bg-gradient-to-r from-red-50 to-red-100 rounded-xl">
@@ -400,11 +400,11 @@ export default function AnalyticsPage() {
 
               <Card className="shadow-lg rounded-2xl border-0 bg-white">
                 <CardHeader>
-                  <CardTitle className="text-[#1f2a7c]">Stock Status</CardTitle>
+                  <CardTitle className="text-[#d0dc36]">Stock Status</CardTitle>
                   <CardDescription>Inventory overview</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-48 flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl">
+                  <div className="h-48 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl">
                     <div className="text-center">
                       <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                       <p className="text-gray-500">Stock chart coming soon</p>
@@ -421,12 +421,12 @@ export default function AnalyticsPage() {
               <Card className="shadow-lg rounded-2xl border-0 bg-white">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <div className="p-3 bg-gradient-to-br from-[#1f2a7c] to-[#2535a0] rounded-xl">
+                    <div className="p-3 bg-gradient-to-br from-[#d0dc36] to-[#c5d030] rounded-xl">
                       <Users className="w-6 h-6 text-white" />
                     </div>
                   </div>
                   <p className="text-sm text-gray-600">Total Customers</p>
-                  <p className="text-3xl font-bold text-[#1f2a7c] mt-1">{stats?.totalCustomers || 0}</p>
+                  <p className="text-3xl font-bold text-[#d0dc36] mt-1">{stats?.totalCustomers || 0}</p>
                 </CardContent>
               </Card>
 
@@ -438,7 +438,7 @@ export default function AnalyticsPage() {
                     </div>
                   </div>
                   <p className="text-sm text-gray-600">Avg. Customer Value</p>
-                  <p className="text-3xl font-bold text-[#1f2a7c] mt-1">
+                  <p className="text-3xl font-bold text-[#d0dc36] mt-1">
                     KSH {Number(customerLifetimeValue).toLocaleString()}
                   </p>
                 </CardContent>
@@ -452,18 +452,18 @@ export default function AnalyticsPage() {
                     </div>
                   </div>
                   <p className="text-sm text-gray-600">Repeat Rate</p>
-                  <p className="text-3xl font-bold text-[#1f2a7c] mt-1">32%</p>
+                  <p className="text-3xl font-bold text-[#d0dc36] mt-1">32%</p>
                 </CardContent>
               </Card>
             </div>
 
             <Card className="shadow-lg rounded-2xl border-0 bg-white">
               <CardHeader>
-                <CardTitle className="text-[#1f2a7c]">Customer Behavior</CardTitle>
+                <CardTitle className="text-[#d0dc36]">Customer Behavior</CardTitle>
                 <CardDescription>Customer engagement metrics</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-64 flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl">
+                <div className="h-64 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl">
                   <div className="text-center">
                     <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                     <p className="text-gray-500">Customer analytics chart coming soon</p>

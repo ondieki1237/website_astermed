@@ -66,8 +66,8 @@ export default function CategorySidebar() {
   return (
     <aside className="lg:w-64 bg-white rounded-2xl shadow-lg border border-gray-100 h-full overflow-hidden">
       <div className="p-4">
-        <h2 className="text-lg font-bold mb-4 tracking-tight text-[#1f2a7c] flex items-center gap-2">
-          <div className="w-1 h-6 bg-gradient-to-b from-[#1f2a7c] to-[#e53935] rounded-full"></div>
+        <h2 className="text-lg font-bold mb-4 tracking-tight text-[#d0dc36] flex items-center gap-2">
+          <div className="w-1 h-6 bg-gradient-to-b from-[#d0dc36] to-[#e53935] rounded-full"></div>
           Categories
         </h2>
 
@@ -94,8 +94,8 @@ export default function CategorySidebar() {
                   }}
                   className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
                     isOpen 
-                      ? 'bg-gradient-to-r from-[#1f2a7c] to-[#2535a0] text-white shadow-lg shadow-[#1f2a7c]/20' 
-                      : 'bg-gradient-to-r from-gray-50 to-white text-gray-700 hover:from-[#f9fbff] hover:to-[#eef2ff] hover:text-[#1f2a7c] hover:shadow-md'
+                      ? 'bg-gradient-to-r from-[#d0dc36] to-[#c5d030] text-white shadow-lg shadow-[#d0dc36]/20' 
+                      : 'bg-gradient-to-r from-gray-50 to-white text-gray-700 hover:from-[#f9fbff] hover:to-[#eef2ff] hover:text-[#d0dc36] hover:shadow-md'
                   }`}
                 >
                   <span className="truncate">{category.name}</span>
@@ -132,8 +132,8 @@ export default function CategorySidebar() {
                             }}
                             className={`w-full text-left text-sm py-2 px-3 rounded-lg transition-all duration-200 font-medium
                               ${subOpen
-                                ? 'text-[#1f2a7c] bg-[#f9fbff] shadow-sm'
-                                : 'text-gray-600 hover:text-[#1f2a7c] hover:bg-gray-50'
+                                ? 'text-[#d0dc36] bg-[#f9fbff] shadow-sm'
+                                : 'text-gray-600 hover:text-[#d0dc36] hover:bg-gray-50'
                               }`}
                           >
                             {sub}
@@ -158,7 +158,7 @@ export default function CategorySidebar() {
                                 <Link
                                   key={product._id}
                                   href={`/products/${product._id}`}
-                                  className="block text-xs truncate hover:text-[#1f2a7c] text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-all duration-200"
+                                  className="block text-xs truncate hover:text-[#d0dc36] text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-all duration-200"
                                 >
                                   {product.name}
                                 </Link>
@@ -180,7 +180,7 @@ export default function CategorySidebar() {
                         <Link
                           key={product._id}
                           href={`/products/${product._id}`}
-                          className="block text-xs truncate hover:text-[#1f2a7c] text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-all duration-200"
+                          className="block text-xs truncate hover:text-[#d0dc36] text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-all duration-200"
                         >
                           {product.name}
                         </Link>

@@ -48,8 +48,8 @@ export default function CartPage() {
                         <img src={item.image || "/placeholder.svg"} alt={item.name} className="w-full h-full object-contain p-2" />
                       </div>
                       <div className="flex-1 flex flex-col">
-                        <h3 className="font-bold text-lg text-gray-900 mb-2 group-hover:text-[#1f2a7c] transition-colors">{item.name}</h3>
-                        <p className="text-[#1f2a7c] font-bold text-xl mb-4">{formatPrice(item.price)}</p>
+                        <h3 className="font-bold text-lg text-gray-900 mb-2">{item.name}</h3>
+                        {/* Price hidden - quote-based system */}
                         
                         <div className="mt-auto flex items-center justify-between">
                           <div className="flex items-center border-2 border-gray-200 rounded-xl bg-white">
@@ -63,7 +63,7 @@ export default function CartPage() {
                           </div>
                           
                           <div className="flex items-center gap-4">
-                            <p className="font-bold text-xl text-gray-900">{formatPrice(item.price * item.quantity)}</p>
+                            {/* Total hidden - quote-based system */}
                             <button onClick={() => removeItem(item.id)} className="p-3 text-[#e53935] hover:bg-red-50 rounded-xl transition-all duration-200">
                               <Trash2 className="w-5 h-5" />
                             </button>
@@ -81,7 +81,7 @@ export default function CartPage() {
                 </div>
                 <p className="text-gray-600 mb-6 text-lg">Your cart is empty</p>
                 <Link href="/products">
-                  <Button className="bg-gradient-to-r from-[#1f2a7c] to-[#2535a0] hover:shadow-xl transition-all duration-200 text-white font-bold rounded-xl px-8">Continue Shopping</Button>
+                  <Button className="bg-gradient-to-r from-[#d0dc36] to-[#c5d030] hover:shadow-xl transition-all duration-200 text-white font-bold rounded-xl px-8">Continue Shopping</Button>
                 </Link>
               </div>
             )}
@@ -91,41 +91,24 @@ export default function CartPage() {
           <div className="lg:col-span-1">
             <div className="bg-white border border-gray-100 rounded-2xl shadow-xl p-8 sticky top-28 overflow-hidden">
               {/* Background decoration */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#1f2a7c]/5 to-transparent rounded-full -mr-16 -mt-16"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#d0dc36]/5 to-transparent rounded-full -mr-16 -mt-16"></div>
               
-              <h2 className="font-bold text-2xl mb-6 text-gray-900 relative">Order Summary</h2>
+              <h2 className="font-bold text-2xl mb-6 text-gray-900 relative">Quote Summary</h2>
 
               <div className="space-y-4 mb-6 relative">
                 <div className="flex justify-between text-base">
-                  <span className="text-gray-600">Subtotal</span>
-                  <span className="font-semibold text-gray-900">{formatPrice(subtotal)}</span>
+                  <span className="text-gray-600">Items</span>
+                  <span className="font-semibold text-gray-900">{cartItems.length}</span>
                 </div>
-                <div className="flex justify-between text-base">
-                  <span className="text-gray-600">Shipping</span>
-                  {shipping === 0 ? (
-                    <span className="text-[#e53935] font-bold">FREE</span>
-                  ) : (
-                    <span className="font-semibold text-gray-900">{formatPrice(shipping)}</span>
-                  )}
-                </div>
-                {shipping === 0 && (
-                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-3">
-                    <p className="text-xs text-green-700 font-medium">🎉 Free shipping on orders over KSH 5000!</p>
-                  </div>
-                )}
-              </div>
-
-              <div className="border-t-2 border-gray-200 pt-6 mb-6">
-                <div className="flex justify-between items-center">
-                  <span className="text-lg font-semibold text-gray-700">Total</span>
-                  <span className="text-3xl font-bold text-[#1f2a7c]">{formatPrice(total)}</span>
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-3">
+                  <p className="text-xs text-blue-700 font-medium">💡 Request a quote to get pricing for your selection</p>
                 </div>
               </div>
 
               {cartItems.length > 0 && (
                 <Link href="/checkout">
                   <Button className="w-full bg-gradient-to-r from-[#e53935] to-[#d32f2f] hover:shadow-2xl hover:scale-105 transition-all duration-200 text-white text-lg py-6 font-bold rounded-xl">
-                    Proceed to Checkout
+                    Request Quote
                   </Button>
                 </Link>
               )}

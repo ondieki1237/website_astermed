@@ -104,18 +104,18 @@ export default function NewProductPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.push('/admin/products')}
-            className="px-4 py-2 rounded-xl border-2 border-[#1f2a7c] text-[#1f2a7c] hover:bg-[#1f2a7c] hover:text-white transition-all font-medium"
+            className="px-4 py-2 rounded-xl border-2 border-[#d0dc36] text-[#d0dc36] hover:bg-[#d0dc36] hover:text-white transition-all font-medium"
           >
             ← Back
           </button>
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-[#1f2a7c] to-[#2535a0] bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-[#d0dc36] to-[#c5d030] bg-clip-text text-transparent">
               Add New Product
             </h1>
             <p className="text-gray-600 mt-2">Create a new product for your store</p>
@@ -129,7 +129,7 @@ export default function NewProductPage() {
             {/* Basic Information */}
             <Card className="bg-white rounded-2xl shadow-lg border-0">
               <CardHeader>
-                <CardTitle className="text-[#1f2a7c]">Basic Information</CardTitle>
+                <CardTitle className="text-[#d0dc36]">Basic Information</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
@@ -140,7 +140,7 @@ export default function NewProductPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#1f2a7c] focus:ring-2 focus:ring-[#1f2a7c]/20 outline-none transition-all"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#d0dc36] focus:ring-2 focus:ring-[#d0dc36]/20 outline-none transition-all"
                     placeholder="Enter product name"
                   />
                 </div>
@@ -153,7 +153,7 @@ export default function NewProductPage() {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     rows={5}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#1f2a7c] focus:ring-2 focus:ring-[#1f2a7c]/20 outline-none transition-all resize-none"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#d0dc36] focus:ring-2 focus:ring-[#d0dc36]/20 outline-none transition-all resize-none"
                     placeholder="Enter product description"
                   />
                 </div>
@@ -163,7 +163,7 @@ export default function NewProductPage() {
             {/* Pricing & Stock */}
             <Card className="bg-white rounded-2xl shadow-lg border-0">
               <CardHeader>
-                <CardTitle className="text-[#1f2a7c]">Pricing & Stock</CardTitle>
+                <CardTitle className="text-[#d0dc36]">Pricing & Stock</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-3 gap-4">
@@ -177,7 +177,7 @@ export default function NewProductPage() {
                       required
                       type="number"
                       step="0.01"
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#1f2a7c] focus:ring-2 focus:ring-[#1f2a7c]/20 outline-none transition-all"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#d0dc36] focus:ring-2 focus:ring-[#d0dc36]/20 outline-none transition-all"
                       placeholder="0.00"
                     />
                   </div>
@@ -190,7 +190,7 @@ export default function NewProductPage() {
                       value={stock}
                       onChange={(e) => setStock(e.target.value)}
                       type="number"
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#1f2a7c] focus:ring-2 focus:ring-[#1f2a7c]/20 outline-none transition-all"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#d0dc36] focus:ring-2 focus:ring-[#d0dc36]/20 outline-none transition-all"
                       placeholder="0"
                     />
                   </div>
@@ -204,7 +204,7 @@ export default function NewProductPage() {
                         type="checkbox"
                         checked={inStock}
                         onChange={(e) => setInStock(e.target.checked)}
-                        className="w-5 h-5 text-[#1f2a7c] border-gray-300 rounded focus:ring-[#1f2a7c]"
+                        className="w-5 h-5 text-[#d0dc36] border-gray-300 rounded focus:ring-[#d0dc36]"
                       />
                       <label className="ml-3 text-sm font-medium text-gray-700">
                         In Stock
@@ -218,14 +218,14 @@ export default function NewProductPage() {
             {/* Specifications */}
             <Card className="bg-white rounded-2xl shadow-lg border-0">
               <CardHeader>
-                <CardTitle className="text-[#1f2a7c]">Specifications (Optional)</CardTitle>
+                <CardTitle className="text-[#d0dc36]">Specifications (Optional)</CardTitle>
               </CardHeader>
               <CardContent>
                 <textarea
                   value={specsText}
                   onChange={(e) => setSpecsText(e.target.value)}
                   rows={6}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#1f2a7c] focus:ring-2 focus:ring-[#1f2a7c]/20 outline-none transition-all resize-none font-mono text-sm"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#d0dc36] focus:ring-2 focus:ring-[#d0dc36]/20 outline-none transition-all resize-none font-mono text-sm"
                   placeholder={'Weight\t1kg\nColor\tBlue\nMaterial\tStainless Steel'}
                 />
                 <p className="text-xs text-gray-500 mt-2">
@@ -240,7 +240,7 @@ export default function NewProductPage() {
             {/* Category */}
             <Card className="bg-white rounded-2xl shadow-lg border-0">
               <CardHeader>
-                <CardTitle className="text-[#1f2a7c]">Category</CardTitle>
+                <CardTitle className="text-[#d0dc36]">Category</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
@@ -250,7 +250,7 @@ export default function NewProductPage() {
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#1f2a7c] focus:ring-2 focus:ring-[#1f2a7c]/20 outline-none transition-all"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#d0dc36] focus:ring-2 focus:ring-[#d0dc36]/20 outline-none transition-all"
                   >
                     <option value="">Select a category</option>
                     {categories.map((c: any) => (
@@ -269,7 +269,7 @@ export default function NewProductPage() {
                     placeholder="New category name"
                     value={newCategory}
                     onChange={(e) => setNewCategory(e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#1f2a7c] focus:ring-2 focus:ring-[#1f2a7c]/20 outline-none transition-all"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#d0dc36] focus:ring-2 focus:ring-[#d0dc36]/20 outline-none transition-all"
                   />
                 </div>
               </CardContent>
@@ -278,10 +278,10 @@ export default function NewProductPage() {
             {/* Image Upload */}
             <Card className="bg-white rounded-2xl shadow-lg border-0">
               <CardHeader>
-                <CardTitle className="text-[#1f2a7c]">Product Image</CardTitle>
+                <CardTitle className="text-[#d0dc36]">Product Image</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-[#1f2a7c] transition-all">
+                <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-[#d0dc36] transition-all">
                   <input
                     type="file"
                     accept="image/png,image/jpeg"
@@ -297,13 +297,13 @@ export default function NewProductPage() {
                           alt="preview"
                           className="max-h-48 mx-auto object-contain rounded-lg"
                         />
-                        <p className="text-sm text-[#1f2a7c] font-medium">
+                        <p className="text-sm text-[#d0dc36] font-medium">
                           Click to change
                         </p>
                       </div>
                     ) : (
                       <div className="space-y-3">
-                        <div className="mx-auto w-16 h-16 bg-gradient-to-br from-[#1f2a7c] to-[#2535a0] rounded-full flex items-center justify-center">
+                        <div className="mx-auto w-16 h-16 bg-gradient-to-br from-[#d0dc36] to-[#c5d030] rounded-full flex items-center justify-center">
                           <svg
                             className="w-8 h-8 text-white"
                             fill="none"
@@ -318,7 +318,7 @@ export default function NewProductPage() {
                             />
                           </svg>
                         </div>
-                        <p className="text-[#1f2a7c] font-medium">
+                        <p className="text-[#d0dc36] font-medium">
                           Upload Image
                         </p>
                         <p className="text-xs text-gray-500">
@@ -348,7 +348,7 @@ export default function NewProductPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-[#1f2a7c] to-[#2535a0] text-white py-4 px-6 rounded-xl font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl"
+                  className="w-full bg-gradient-to-r from-[#d0dc36] to-[#c5d030] text-white py-4 px-6 rounded-xl font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl"
                 >
                   {loading ? 'Creating...' : 'Create Product'}
                 </button>

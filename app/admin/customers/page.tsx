@@ -126,26 +126,26 @@ export default function CustomersPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-8 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8 flex items-center justify-center">
         <div className="text-xl text-gray-600">Loading customers...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-[#1f2a7c] to-[#2535a0] bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-[#d0dc36] to-[#c5d030] bg-clip-text text-transparent">
               Customer Management
             </h1>
             <p className="text-gray-600 mt-2">
               Track customer orders and recover abandoned carts
             </p>
           </div>
-          <Button className="bg-gradient-to-r from-[#1f2a7c] to-[#2535a0] hover:opacity-90">
+          <Button className="bg-gradient-to-r from-[#d0dc36] to-[#c5d030] hover:opacity-90">
             <Download className="w-4 h-4 mr-2" />
             Export Data
           </Button>
@@ -158,9 +158,9 @@ export default function CustomersPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">Total Customers</p>
-                  <p className="text-3xl font-bold text-[#1f2a7c] mt-1">{customers.length}</p>
+                  <p className="text-3xl font-bold text-[#d0dc36] mt-1">{customers.length}</p>
                 </div>
-                <div className="p-4 bg-gradient-to-br from-[#1f2a7c] to-[#2535a0] rounded-xl">
+                <div className="p-4 bg-gradient-to-br from-[#d0dc36] to-[#c5d030] rounded-xl">
                   <Users className="w-8 h-8 text-white" />
                 </div>
               </div>
@@ -172,7 +172,7 @@ export default function CustomersPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">Total Orders</p>
-                  <p className="text-3xl font-bold text-[#1f2a7c] mt-1">
+                  <p className="text-3xl font-bold text-[#d0dc36] mt-1">
                     {customers.reduce((sum, c) => sum + c.totalOrders, 0)}
                   </p>
                 </div>
@@ -208,7 +208,7 @@ export default function CustomersPage() {
                 placeholder="Search by name, email, or phone..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-12 rounded-xl border-gray-200 focus:border-[#1f2a7c] focus:ring-[#1f2a7c]"
+                className="pl-10 h-12 rounded-xl border-gray-200 focus:border-[#d0dc36] focus:ring-[#d0dc36]"
               />
             </div>
           </CardContent>
@@ -217,7 +217,7 @@ export default function CustomersPage() {
         {/* Tabs */}
         <Tabs defaultValue="customers" className="space-y-4">
           <TabsList className="bg-white shadow-md rounded-xl p-1">
-            <TabsTrigger value="customers" className="rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#1f2a7c] data-[state=active]:to-[#2535a0] data-[state=active]:text-white">
+            <TabsTrigger value="customers" className="rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#d0dc36] data-[state=active]:to-[#c5d030] data-[state=active]:text-white">
               <Users className="w-4 h-4 mr-2" />
               Customers ({filteredCustomers.length})
             </TabsTrigger>
@@ -245,7 +245,7 @@ export default function CustomersPage() {
                         <div className="flex-1 space-y-4">
                           <div className="flex items-start justify-between">
                             <div>
-                              <h3 className="text-xl font-bold text-[#1f2a7c]">{customer.name}</h3>
+                              <h3 className="text-xl font-bold text-[#d0dc36]">{customer.name}</h3>
                               <div className="flex flex-col gap-2 mt-2">
                                 <div className="flex items-center text-gray-600">
                                   <Mail className="w-4 h-4 mr-2" />
@@ -260,9 +260,9 @@ export default function CustomersPage() {
                           </div>
 
                           <div className="grid grid-cols-3 gap-4">
-                            <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl">
+                            <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl">
                               <p className="text-sm text-gray-600">Total Orders</p>
-                              <p className="text-2xl font-bold text-[#1f2a7c]">{customer.totalOrders}</p>
+                              <p className="text-2xl font-bold text-[#d0dc36]">{customer.totalOrders}</p>
                             </div>
                             <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl">
                               <p className="text-sm text-gray-600">Total Spent</p>
@@ -280,7 +280,7 @@ export default function CustomersPage() {
 
                           {selectedCustomer?.email === customer.email && (
                             <div className="mt-4 space-y-2">
-                              <h4 className="font-semibold text-[#1f2a7c]">Recent Orders:</h4>
+                              <h4 className="font-semibold text-[#d0dc36]">Recent Orders:</h4>
                               {customer.orders.slice(0, 5).map((order) => (
                                 <div key={order._id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                   <div className="flex items-center gap-3">
@@ -294,7 +294,7 @@ export default function CustomersPage() {
                                     </Badge>
                                   </div>
                                   <div className="flex items-center gap-4">
-                                    <span className="font-semibold text-[#1f2a7c]">
+                                    <span className="font-semibold text-[#d0dc36]">
                                       KSH {order.total.toLocaleString()}
                                     </span>
                                     <span className="text-sm text-gray-500">
@@ -317,7 +317,7 @@ export default function CustomersPage() {
                           >
                             {selectedCustomer?.email === customer.email ? 'Hide Orders' : 'View Orders'}
                           </Button>
-                          <Button className="bg-gradient-to-r from-[#1f2a7c] to-[#2535a0] rounded-xl">
+                          <Button className="bg-gradient-to-r from-[#d0dc36] to-[#c5d030] rounded-xl">
                             <Mail className="w-4 h-4 mr-2" />
                             Contact
                           </Button>
@@ -349,7 +349,7 @@ export default function CustomersPage() {
                         <div className="flex-1 space-y-4">
                           <div className="flex items-start justify-between">
                             <div>
-                              <h3 className="text-xl font-bold text-[#1f2a7c]">{cart.customerName}</h3>
+                              <h3 className="text-xl font-bold text-[#d0dc36]">{cart.customerName}</h3>
                               <div className="flex flex-col gap-2 mt-2">
                                 <div className="flex items-center text-gray-600">
                                   <Mail className="w-4 h-4 mr-2" />
@@ -383,11 +383,11 @@ export default function CustomersPage() {
                           </div>
 
                           <div className="space-y-2">
-                            <h4 className="font-semibold text-[#1f2a7c]">Cart Items:</h4>
+                            <h4 className="font-semibold text-[#d0dc36]">Cart Items:</h4>
                             {cart.items.map((item, idx) => (
                               <div key={idx} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                                 <span>{item.name} (x{item.quantity})</span>
-                                <span className="font-semibold text-[#1f2a7c]">
+                                <span className="font-semibold text-[#d0dc36]">
                                   KSH {(item.price * item.quantity).toLocaleString()}
                                 </span>
                               </div>

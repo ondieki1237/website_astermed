@@ -4,10 +4,10 @@ import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Create order (public - no auth required to capture abandoned carts)
+// Create order or quote request (public - no auth required)
 router.post('/', async (req, res) => {
   try {
-    const { customer, items, subtotal, shipping, total, paymentPhone } = req.body
+    const { customer, items, subtotal, shipping, total, paymentPhone, status, type } = req.body
 
     // Validation
     if (!customer || !customer.name || !customer.email || !customer.phone) {
@@ -19,18 +19,18 @@ router.post('/', async (req, res) => {
     }
 
     // Generate unique order number
-    const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`
+    const orderNumber = `${type === 'quote' ? 'QTE' : 'ORD'}-${Date.now()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`
 
     const order = new Order({
       orderNumber,
       customer,
       items,
-      subtotal,
+      subtotal: subtotal || 0,
       shipping: shipping || 0,
-      total,
+      total: total || 0,
       paymentPhone: paymentPhone || customer.phone,
-      paymentStatus: 'pending',
-      orderStatus: 'pending',
+      paymentStatus: status === 'quote_requested' ? 'not_applicable' : 'pending',
+      orderStatus: status || 'pending',
     })
 
     await order.save()

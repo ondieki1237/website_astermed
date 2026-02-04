@@ -139,14 +139,14 @@ export default function ManageProductsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-8 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8 flex items-center justify-center">
         <div className="text-xl text-gray-600">Loading products...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -154,12 +154,12 @@ export default function ManageProductsPage() {
             <Button
               variant="outline"
               onClick={() => router.push('/admin')}
-              className="rounded-xl border-[#1f2a7c] text-[#1f2a7c] hover:bg-[#1f2a7c] hover:text-white"
+              className="rounded-xl border-[#d0dc36] text-[#d0dc36] hover:bg-[#d0dc36] hover:text-white"
             >
               ← Back
             </Button>
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-[#1f2a7c] to-[#2535a0] bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-[#d0dc36] to-[#c5d030] bg-clip-text text-transparent">
                 Manage Products
               </h1>
               <p className="text-gray-600 mt-2">
@@ -169,7 +169,7 @@ export default function ManageProductsPage() {
           </div>
           <Button
             onClick={() => router.push('/admin/products/new')}
-            className="bg-gradient-to-r from-[#1f2a7c] to-[#2535a0] hover:opacity-90 rounded-xl px-8 py-3 font-semibold"
+            className="bg-gradient-to-r from-[#d0dc36] to-[#c5d030] hover:opacity-90 rounded-xl px-8 py-3 font-semibold"
           >
             + Add New Product
           </Button>
@@ -180,14 +180,14 @@ export default function ManageProductsPage() {
           <Card className="shadow-lg rounded-2xl border-0 bg-white">
             <CardContent className="p-6 text-center">
               <p className="text-sm text-gray-600 mb-2">Total Products</p>
-              <p className="text-4xl font-bold text-[#1f2a7c]">{products.length}</p>
+              <p className="text-4xl font-bold text-[#d0dc36]">{products.length}</p>
             </CardContent>
           </Card>
 
           <Card className="shadow-lg rounded-2xl border-0 bg-white">
             <CardContent className="p-6 text-center">
               <p className="text-sm text-gray-600 mb-2">Categories</p>
-              <p className="text-4xl font-bold text-[#1f2a7c]">{categories.length}</p>
+              <p className="text-4xl font-bold text-[#d0dc36]">{categories.length}</p>
             </CardContent>
           </Card>
 
@@ -216,12 +216,12 @@ export default function ManageProductsPage() {
                 placeholder="Search by name or SKU..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="h-12 rounded-xl border-gray-200 focus:border-[#1f2a7c] focus:ring-[#1f2a7c]"
+                className="h-12 rounded-xl border-gray-200 focus:border-[#d0dc36] focus:ring-[#d0dc36]"
               />
 
               {/* Category Filter */}
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="h-12 rounded-xl border-gray-200 focus:border-[#1f2a7c] focus:ring-[#1f2a7c]">
+                <SelectTrigger className="h-12 rounded-xl border-gray-200 focus:border-[#d0dc36] focus:ring-[#d0dc36]">
                   <SelectValue placeholder="Filter by category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -234,7 +234,7 @@ export default function ManageProductsPage() {
 
               {/* Stock Filter */}
               <Select value={stockFilter} onValueChange={setStockFilter}>
-                <SelectTrigger className="h-12 rounded-xl border-gray-200 focus:border-[#1f2a7c] focus:ring-[#1f2a7c]">
+                <SelectTrigger className="h-12 rounded-xl border-gray-200 focus:border-[#d0dc36] focus:ring-[#d0dc36]">
                   <SelectValue placeholder="Filter by stock" />
                 </SelectTrigger>
                 <SelectContent>
@@ -251,7 +251,7 @@ export default function ManageProductsPage() {
         {/* Products Table */}
         <Card className="shadow-lg rounded-2xl border-0 bg-white">
           <CardHeader>
-            <CardTitle className="text-[#1f2a7c]">
+            <CardTitle className="text-[#d0dc36]">
               Products ({filteredProducts.length})
             </CardTitle>
           </CardHeader>
@@ -290,7 +290,7 @@ export default function ManageProductsPage() {
                               <div className="w-12 h-12 bg-gray-200 rounded-lg"></div>
                             )}
                             <div>
-                              <p className="font-semibold text-[#1f2a7c]">{product.name}</p>
+                              <p className="font-semibold text-[#d0dc36]">{product.name}</p>
                               <p className="text-sm text-gray-500 line-clamp-1">
                                 {product.description}
                               </p>
@@ -301,12 +301,12 @@ export default function ManageProductsPage() {
                           <span className="font-mono text-sm text-gray-600">{product.sku}</span>
                         </td>
                         <td className="p-4">
-                          <Badge variant="secondary" className="bg-blue-100 text-[#1f2a7c]">
+                          <Badge variant="secondary" className="bg-yellow-100 text-[#c5d030]">
                             {product.category}
                           </Badge>
                         </td>
                         <td className="p-4">
-                          <span className="font-semibold text-[#1f2a7c]">
+                          <span className="font-semibold text-[#d0dc36]">
                             Ksh {product.price.toLocaleString()}
                           </span>
                         </td>
@@ -340,7 +340,7 @@ export default function ManageProductsPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => window.open(`/products/${product._id}`, '_blank')}
-                              className="rounded-lg text-[#1f2a7c] border-[#1f2a7c] hover:bg-[#1f2a7c] hover:text-white"
+                              className="rounded-lg text-[#d0dc36] border-[#d0dc36] hover:bg-[#d0dc36] hover:text-white"
                             >
                               View
                             </Button>
@@ -348,7 +348,7 @@ export default function ManageProductsPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => router.push(`/admin/products/edit/${product._id}`)}
-                              className="rounded-lg text-[#2535a0] border-[#2535a0] hover:bg-[#2535a0] hover:text-white"
+                              className="rounded-lg text-[#c5d030] border-[#c5d030] hover:bg-[#c5d030] hover:text-white"
                             >
                               Edit
                             </Button>
@@ -374,7 +374,7 @@ export default function ManageProductsPage() {
               <div className="mt-6 text-center">
                 <Button
                   onClick={() => setDisplayCount(prev => prev + ITEMS_PER_PAGE)}
-                  className="bg-gradient-to-r from-[#1f2a7c] to-[#2535a0] hover:opacity-90 rounded-xl px-8 py-3"
+                  className="bg-gradient-to-r from-[#d0dc36] to-[#c5d030] hover:opacity-90 rounded-xl px-8 py-3"
                 >
                   View More Products ({allFilteredProducts.length - displayCount} remaining)
                 </Button>

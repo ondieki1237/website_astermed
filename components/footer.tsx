@@ -5,7 +5,7 @@ import { Mail, Phone, MapPin, Facebook, Twitter, Linkedin } from 'lucide-react'
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-br from-[#1a2460] via-[#1f2a7c] to-[#1a2460] text-white mt-auto relative overflow-hidden">
+    <footer className="bg-gradient-to-br from-[#b8c92e] via-[#d0dc36] to-[#b8c92e] text-gray-800 mt-auto relative overflow-hidden">
       {/* Decorative elements */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-[#e53935]/5 rounded-full blur-3xl"></div>
       <div className="absolute bottom-0 left-0 w-80 h-80 bg-white/5 rounded-full blur-3xl"></div>

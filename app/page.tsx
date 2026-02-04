@@ -65,7 +65,7 @@ export default function Home() {
         {/* Main Content */}
         <div className="flex-1 space-y-6">
           {/* Hero Banner */}
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1f2a7c] via-[#2a3a8c] to-[#1f2a7c] p-8 lg:p-12 shadow-xl">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#d0dc36] via-[#2a3a8c] to-[#d0dc36] p-8 lg:p-12 shadow-xl">
             <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]"></div>
             <div className="relative z-10">
               <h1 className="text-3xl lg:text-5xl font-bold text-white mb-4 tracking-tight">
@@ -91,11 +91,11 @@ export default function Home() {
           {/* Products Section */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold text-[#1f2a7c] tracking-tight">
+              <h2 className="text-2xl font-bold text-[#d0dc36] tracking-tight">
                 Featured Products
               </h2>
               {usedFallback && (
-                <Link href="/products" className="text-sm text-[#1f2a7c] hover:text-[#162060] font-medium transition-colors">
+                <Link href="/products" className="text-sm text-[#d0dc36] hover:text-[#162060] font-medium transition-colors">
                   View All →
                 </Link>
               )}
@@ -103,7 +103,7 @@ export default function Home() {
 
             {loading ? (
               <div className="text-center py-20">
-                <div className="inline-block w-12 h-12 border-4 border-[#1f2a7c]/20 border-t-[#1f2a7c] rounded-full animate-spin"></div>
+                <div className="inline-block w-12 h-12 border-4 border-[#d0dc36]/20 border-t-[#d0dc36] rounded-full animate-spin"></div>
                 <p className="text-sm text-gray-500 mt-4">Loading products...</p>
               </div>
             ) : products.length === 0 ? (
@@ -117,7 +117,7 @@ export default function Home() {
                   <div
                     onClick={() => router.push(`/products/${product._id || product.id}`)}
                     className="bg-white border border-gray-100 rounded-xl overflow-hidden
-                  hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#1f2a7c]/10 hover:border-[#1f2a7c]/30
+                  hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#d0dc36]/10 hover:border-[#d0dc36]/30
                   transition-all duration-300 cursor-pointer flex flex-col h-full group"
                   >
                     {/* Image – Fixed height aspect-square */}
@@ -139,29 +139,12 @@ export default function Home() {
 
                     {/* Info – consistent padding and fixed bottom area */}
                     <div className="p-3 flex flex-col flex-1">
-                      <h3 className="font-semibold text-[#1f2a7c] text-xs leading-snug mb-2 line-clamp-2 min-h-[32px]">
+                      <h3 className="font-semibold text-gray-900 text-xs leading-snug mb-2 line-clamp-2 min-h-[32px]">
                         {product.name}
                       </h3>
 
                       <div className="mt-auto pt-2">
-                        <div className="flex items-center justify-center gap-2 mb-3">
-                          {product.isOnOffer ? (
-                            <>
-                              <span className="text-xs line-through text-gray-400">
-                                {formatPrice(product.price)}
-                              </span>
-                              <span className="text-base font-bold text-[#1f2a7c]">
-                                {formatPrice(
-                                  product.price * (1 - (product.discountPercentage || 0) / 100)
-                                )}
-                              </span>
-                            </>
-                          ) : (
-                            <span className="text-base font-bold text-[#1f2a7c]">
-                              {formatPrice(product.price)}
-                            </span>
-                          )}
-                        </div>
+                        {/* Prices hidden - quote-based system */}
 
                           <div className="flex gap-2">
                           <button
@@ -178,7 +161,7 @@ export default function Home() {
                                 1
                               )
                             }}
-                            className="flex-1 bg-gradient-to-r from-[#1f2a7c] to-[#2a3a8c] text-white text-xs font-bold px-3 py-2 rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-200"
+                            className="flex-1 bg-gradient-to-r from-[#d0dc36] to-[#2a3a8c] text-white text-xs font-bold px-3 py-2 rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-200"
                           >
                             Add to Cart
                           </button>
@@ -186,7 +169,7 @@ export default function Home() {
                           <Link
                             href={`/products/${product._id || product.id}`}
                             onClick={(e) => e.stopPropagation()}
-                            className="flex items-center justify-center border-2 border-[#1f2a7c] text-[#1f2a7c] text-xs font-bold px-3 py-2 rounded-lg hover:bg-[#1f2a7c] hover:text-white transition-all duration-200"
+                            className="flex items-center justify-center border-2 border-[#d0dc36] text-[#d0dc36] text-xs font-bold px-3 py-2 rounded-lg hover:bg-[#d0dc36] hover:text-white transition-all duration-200"
                           >
                             View
                           </Link>

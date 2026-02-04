@@ -119,7 +119,7 @@ export default function AdminOrdersPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending': return 'bg-yellow-100 text-yellow-700'
-      case 'processing': return 'bg-blue-100 text-blue-700'
+      case 'processing': return 'bg-yellow-100 text-yellow-700'
       case 'shipped': return 'bg-purple-100 text-purple-700'
       case 'delivered': return 'bg-green-100 text-green-700'
       case 'cancelled': return 'bg-red-100 text-red-700'
@@ -129,7 +129,7 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-[#f9fbff] to-white">
-      <div className="sticky top-0 z-40 bg-gradient-to-r from-[#1f2a7c] to-[#2535a0] text-white shadow-xl">
+      <div className="sticky top-0 z-40 bg-gradient-to-r from-[#d0dc36] to-[#c5d030] text-white shadow-xl">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
@@ -161,28 +161,28 @@ export default function AdminOrdersPage() {
               <Button
                 variant={statusFilter === 'all' ? 'default' : 'outline'}
                 onClick={() => setStatusFilter('all')}
-                className={statusFilter === 'all' ? 'bg-[#1f2a7c]' : ''}
+                className={statusFilter === 'all' ? 'bg-[#d0dc36]' : ''}
               >
                 All
               </Button>
               <Button
                 variant={statusFilter === 'pending' ? 'default' : 'outline'}
                 onClick={() => setStatusFilter('pending')}
-                className={statusFilter === 'pending' ? 'bg-[#1f2a7c]' : ''}
+                className={statusFilter === 'pending' ? 'bg-[#d0dc36]' : ''}
               >
                 Pending
               </Button>
               <Button
                 variant={statusFilter === 'processing' ? 'default' : 'outline'}
                 onClick={() => setStatusFilter('processing')}
-                className={statusFilter === 'processing' ? 'bg-[#1f2a7c]' : ''}
+                className={statusFilter === 'processing' ? 'bg-[#d0dc36]' : ''}
               >
                 Processing
               </Button>
               <Button
                 variant={statusFilter === 'delivered' ? 'default' : 'outline'}
                 onClick={() => setStatusFilter('delivered')}
-                className={statusFilter === 'delivered' ? 'bg-[#1f2a7c]' : ''}
+                className={statusFilter === 'delivered' ? 'bg-[#d0dc36]' : ''}
               >
                 Delivered
               </Button>
@@ -193,7 +193,7 @@ export default function AdminOrdersPage() {
         {/* Orders Table */}
         {loading ? (
           <div className="text-center py-12">
-            <div className="inline-block w-12 h-12 border-4 border-[#1f2a7c]/20 border-t-[#1f2a7c] rounded-full animate-spin"></div>
+            <div className="inline-block w-12 h-12 border-4 border-[#d0dc36]/20 border-t-[#d0dc36] rounded-full animate-spin"></div>
           </div>
         ) : (
           <Card className="border border-gray-100 shadow-lg rounded-2xl overflow-hidden">
@@ -214,7 +214,7 @@ export default function AdminOrdersPage() {
                   {filteredOrders.map((order) => (
                     <tr key={order._id} className="border-b hover:bg-gray-50 transition-colors">
                       <td className="py-4 px-6">
-                        <span className="font-semibold text-[#1f2a7c]">#{order.orderNumber}</span>
+                        <span className="font-semibold text-[#d0dc36]">#{order.orderNumber}</span>
                       </td>
                       <td className="py-4 px-6">
                         <div>
@@ -239,7 +239,7 @@ export default function AdminOrdersPage() {
                       </td>
                       <td className="py-4 px-6">
                         <div className="flex gap-2">
-                          <Button size="sm" variant="outline" className="hover:bg-[#1f2a7c] hover:text-white">
+                          <Button size="sm" variant="outline" className="hover:bg-[#d0dc36] hover:text-white">
                             <Eye className="w-4 h-4" />
                           </Button>
                           <select

@@ -82,13 +82,13 @@ export default function Header() {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 text-[#1f2a7c] hover:bg-[#1f2a7c]/10 rounded-lg transition-all duration-200"
+            className="lg:hidden p-2 text-[#d0dc36] hover:bg-[#d0dc36]/10 rounded-lg transition-all duration-200"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
 
           {/* Mobile Cart */}
-          <Link href="/cart" className="lg:hidden relative p-2 text-[#1f2a7c] hover:bg-[#1f2a7c]/10 rounded-lg transition-all duration-200">
+          <Link href="/cart" className="lg:hidden relative p-2 text-[#d0dc36] hover:bg-[#d0dc36]/10 rounded-lg transition-all duration-200">
             <ShoppingCart className="w-6 h-6" />
             {count > 0 && (
               <span className="absolute -top-1 -right-1 bg-gradient-to-br from-[#e53935] to-[#d32f2f] text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg animate-pulse">{count}</span>
@@ -96,7 +96,7 @@ export default function Header() {
           </Link>
 
           {/* Center Navigation Pill - Enhanced */}
-          <div ref={containerRef} className="hidden lg:flex items-center bg-gradient-to-r from-[#1f2a7c] via-[#2535a0] to-[#1f2a7c] text-white rounded-full px-3 py-2 gap-3 flex-1 max-w-4xl relative shadow-lg">
+          <div ref={containerRef} className="hidden lg:flex items-center bg-gradient-to-r from-[#d0dc36] via-[#c5d030] to-[#d0dc36] text-white rounded-full px-3 py-2 gap-3 flex-1 max-w-4xl relative shadow-lg">
             {/* Home Icon */}
             <Link href="/" className="flex items-center justify-center hover:bg-white/20 transition-all duration-200 p-2 bg-white/10 rounded-full group">
               <Home className="w-4 h-4 group-hover:scale-110 transition-transform" />
@@ -123,12 +123,12 @@ export default function Header() {
                 onKeyDown={(e) => { if (e.key === 'Enter') doSearch(searchQuery) }}
                 className="bg-transparent text-sm outline-none text-gray-800 placeholder-gray-400 w-full"
               />
-              <Search onClick={() => doSearch(searchQuery)} className="w-4 h-4 text-[#1f2a7c] flex-shrink-0 cursor-pointer hover:scale-110 transition-transform" />
+              <Search onClick={() => doSearch(searchQuery)} className="w-4 h-4 text-[#d0dc36] flex-shrink-0 cursor-pointer hover:scale-110 transition-transform" />
             </div>
 
             {/* Cart Icon - Inside Nav */}
             <Link href="/cart" className="relative flex-shrink-0 ml-2 group">
-              <div className="bg-white text-[#1f2a7c] rounded-full p-2 hover:bg-white/95 transition-all duration-200 group-hover:shadow-lg">
+              <div className="bg-white text-[#d0dc36] rounded-full p-2 hover:bg-white/95 transition-all duration-200 group-hover:shadow-lg">
                 <ShoppingCart className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 {count > 0 && (
                   <span className="absolute -top-1 -right-1 bg-gradient-to-br from-[#e53935] to-[#d32f2f] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg animate-pulse">{count}</span>
@@ -144,7 +144,7 @@ export default function Header() {
                     <img src={resolveImageSrc(s.image)} alt={s.name} className="w-14 h-14 object-cover rounded-lg shadow-sm" />
                     <div className="flex-1">
                       <div className="font-semibold text-gray-800 text-sm">{s.name}</div>
-                      <div className="text-sm text-[#1f2a7c] font-bold">{s.isOnOffer ? formatPrice((s.price || 0) * (1 - (s.discountPercentage || 0) / 100)) : (s.price ? formatPrice(s.price) : '')}</div>
+                      <div className="text-sm text-[#d0dc36] font-bold">{s.isOnOffer ? formatPrice((s.price || 0) * (1 - (s.discountPercentage || 0) / 100)) : (s.price ? formatPrice(s.price) : '')}</div>
                     </div>
                   </div>
                 ))}
@@ -154,7 +154,7 @@ export default function Header() {
         </div>
 
         {/* Mobile Navigation */}
-        <div className="lg:hidden mt-4 flex items-center gap-3 bg-gradient-to-r from-[#1f2a7c] to-[#2535a0] text-white rounded-2xl px-4 py-3 shadow-lg">
+        <div className="lg:hidden mt-4 flex items-center gap-3 bg-gradient-to-r from-[#d0dc36] to-[#c5d030] text-white rounded-2xl px-4 py-3 shadow-lg">
           <input
             type="text"
             placeholder="Search products..."
@@ -175,14 +175,14 @@ export default function Header() {
             onClick={() => setMobileMenuOpen(false)}
           />
           <div className="relative w-80 max-w-[85vw] bg-white h-full shadow-2xl overflow-y-auto animate-in slide-in-from-left duration-300">
-            <div className="p-5 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-[#1f2a7c] to-[#2535a0] text-white">
+            <div className="p-5 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-[#d0dc36] to-[#c5d030] text-white">
               <span className="font-bold text-base">Menu</span>
               <button onClick={() => setMobileMenuOpen(false)} className="hover:bg-white/20 rounded-lg p-2 transition-all">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="p-3">
-              <Link href="/" className="flex items-center gap-3 p-4 text-sm font-semibold text-[#1f2a7c] hover:bg-gradient-to-r hover:from-[#f9fbff] hover:to-white rounded-xl transition-all duration-200">
+              <Link href="/" className="flex items-center gap-3 p-4 text-sm font-semibold text-[#d0dc36] hover:bg-gradient-to-r hover:from-[#f9fbff] hover:to-white rounded-xl transition-all duration-200">
                 <Home className="w-5 h-5" /> Home
               </Link>
               <div className="my-3 border-t border-gray-100" />
@@ -191,9 +191,9 @@ export default function Header() {
               </div>
               <div className="my-3 border-t border-gray-100" />
               <div className="space-y-1 p-1">
-                <Link href="/news" className="block p-3 text-sm font-medium text-gray-700 hover:text-[#1f2a7c] hover:bg-gradient-to-r hover:from-[#f9fbff] hover:to-white rounded-xl transition-all">Contact Us</Link>
-                <Link href="/blogs" className="block p-3 text-sm font-medium text-gray-700 hover:text-[#1f2a7c] hover:bg-gradient-to-r hover:from-[#f9fbff] hover:to-white rounded-xl transition-all">Blog</Link>
-                <Link href="/jobs" className="block p-3 text-sm font-medium text-gray-700 hover:text-[#1f2a7c] hover:bg-gradient-to-r hover:from-[#f9fbff] hover:to-white rounded-xl transition-all">Career</Link>
+                <Link href="/news" className="block p-3 text-sm font-medium text-gray-700 hover:text-[#d0dc36] hover:bg-gradient-to-r hover:from-[#f9fbff] hover:to-white rounded-xl transition-all">Contact Us</Link>
+                <Link href="/blogs" className="block p-3 text-sm font-medium text-gray-700 hover:text-[#d0dc36] hover:bg-gradient-to-r hover:from-[#f9fbff] hover:to-white rounded-xl transition-all">Blog</Link>
+                <Link href="/jobs" className="block p-3 text-sm font-medium text-gray-700 hover:text-[#d0dc36] hover:bg-gradient-to-r hover:from-[#f9fbff] hover:to-white rounded-xl transition-all">Career</Link>
               </div>
             </div>
           </div>

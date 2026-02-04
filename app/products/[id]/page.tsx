@@ -126,11 +126,11 @@ export default function ProductDetailPage() {
         <div className="max-w-7xl mx-auto">
           {/* Breadcrumb */}
           <div className="flex gap-2 text-sm mb-8 items-center">
-            <Link href="/" className="text-gray-500 hover:text-[#1f2a7c] transition-colors">Home</Link>
+            <Link href="/" className="text-gray-500 hover:text-[#d0dc36] transition-colors">Home</Link>
             <span className="text-gray-300">•</span>
-            <Link href="/products" className="text-gray-500 hover:text-[#1f2a7c] transition-colors">Products</Link>
+            <Link href="/products" className="text-gray-500 hover:text-[#d0dc36] transition-colors">Products</Link>
             <span className="text-gray-300">•</span>
-            <span className="text-[#1f2a7c] font-medium truncate max-w-xs">{product!.name}</span>
+            <span className="text-gray-900 font-medium truncate max-w-xs">{product!.name}</span>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 mb-16">
@@ -158,8 +158,8 @@ export default function ProductDetailPage() {
                       onClick={() => setSelectedImage(idx)}
                       className={`flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all duration-200 ${
                         selectedImage === idx 
-                          ? 'border-[#1f2a7c] shadow-lg shadow-[#1f2a7c]/20 scale-105' 
-                          : 'border-gray-200 hover:border-[#1f2a7c]/50 hover:shadow-md'
+                          ? 'border-[#d0dc36] shadow-lg shadow-[#d0dc36]/20 scale-105' 
+                          : 'border-gray-200 hover:border-[#d0dc36]/50 hover:shadow-md'
                       }`}
                     >
                           <img src={resolveImageSrc(img)} alt={`View ${idx + 1}`} className="w-full h-full object-cover" />
@@ -172,7 +172,7 @@ export default function ProductDetailPage() {
             {/* Product Info */}
             <div className="space-y-6">
               {/* Category Badge */}
-              <div className="inline-block px-4 py-2 bg-gradient-to-r from-[#1f2a7c]/10 to-[#2535a0]/10 text-[#1f2a7c] rounded-full text-sm font-semibold">
+              <div className="inline-block px-4 py-2 bg-gradient-to-r from-[#d0dc36]/10 to-[#c5d030]/10 text-[#d0dc36] rounded-full text-sm font-semibold">
                 {product!.category}
               </div>
 
@@ -192,21 +192,10 @@ export default function ProductDetailPage() {
                 <span className="text-sm font-medium text-gray-700">{product!.rating} ({product!.reviewCount} reviews)</span>
               </div>
 
-              {/* Price */}
-              <div className="p-6 bg-gradient-to-br from-[#f9fbff] to-white rounded-2xl border border-gray-100 shadow-lg">
-                <div className="flex items-baseline gap-4">
-                  <p className="text-4xl font-bold text-[#1f2a7c]">{formatPrice(discountedPrice)}</p>
-                  {product!.discountPercentage && (
-                    <div>
-                      <p className="text-xl line-through text-gray-400">{formatPrice(product!.price)}</p>
-                      <p className="text-sm text-[#e53935] font-semibold">Save {product!.discountPercentage}%</p>
-                    </div>
-                  )}
-                </div>
-              </div>
+              {/* Price hidden - quote-based system */}
 
-              {/* Stock Status */}
-              <div className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-100">
+              {/* Stock hidden - quote-based system */}
+              <div className="hidden">
                 {product!.stock > 0 ? (
                   <>
                     <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
@@ -261,7 +250,7 @@ export default function ProductDetailPage() {
                       quantity
                     )
                   }
-                  className="flex-1 bg-gradient-to-r from-[#1f2a7c] to-[#2535a0] hover:shadow-xl hover:scale-105 transition-all duration-200 text-white py-6 text-lg font-bold rounded-xl"
+                  className="flex-1 bg-gradient-to-r from-[#d0dc36] to-[#c5d030] hover:shadow-xl hover:scale-105 transition-all duration-200 text-white py-6 text-lg font-bold rounded-xl"
                 >
                   Add to Cart
                 </Button>
@@ -270,14 +259,14 @@ export default function ProductDetailPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setLiked(!liked)}
-                  className="flex-1 px-6 py-3 border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-[#1f2a7c] transition-all duration-200 flex items-center justify-center gap-2 group"
+                  className="flex-1 px-6 py-3 border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-[#d0dc36] transition-all duration-200 flex items-center justify-center gap-2 group"
                 >
                   <Heart className={`w-5 h-5 transition-all duration-200 ${liked ? 'fill-[#e53935] text-[#e53935]' : 'text-gray-600 group-hover:text-[#e53935]'}`} />
                   <span className="font-medium text-sm">{liked ? 'Saved' : 'Save'}</span>
                 </button>
 
-                <button onClick={handleShare} className="flex-1 px-6 py-3 border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-[#1f2a7c] transition-all duration-200 flex items-center justify-center gap-2 group">
-                  <Share2 className="w-5 h-5 text-gray-600 group-hover:text-[#1f2a7c] transition-colors" />
+                <button onClick={handleShare} className="flex-1 px-6 py-3 border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-[#d0dc36] transition-all duration-200 flex items-center justify-center gap-2 group">
+                  <Share2 className="w-5 h-5 text-gray-600 group-hover:text-[#d0dc36] transition-colors" />
                   <span className="font-medium text-sm">Share</span>
                 </button>
               </div>
@@ -285,8 +274,8 @@ export default function ProductDetailPage() {
               {/* Trust Badges */}
               <div className="grid grid-cols-3 gap-4 p-6 bg-gradient-to-br from-white to-[#f9fbff] rounded-2xl border border-gray-100 shadow-md">
                 <div className="flex flex-col items-center gap-3 text-center">
-                  <div className="w-14 h-14 bg-gradient-to-br from-[#1f2a7c]/10 to-[#2535a0]/10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Truck className="w-6 h-6 text-[#1f2a7c]" />
+                  <div className="w-14 h-14 bg-gradient-to-br from-[#d0dc36]/10 to-[#c5d030]/10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Truck className="w-6 h-6 text-[#d0dc36]" />
                   </div>
                   <div>
                     <p className="font-bold text-sm text-gray-900">Fast Shipping</p>
@@ -294,8 +283,8 @@ export default function ProductDetailPage() {
                   </div>
                 </div>
                 <div className="flex flex-col items-center gap-3 text-center">
-                  <div className="w-14 h-14 bg-gradient-to-br from-[#1f2a7c]/10 to-[#2535a0]/10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Shield className="w-6 h-6 text-[#1f2a7c]" />
+                  <div className="w-14 h-14 bg-gradient-to-br from-[#d0dc36]/10 to-[#c5d030]/10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Shield className="w-6 h-6 text-[#d0dc36]" />
                   </div>
                   <div>
                     <p className="font-bold text-sm text-gray-900">Secure Payment</p>
@@ -303,8 +292,8 @@ export default function ProductDetailPage() {
                   </div>
                 </div>
                 <div className="flex flex-col items-center gap-3 text-center">
-                  <div className="w-14 h-14 bg-gradient-to-br from-[#1f2a7c]/10 to-[#2535a0]/10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <RotateCcw className="w-6 h-6 text-[#1f2a7c]" />
+                  <div className="w-14 h-14 bg-gradient-to-br from-[#d0dc36]/10 to-[#c5d030]/10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <RotateCcw className="w-6 h-6 text-[#d0dc36]" />
                   </div>
                   <div>
                     <p className="font-bold text-sm text-gray-900">Easy Returns</p>
@@ -324,13 +313,13 @@ export default function ProductDetailPage() {
                   onClick={() => setActiveTab(tab)}
                   className={`py-4 px-8 border-b-2 transition-all duration-200 font-semibold text-sm capitalize relative ${
                     activeTab === tab 
-                      ? 'border-[#1f2a7c] text-[#1f2a7c] bg-white' 
-                      : 'border-transparent text-gray-500 hover:text-[#1f2a7c] hover:bg-white/50'
+                      ? 'border-[#d0dc36] text-[#d0dc36] bg-white' 
+                      : 'border-transparent text-gray-500 hover:text-[#d0dc36] hover:bg-white/50'
                   }`}
                 >
                   {tab}
                   {activeTab === tab && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#1f2a7c] to-[#e53935]"></div>
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#d0dc36] to-[#e53935]"></div>
                   )}
                 </button>
               ))}
@@ -409,7 +398,7 @@ export default function ProductDetailPage() {
                 </div>
 
                 {/* Write Review */}
-                <Button className="bg-gradient-to-r from-[#1f2a7c] to-[#2535a0] hover:shadow-xl transition-all duration-200 text-white font-bold rounded-xl" onClick={() => setShowReviewModal(true)}>Write a Review</Button>
+                <Button className="bg-gradient-to-r from-[#d0dc36] to-[#c5d030] hover:shadow-xl transition-all duration-200 text-white font-bold rounded-xl" onClick={() => setShowReviewModal(true)}>Write a Review</Button>
               </div>
             )}
             </div>

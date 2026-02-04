@@ -105,7 +105,7 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="inline-block w-16 h-16 border-4 border-gray-200 border-t-[#1f2a7c] rounded-full animate-spin"></div>
+          <div className="inline-block w-16 h-16 border-4 border-gray-200 border-t-[#d0dc36] rounded-full animate-spin"></div>
           <p className="mt-4 text-gray-600">Loading dashboard...</p>
         </div>
       </div>
@@ -114,7 +114,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="sticky top-0 z-40 bg-[#1f2a7c] text-white shadow">
+      <div className="sticky top-0 z-40 bg-[#d0dc36] text-white shadow">
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-semibold">AsterMed Admin Dashboard</h1>
@@ -122,7 +122,7 @@ export default function AdminDashboard() {
           <Button 
             onClick={handleLogout} 
             variant="outline" 
-            className="text-white border-white hover:bg-white hover:text-[#1f2a7c] bg-transparent"
+            className="text-white border-white hover:bg-white hover:text-[#d0dc36] bg-transparent"
           >
             Logout
           </Button>
@@ -142,7 +142,7 @@ export default function AdminDashboard() {
 
           <Card className="p-6 bg-white border border-gray-200">
             <div className="flex items-start justify-between mb-3">
-              <ShoppingCart className="w-8 h-8 text-[#1f2a7c]" />
+              <ShoppingCart className="w-8 h-8 text-[#d0dc36]" />
             </div>
             <p className="text-gray-600 text-sm mb-1">Total Orders</p>
             <p className="text-3xl font-semibold text-gray-900">{stats?.totalOrders || 0}</p>
@@ -150,7 +150,7 @@ export default function AdminDashboard() {
 
           <Card className="p-6 bg-white border border-gray-200">
             <div className="flex items-start justify-between mb-3">
-              <Users className="w-8 h-8 text-[#2535a0]" />
+              <Users className="w-8 h-8 text-[#c5d030]" />
             </div>
             <p className="text-gray-600 text-sm mb-1">Total Customers</p>
             <p className="text-3xl font-semibold text-gray-900">{stats?.totalCustomers || 0}</p>
@@ -158,7 +158,7 @@ export default function AdminDashboard() {
 
           <Card className="p-6 bg-white border border-gray-200">
             <div className="flex items-start justify-between mb-3">
-              <Package className="w-8 h-8 text-[#1f2a7c]" />
+              <Package className="w-8 h-8 text-[#d0dc36]" />
             </div>
             <p className="text-gray-600 text-sm mb-1">Total Products</p>
             <p className="text-3xl font-semibold text-gray-900">{stats?.totalProducts || 0}</p>
@@ -245,7 +245,7 @@ export default function AdminDashboard() {
                   ))}
                 </div>
                 <Link href="/admin/orders">
-                  <Button className="w-full mt-4 bg-gradient-to-r from-[#1f2a7c] to-[#2535a0]">
+                  <Button className="w-full mt-4 bg-gradient-to-r from-[#d0dc36] to-[#c5d030]">
                     View All Orders
                   </Button>
                 </Link>
@@ -256,7 +256,7 @@ export default function AdminDashboard() {
                 <div className="space-y-3">
                   {stats?.topProducts?.slice(0, 5).map((product, idx) => (
                     <div key={product._id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                      <div className="w-8 h-8 bg-[#1f2a7c] text-white rounded-full flex items-center justify-center font-semibold text-sm">
+                      <div className="w-8 h-8 bg-[#d0dc36] text-white rounded-full flex items-center justify-center font-semibold text-sm">
                         {idx + 1}
                       </div>
                       <div className="flex-1">
@@ -285,7 +285,7 @@ export default function AdminDashboard() {
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold text-gray-900">All Orders</h2>
                 <Link href="/admin/orders">
-                  <Button className="bg-[#1f2a7c] hover:bg-[#2535a0]">
+                  <Button className="bg-[#d0dc36] hover:bg-[#c5d030]">
                     Manage Orders
                   </Button>
                 </Link>
@@ -299,7 +299,7 @@ export default function AdminDashboard() {
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold text-gray-900">Products</h2>
                 <Link href="/admin/products">
-                  <Button className="bg-[#1f2a7c] hover:bg-[#2535a0]">
+                  <Button className="bg-[#d0dc36] hover:bg-[#c5d030]">
                     Manage Products
                   </Button>
                 </Link>
@@ -313,7 +313,7 @@ export default function AdminDashboard() {
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold text-gray-900">Customers</h2>
                 <Link href="/admin/customers">
-                  <Button className="bg-[#1f2a7c] hover:bg-[#2535a0]">
+                  <Button className="bg-[#d0dc36] hover:bg-[#c5d030]">
                     View Customers
                   </Button>
                 </Link>
@@ -327,7 +327,7 @@ export default function AdminDashboard() {
               <h2 className="text-xl font-semibold text-gray-900 mb-4">Analytics</h2>
               <p className="text-gray-600 mb-6">View detailed analytics</p>
               <Link href="/admin/analytics">
-                <Button className="bg-[#1f2a7c] hover:bg-[#2535a0]">
+                <Button className="bg-[#d0dc36] hover:bg-[#c5d030]">
                   View Analytics
                 </Button>
               </Link>
@@ -340,7 +340,7 @@ export default function AdminDashboard() {
                 <h3 className="text-base font-semibold mb-2">Blogs</h3>
                 <p className="text-sm text-gray-600 mb-4">Manage blog content</p>
                 <Link href="/admin/blogs">
-                  <Button className="w-full bg-[#1f2a7c] hover:bg-[#2535a0]">
+                  <Button className="w-full bg-[#d0dc36] hover:bg-[#c5d030]">
                     Manage Blogs
                   </Button>
                 </Link>
@@ -350,7 +350,7 @@ export default function AdminDashboard() {
                 <h3 className="text-base font-semibold mb-2">News</h3>
                 <p className="text-sm text-gray-600 mb-4">Manage news</p>
                 <Link href="/admin/news">
-                  <Button className="w-full bg-[#1f2a7c] hover:bg-[#2535a0]">
+                  <Button className="w-full bg-[#d0dc36] hover:bg-[#c5d030]">
                     Manage News
                   </Button>
                 </Link>
@@ -360,7 +360,7 @@ export default function AdminDashboard() {
                 <h3 className="text-base font-semibold mb-2">Jobs</h3>
                 <p className="text-sm text-gray-600 mb-4">Manage job postings</p>
                 <Link href="/admin/jobs">
-                  <Button className="w-full bg-[#1f2a7c] hover:bg-[#2535a0]">
+                  <Button className="w-full bg-[#d0dc36] hover:bg-[#c5d030]">
                     Manage Jobs
                   </Button>
                 </Link>

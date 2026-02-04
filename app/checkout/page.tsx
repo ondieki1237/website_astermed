@@ -5,18 +5,13 @@ import Footer from '@/components/footer'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Link from 'next/link'
 import { useState } from 'react'
-import { formatPrice } from '@/lib/currency'
 import useCart from '@/hooks/use-cart'
 
 export default function CheckoutPage() {
-  const [step, setStep] = useState('shipping')
-  const [orderPlaced, setOrderPlaced] = useState(false)
-  const { items, subtotal, clearCart } = useCart()
-  const [orderTotal, setOrderTotal] = useState(0)
-  const [orderId, setOrderId] = useState('')
+  const [quoteSubmitted, setQuoteSubmitted] = useState(false)
+  const { items, clearCart } = useCart()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -34,17 +29,10 @@ export default function CheckoutPage() {
     facility: '',
     county: '',
     location: '',
-    phoneForPayment: '',
   })
 
-  const handlePlaceOrder = (amount = 0) => {
-    setOrderTotal(amount)
-    clearCart()
-    setOrderPlaced(true)
-  }
-
-  // Create order and save to database
-  const createOrder = async () => {
+  // Submit quote request
+  const handleQuoteRequest = async () => {
     try {
       setLoading(true)
       setError('')
@@ -53,10 +41,10 @@ export default function CheckoutPage() {
       if (!form.name || !form.email || !form.contact) {
         setError('Please fill in all required fields')
         setLoading(false)
-        return null
+        return
       }
 
-      const orderData = {
+      const quoteData = {
         customer: {
           name: form.name,
           email: form.email,
@@ -69,122 +57,57 @@ export default function CheckoutPage() {
         items: items.map(item => ({
           productId: item.id,
           name: item.name,
-          price: item.price,
           quantity: item.quantity,
           image: item.image,
         })),
-        subtotal,
-        shipping,
-        total,
-        paymentPhone: form.phoneForPayment || form.contact,
+        status: 'quote_requested',
+        type: 'quote',
       }
 
       const response = await fetch(`${API_BASE}/api/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderData),
+        body: JSON.stringify(quoteData),
       })
 
       const data = await response.json()
       
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to create order')
+        throw new Error(data.message || 'Failed to submit quote request')
       }
 
+      clearCart()
+      setQuoteSubmitted(true)
       setLoading(false)
-      return data._id
     } catch (err: any) {
-      setError(err.message || 'Failed to create order')
-      setLoading(false)
-      return null
-    }
-  }
-
-  const computeShipping = () => {
-    // Free within Nairobi
-    if (form.county === 'Nairobi') return 0
-
-    // determine package size from total quantity in cart
-    const totalQty = items?.reduce((s, it) => s + (it.quantity || 0), 0) || 0
-    const size = totalQty <= 2 ? 'small' : totalQty <= 5 ? 'medium' : 'large'
-
-    const baseBySize: Record<string, number> = { small: 500, medium: 1200, large: 2500 }
-    const near = ['Kiambu', 'Kajiado', 'Machakos']
-    const far = [
-      'Mombasa','Wajir','Mandera','Marsabit','Turkana','Samburu','Garissa'
-    ]
-
-    const distanceMultiplier = near.includes(form.county) ? 1 : far.includes(form.county) ? 2 : 1.5
-
-    return Math.round((baseBySize[size] || 500) * distanceMultiplier)
-  }
-
-  const shipping = computeShipping()
-  const total = Math.round(subtotal + shipping)
-
-  const handleMpesaPush = async () => {
-    try {
-      setLoading(true)
-      setError('')
-
-      // Step 1: Create order and save to database (captures abandoned cart)
-      const newOrderId = await createOrder()
-      if (!newOrderId) {
-        return // Error already set by createOrder
-      }
-
-      setOrderId(newOrderId)
-
-      // Step 2: Initiate M-Pesa STK Push
-      const response = await fetch(`${API_BASE}/api/mpesa/stk`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          phone: form.phoneForPayment || form.contact,
-          amount: total,
-          orderId: newOrderId,
-        }),
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        setOrderTotal(total)
-        clearCart()
-        setOrderPlaced(true)
-        setLoading(false)
-      } else {
-        setError(data.message || 'Payment initiation failed')
-        setLoading(false)
-      }
-    } catch (err: any) {
-      setError(err.message || 'Payment request failed')
+      setError(err.message || 'Failed to submit quote request')
       setLoading(false)
     }
   }
 
-  if (orderPlaced) {
+  if (quoteSubmitted) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
         <main className="flex-1 container mx-auto px-4 py-12 flex items-center justify-center">
           <Card className="p-12 text-center max-w-md border-none shadow-lg">
             <div className="text-6xl mb-4">✓</div>
-            <h1 className="text-3xl font-bold mb-4">Order Placed Successfully!</h1>
+            <h1 className="text-3xl font-bold mb-4">Quote Request Submitted!</h1>
             <p className="text-muted-foreground mb-6">
-              Your order #12345 has been confirmed. You will receive an email shortly with your shipping details.
+              Thank you for your interest! Our team will review your quote request and get back to you within 24 hours with pricing and availability.
             </p>
             <div className="space-y-2 mb-6 text-left bg-secondary/50 p-4 rounded">
-              <p><strong>Order Total:</strong> {formatPrice(orderTotal || subtotal)}</p>
-              <p><strong>Estimated Delivery:</strong> 5-7 business days</p>
-              <p><strong>Tracking:</strong> Will be emailed to you</p>
+              <p><strong>What's Next?</strong></p>
+              <p className="text-sm">• Our team will review your request</p>
+              <p className="text-sm">• You'll receive a detailed quote via email</p>
+              <p className="text-sm">• We'll contact you to discuss delivery</p>
             </div>
             <div className="flex gap-4">
               <Link href="/" className="flex-1">
                 <Button variant="outline" className="w-full bg-transparent">Home</Button>
               </Link>
               <Link href="/products" className="flex-1">
-                <Button className="w-full bg-primary hover:bg-primary/90">Continue Shopping</Button>
+                <Button className="w-full bg-primary hover:bg-primary/90">Browse More Products</Button>
               </Link>
             </div>
           </Card>
@@ -199,196 +122,96 @@ export default function CheckoutPage() {
       <Header />
 
       <main className="flex-1 container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold mb-8">Checkout</h1>
+        <h1 className="text-4xl font-bold mb-8">Request Quote</h1>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Checkout Form */}
+          {/* Quote Request Form */}
           <div className="lg:col-span-2">
-            <Tabs value={step} onValueChange={setStep}>
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="shipping">Shipping</TabsTrigger>
-                <TabsTrigger value="payment">Payment</TabsTrigger>
-                <TabsTrigger value="review">Review</TabsTrigger>
-              </TabsList>
-
-              {/* Shipping Tab */}
-              <TabsContent value="shipping">
-                <Card className="p-6 border-none shadow-md">
-                  <h2 className="text-2xl font-bold mb-6">Shipping Address</h2>
-                  <div className="space-y-4">
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-sm font-semibold block mb-2">First Name</label>
-                        <Input placeholder="John" className="bg-input" value={form.name} onChange={(e)=>setForm({...form,name:e.target.value})} />
-                      </div>
-                      <div>
-                        <label className="text-sm font-semibold block mb-2">Last Name</label>
-                        <Input placeholder="Role / Position" className="bg-input" value={form.role} onChange={(e)=>setForm({...form,role:e.target.value})} />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="text-sm font-semibold block mb-2">Email</label>
-                      <Input placeholder="john@example.com" type="email" className="bg-input" value={form.email} onChange={(e)=>setForm({...form,email:e.target.value})} />
-                    </div>
-                    {/* Street Address removed per requirements */}
-                    
-                    {/* ZIP Code and Country removed */}
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-sm font-semibold block mb-2">Facility</label>
-                        <Input placeholder="Facility" className="bg-input" value={form.facility} onChange={(e)=>setForm({...form,facility:e.target.value})} />
-                      </div>
-                      <div>
-                        <label className="text-sm font-semibold block mb-2">County</label>
-                        <select className="w-full border rounded p-2" value={form.county} onChange={(e)=>setForm({...form,county:e.target.value})}>
-                          <option value="">Select county</option>
-                          {counties.map(c=> <option key={c} value={c}>{c}</option>)}
-                        </select>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="text-sm font-semibold block mb-2">Package Size</label>
-                      <select className="w-full border rounded p-2" value={form.packageSize} onChange={(e)=>setForm({...form,packageSize:e.target.value})}>
-                        <option value="small">Small</option>
-                        <option value="medium">Medium</option>
-                        <option value="large">Large</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="text-sm font-semibold block mb-2">Location / Area</label>
-                      <Input placeholder="e.g. Westlands, Nairobi" className="bg-input" value={form.location} onChange={(e)=>setForm({...form,location:e.target.value})} />
-                    </div>
-                    <div>
-                      <label className="text-sm font-semibold block mb-2">Phone</label>
-                      <Input placeholder="+2547XXXXXXXX" className="bg-input" value={form.contact} onChange={(e)=>setForm({...form,contact:e.target.value})} />
-                    </div>
-                    <Button
-                      onClick={() => setStep('payment')}
-                      className="w-full bg-primary hover:bg-primary/90"
-                    >
-                      Continue to Payment
-                    </Button>
+            <Card className="p-6 border-none shadow-md">
+              <h2 className="text-2xl font-bold mb-6">Contact Information</h2>
+              
+              {error && (
+                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded text-red-700">
+                  {error}
+                </div>
+              )}
+              
+              <div className="space-y-4">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-semibold block mb-2">Full Name *</label>
+                    <Input placeholder="John Doe" className="bg-input" value={form.name} onChange={(e)=>setForm({...form,name:e.target.value})} />
                   </div>
-                </Card>
-              </TabsContent>
-
-              {/* Payment Tab */}
-              <TabsContent value="payment">
-                <Card className="p-6 border-none shadow-md">
-                  <h2 className="text-2xl font-bold mb-6">Payment Method</h2>
-                  <div className="space-y-4">
-                    <div className="border-2 border-primary rounded p-4">
-                      <label className="flex items-center cursor-pointer">
-                        <input type="radio" name="payment" defaultChecked className="mr-3" />
-                        <span className="font-semibold">M-Pesa (STK Push)</span>
-                      </label>
-                      <div className="mt-4">
-                        <label className="text-sm font-semibold block mb-2">Phone for M-Pesa</label>
-                        <Input placeholder="+2547XXXXXXXX" className="bg-input" value={form.phoneForPayment} onChange={(e)=>setForm({...form,phoneForPayment:e.target.value})} />
-                      </div>
-                    </div>
-
-                    <div className="flex gap-4">
-                      <Button
-                        variant="outline"
-                        onClick={() => setStep('shipping')}
-                        className="flex-1"
-                      >
-                        Back
-                      </Button>
-                      <Button
-                        onClick={() => setStep('review')}
-                        className="flex-1 bg-primary hover:bg-primary/90"
-                      >
-                        Review Order
-                      </Button>
-                    </div>
+                  <div>
+                    <label className="text-sm font-semibold block mb-2">Role / Position</label>
+                    <Input placeholder="e.g. Lab Manager" className="bg-input" value={form.role} onChange={(e)=>setForm({...form,role:e.target.value})} />
                   </div>
-                </Card>
-              </TabsContent>
+                </div>
+                <div>
+                  <label className="text-sm font-semibold block mb-2">Email *</label>
+                  <Input placeholder="john@example.com" type="email" className="bg-input" value={form.email} onChange={(e)=>setForm({...form,email:e.target.value})} />
+                </div>
+                <div>
+                  <label className="text-sm font-semibold block mb-2">Phone *</label>
+                  <Input placeholder="+254 7XX XXX XXX" className="bg-input" value={form.contact} onChange={(e)=>setForm({...form,contact:e.target.value})} />
+                </div>
+                
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-semibold block mb-2">Facility / Organization</label>
+                    <Input placeholder="e.g. City Hospital" className="bg-input" value={form.facility} onChange={(e)=>setForm({...form,facility:e.target.value})} />
+                  </div>
+                  <div>
+                    <label className="text-sm font-semibold block mb-2">County</label>
+                    <select className="w-full border rounded p-2" value={form.county} onChange={(e)=>setForm({...form,county:e.target.value})}>
+                      <option value="">Select county</option>
+                      {counties.map(c=> <option key={c} value={c}>{c}</option>)}
+                    </select>
+                  </div>
+                </div>
 
-              {/* Review Tab */}
-              <TabsContent value="review">
-                <Card className="p-6 border-none shadow-md">
-                  <h2 className="text-2xl font-bold mb-6">Review Your Order</h2>
-                  
-                  {error && (
-                    <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded text-red-700">
-                      {error}
-                    </div>
-                  )}
-                  
-                  <div className="space-y-4 mb-6">
-                    <div className="p-4 bg-secondary/50 rounded">
-                      <p className="font-semibold mb-2">Shipping Address</p>
-                      <p className="text-sm text-muted-foreground">
-                        {form.name} ({form.role})<br />
-                        {form.contact} • {form.email}<br />
-                        {form.facility} - {form.location}<br />
-                        {form.county}
-                      </p>
-                    </div>
-                    <div className="p-4 bg-secondary/50 rounded">
-                      <p className="font-semibold mb-2">Payment Method</p>
-                      <p className="text-sm text-muted-foreground">M-Pesa STK Push to {form.phoneForPayment || form.contact}</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-4">
-                    <Button
-                      variant="outline"
-                      onClick={() => setStep('payment')}
-                      className="flex-1"
-                      disabled={loading}
-                    >
-                      Back
-                    </Button>
-                    <Button
-                      onClick={handleMpesaPush}
-                      className="flex-1 bg-accent hover:bg-accent/90"
-                      disabled={loading}
-                    >
-                      {loading ? 'Processing...' : 'Pay with M-Pesa'}
-                    </Button>
-                  </div>
-                </Card>
-              </TabsContent>
-            </Tabs>
+                <div>
+                  <label className="text-sm font-semibold block mb-2">Location / Area</label>
+                  <Input placeholder="e.g. Westlands, Nairobi" className="bg-input" value={form.location} onChange={(e)=>setForm({...form,location:e.target.value})} />
+                </div>
+                
+                <Button
+                  onClick={handleQuoteRequest}
+                  className="w-full bg-gradient-to-r from-[#e53935] to-[#d32f2f] hover:shadow-2xl hover:scale-105 transition-all duration-200 text-white text-lg py-6 font-bold rounded-xl mt-6"
+                  disabled={loading}
+                >
+                  {loading ? 'Submitting...' : 'Request Quote'}
+                </Button>
+              </div>
+            </Card>
           </div>
 
-          {/* Order Summary */}
+          {/* Items Summary */}
           <div className="lg:col-span-1">
             <Card className="p-6 border-none shadow-md sticky top-24">
-              <h2 className="font-bold text-xl mb-4">Order Summary</h2>
-              <div className="space-y-3 mb-6">
+              <h2 className="font-bold text-xl mb-4">Selected Items</h2>
+              <div className="space-y-3 mb-6 max-h-96 overflow-y-auto">
                 {items && items.length > 0 ? (
                   items.map(it => (
-                    <div key={it.id} className="text-sm">
-                      <p>{it.name} × {it.quantity}</p>
-                      <p className="text-muted-foreground">{formatPrice(it.price * it.quantity)}</p>
+                    <div key={it.id} className="text-sm p-3 bg-gray-50 rounded-lg">
+                      <p className="font-semibold">{it.name}</p>
+                      <p className="text-muted-foreground">Quantity: {it.quantity}</p>
                     </div>
                   ))
                 ) : (
-                  <div className="text-sm">
-                    <p>No items</p>
+                  <div className="text-sm text-center py-8 text-muted-foreground">
+                    <p>No items selected</p>
                   </div>
                 )}
               </div>
-              <div className="space-y-3 mb-6 border-t pt-4">
-                <div className="flex justify-between text-sm">
-                  <span>Subtotal</span>
-                  <span>{formatPrice(subtotal)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Shipping</span>
-                  <span>{shipping === 0 ? <span className="text-accent">FREE</span> : formatPrice(shipping)}</span>
-                </div>
-              </div>
               <div className="border-t pt-4">
-                <div className="flex justify-between font-bold text-lg">
-                  <span>Total</span>
-                  <span>{formatPrice(total)}</span>
+                <div className="flex justify-between font-bold">
+                  <span>Total Items</span>
+                  <span>{items?.length || 0}</span>
                 </div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Our team will provide detailed pricing and availability for all selected items.
+                </p>
               </div>
             </Card>
           </div>
