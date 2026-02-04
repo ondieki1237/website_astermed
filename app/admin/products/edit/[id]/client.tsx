@@ -4,10 +4,12 @@ import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
-// Force dynamic rendering for admin pages
-export const dynamic = 'force-dynamic'
-
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://astermed.codewithseth.co.ke'
+
+// Generate empty static params - admin pages are client-side only
+export async function generateStaticParams() {
+  return []
+}
 
 interface Product {
   _id: string
