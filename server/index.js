@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import compression from 'compression';
+import helmet from 'helmet';
 import connectDB from './config/db.js';
 
 import authRoutes from './routes/auth.js';
@@ -19,9 +21,16 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
-// Allow CORS from configured frontend origins (comma-separated) or default to local Next dev frontend
-// Example production value: "https://website-astermed.vercel.app,https://astermedsupplies.co.ke"
+// Security middleware
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  contentSecurityPolicy: false, // Allow flexible CSP for API
+}));
+
+// Compression middleware - compress all responses
+app.use(compression());
+
+// CORS configuration
 const rawOrigins = process.env.CORS_ORIGIN || 'http://localhost:3000'
 const allowedOrigins = rawOrigins.split(',').map(s => s.trim()).filter(Boolean)
 app.use(cors({ 
@@ -30,12 +39,19 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }))
-app.use(express.json());
 
-// Serve uploaded files (images) from server public/uploads
+// Body parser middleware with limits
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Serve uploaded files (images) from server public/uploads with caching
 import path from 'path'
 const uploadsDir = path.join(process.cwd(), 'public', 'uploads')
-app.use('/uploads', express.static(uploadsDir))
+app.use('/uploads', express.static(uploadsDir, {
+  maxAge: '30d', // Cache images for 30 days
+  etag: true,
+  lastModified: true
+}))
 
 // Connect to MongoDB
 connectDB();
