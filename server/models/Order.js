@@ -27,12 +27,12 @@ const orderSchema = new mongoose.Schema({
   paymentPhone: String,
   paymentStatus: {
     type: String,
-    enum: ['pending', 'completed', 'failed'],
+    enum: ['pending', 'completed', 'failed', 'not_applicable'],
     default: 'pending',
   },
   orderStatus: {
     type: String,
-    enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
+    enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled', 'quote_requested'],
     default: 'pending',
   },
   mpesaCheckoutRequestID: String,
