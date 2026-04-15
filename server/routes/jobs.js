@@ -8,7 +8,7 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const { page = 1, limit = 10, jobType = null } = req.query;
-    const query = { published: true };
+    const query = { status: { $ne: 'closed' } };
 
     if (jobType) {
       query.jobType = jobType;
