@@ -55,7 +55,7 @@ export default function Footer() {
             <div className="space-y-4 text-[13px]">
               <div className="flex gap-3 items-start">
                 <MapPin className="w-4 h-4 text-[#5A946A] mt-1 shrink-0" />
-                <p className="text-gray-400">123 Medical Drive<br />Healthcare City, HC 12345</p>
+                <p className="text-gray-400">Nairobi City<br />Kenya</p>
               </div>
               <div className="flex gap-3 items-start">
                 <Phone className="w-4 h-4 text-[#5A946A] mt-0.5 shrink-0" />

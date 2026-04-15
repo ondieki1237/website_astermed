@@ -8,7 +8,6 @@ import { Star, Heart, Share2, CheckCircle, Truck, Shield, RotateCcw } from 'luci
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
-import useCart from '@/hooks/use-cart'
 import { formatPrice } from '@/lib/currency'
 import { resolveImageSrc } from '@/lib/image'
 import { getApiBase } from '@/lib/api'
@@ -40,13 +39,13 @@ export default function ProductDetailClient() {
   const [similarProducts, setSimilarProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [quantity, setQuantity] = useState(1)
-  const { addItem } = useCart()
   const [selectedImage, setSelectedImage] = useState(0)
   const [liked, setLiked] = useState(false)
   const [activeTab, setActiveTab] = useState('description')
   const [showReviewModal, setShowReviewModal] = useState(false)
   const [reviewSubmitting, setReviewSubmitting] = useState(false)
   const [reviewForm, setReviewForm] = useState({ username: '', rating: 5, comment: '' })
+  const whatsappNumber = '254746999725'
 
   useEffect(() => {
     if (!id) return
@@ -117,6 +116,14 @@ export default function ProductDetailClient() {
   const discountedPrice = product && product.discountPercentage
     ? product.price * (1 - product.discountPercentage / 100)
     : (product ? product.price : 0)
+
+  const orderViaWhatsApp = () => {
+    if (!product) return
+    const productUrl = `${window.location.origin}/products/${product._id}`
+    const message = `Hello AsterMed, I'd like to order ${quantity} x ${product.name}.\n${productUrl}`
+    const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
+    window.open(url, '_blank')
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-white via-[#f9fbff] to-white">
@@ -209,21 +216,10 @@ export default function ProductDetailClient() {
                 </div>
 
                 <Button
-                  onClick={() =>
-                    addItem(
-                      {
-                        id: product!._id,
-                        name: product!.name,
-                        price: discountedPrice,
-                        image: product!.image,
-                        quantity,
-                      },
-                      quantity
-                    )
-                  }
+                  onClick={orderViaWhatsApp}
                   className="flex-1 bg-gradient-to-r from-[#5A946A] to-[#487a55] hover:shadow-xl transition-all duration-200 text-white py-3.5 md:py-4 text-sm md:text-base font-bold rounded-xl"
                 >
-                  Add to Cart
+                  Order via WhatsApp
                 </Button>
               </div>
 

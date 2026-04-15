@@ -76,15 +76,25 @@ export default function Header() {
         <div className="px-4 xl:px-8 max-w-[1400px] mx-auto relative">
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Mobile Menu Toggle - Left on mobile */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-gray-700 hover:text-[#5A946A] hover:bg-gray-50 rounded-lg transition-colors relative z-10"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+            <div className="lg:hidden w-10 flex items-center justify-start">
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 text-gray-700 hover:text-[#5A946A] hover:bg-gray-50 rounded-lg transition-colors"
+                aria-label="Toggle menu"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
 
-            {/* Logo */}
-            <Link href="/" className="flex-shrink-0 hover:opacity-80 transition-opacity absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0">
+            {/* Mobile Centered Logo */}
+            <div className="lg:hidden flex-1 flex items-center justify-center px-2">
+              <Link href="/" className="flex-shrink-0 hover:opacity-80 transition-opacity">
+                <img src="/astermedlogo.png" alt="AsterMed" className="h-7 w-auto object-contain" />
+              </Link>
+            </div>
+
+            {/* Desktop Logo */}
+            <Link href="/" className="hidden lg:block flex-shrink-0 hover:opacity-80 transition-opacity">
               <img src="/astermedlogo.png" alt="AsterMed" className="h-10 lg:h-12 w-auto object-contain" />
             </Link>
 
@@ -108,7 +118,7 @@ export default function Header() {
             </div>
 
             {/* Right Side: Search and Cart */}
-            <div className="flex items-center gap-2 lg:gap-4 z-10">
+            <div className="flex items-center justify-end w-10 lg:w-auto gap-2 lg:gap-4">
               {/* Desktop Search */}
               <div className="hidden lg:flex items-center border border-gray-300 rounded-md px-3 py-1.5 focus-within:border-[#5A946A] focus-within:ring-1 focus-within:ring-[#5A946A] transition-all bg-white w-[250px] relative">
                 <input
@@ -138,8 +148,8 @@ export default function Header() {
               </div>
 
               {/* Mobile Cart Toggle */}
-              <Link href="/cart" className="relative p-2 text-gray-700 hover:text-[#5A946A] transition-colors rounded-lg hover:bg-gray-50">
-                <ShoppingCart className="w-6 h-6" />
+              <Link href="/cart" className="relative p-2 text-gray-700 hover:text-[#5A946A] transition-colors rounded-lg hover:bg-gray-50" aria-label="Cart">
+                <ShoppingCart className="w-5 h-5 lg:w-6 lg:h-6" />
                 {count > 0 && (
                   <span className="absolute 0 top-0 right-0 bg-[#5A946A] text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">{count}</span>
                 )}

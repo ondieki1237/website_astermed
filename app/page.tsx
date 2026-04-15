@@ -7,16 +7,23 @@ import Link from 'next/link'
 import { formatPrice } from '@/lib/currency'
 import { resolveImageSrc } from '@/lib/image'
 import { getApiBase } from '@/lib/api'
-import useCart from '@/hooks/use-cart'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 export default function Home() {
-  const { addItem } = useCart()
   const [products, setProducts] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [usedFallback, setUsedFallback] = useState(false)
   const router = useRouter()
+  const whatsappNumber = '254746999725'
+
+  const orderViaWhatsApp = (product: any) => {
+    const productId = product?._id || product?.id
+    const productUrl = `${window.location.origin}/products/${productId}`
+    const message = `Hello AsterMed, I'd like to order ${product?.name || 'this product'}.\n${productUrl}`
+    const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
+    window.open(url, '_blank')
+  }
 
   useEffect(() => {
     let mounted = true
@@ -68,7 +75,7 @@ export default function Home() {
           <div className="relative bg-[#5A946A] p-4 md:p-6 lg:p-8 shadow-sm border border-[#487a55] rounded-sm">
             <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay"></div>
             <div className="relative z-10 flex flex-col items-start">
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mb-2 tracking-wider uppercase leading-tight">
+              <h1 className="hidden lg:block text-2xl md:text-3xl lg:text-4xl font-black text-white mb-2 tracking-wider uppercase leading-tight">
                 AsterMed Medical Supplies
               </h1>
               <p className="text-sm md:text-base text-white/95 mb-4 max-w-xl font-medium leading-relaxed">
@@ -138,20 +145,11 @@ export default function Home() {
                           <button
                             onClick={(e) => {
                               e.stopPropagation()
-                              addItem(
-                                {
-                                  id: product._id || product.id,
-                                  name: product.name,
-                                  price: product.price,
-                                  image: product.image,
-                                  quantity: 1,
-                                },
-                                1
-                              )
+                              orderViaWhatsApp(product)
                             }}
                             className="w-full bg-[#5A946A] text-white text-[11px] font-bold uppercase tracking-wide py-2.5 hover:bg-[#487a55] transition-colors rounded-sm"
                           >
-                            Add to Cart
+                            Order via WhatsApp
                           </button>
                           <Link
                             href={`/products/${product._id || product.id}`}
