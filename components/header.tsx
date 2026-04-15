@@ -17,7 +17,8 @@ export default function Header() {
   const [loadingSuggest, setLoadingSuggest] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const suggestTimer = useRef<number | null>(null)
-  const containerRef = useRef<HTMLDivElement | null>(null)
+  const desktopSearchRef = useRef<HTMLDivElement | null>(null)
+  const mobileSearchRef = useRef<HTMLDivElement | null>(null)
   const { count } = useCart()
   const router = useRouter()
   const pathname = usePathname()
@@ -30,13 +31,22 @@ export default function Header() {
   const doSearch = (q: string) => {
     const term = String(q || '').trim()
     if (!term) return
+    setSuggestOpen(false)
     router.push(`/products?search=${encodeURIComponent(term)}`)
+  }
+
+  const selectSuggestion = (id: string) => {
+    setSuggestOpen(false)
+    setSearchQuery('')
+    router.push(`/products/${id}`)
   }
 
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
-      if (!containerRef.current) return
-      if (!containerRef.current.contains(e.target as Node)) {
+      const target = e.target as Node
+      const insideDesktop = desktopSearchRef.current?.contains(target)
+      const insideMobile = mobileSearchRef.current?.contains(target)
+      if (!insideDesktop && !insideMobile) {
         setSuggestOpen(false)
       }
     }
@@ -118,7 +128,7 @@ export default function Header() {
             </div>
 
             {/* Right Side: Search and Cart */}
-            <div className="flex items-center justify-end w-10 lg:w-auto gap-2 lg:gap-4">
+            <div className="flex items-center justify-end w-10 lg:w-auto gap-2 lg:gap-4" ref={desktopSearchRef}>
               {/* Desktop Search */}
               <div className="hidden lg:flex items-center border border-gray-300 rounded-md px-3 py-1.5 focus-within:border-[#5A946A] focus-within:ring-1 focus-within:ring-[#5A946A] transition-all bg-white w-[250px] relative">
                 <input
@@ -126,23 +136,32 @@ export default function Header() {
                   placeholder="Search products..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => {
+                    if (searchQuery.trim().length >= 2 && suggestions.length > 0) setSuggestOpen(true)
+                  }}
                   onKeyDown={(e) => { if (e.key === 'Enter') doSearch(searchQuery) }}
                   className="bg-transparent text-sm outline-none text-gray-800 placeholder-gray-400 flex-1"
                 />
                 <Search onClick={() => doSearch(searchQuery)} className="w-4 h-4 text-gray-400 hover:text-[#5A946A] cursor-pointer transition-colors" />
                 
                 {/* Search Suggestions */}
-                {suggestOpen && suggestions.length > 0 && (
+                {suggestOpen && (
                   <div className="absolute left-0 right-0 top-full mt-2 bg-white rounded-md shadow-lg border border-gray-200 overflow-hidden z-50">
-                    {suggestions.map((s) => (
-                      <div key={s._id} onClick={() => { router.push(`/products/${s._id}`); setSuggestOpen(false) }} className="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0 transition-colors">
-                        <img src={resolveImageSrc(s.image)} alt={s.name} className="w-10 h-10 object-cover rounded border border-gray-100" />
-                        <div className="flex-1 overflow-hidden">
-                          <div className="font-medium text-gray-800 text-xs truncate">{s.name}</div>
-                          <div className="text-xs text-[#5A946A] font-bold mt-0.5">{s.isOnOffer ? formatPrice((s.price || 0) * (1 - (s.discountPercentage || 0) / 100)) : (s.price ? formatPrice(s.price) : '')}</div>
+                    {loadingSuggest ? (
+                      <div className="px-3 py-3 text-xs text-gray-500">Searching...</div>
+                    ) : suggestions.length > 0 ? (
+                      suggestions.map((s) => (
+                        <div key={s._id} onClick={() => selectSuggestion(s._id)} className="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0 transition-colors">
+                          <img src={resolveImageSrc(s.image)} alt={s.name} className="w-10 h-10 object-cover rounded border border-gray-100" />
+                          <div className="flex-1 overflow-hidden">
+                            <div className="font-medium text-gray-800 text-xs truncate">{s.name}</div>
+                            <div className="text-xs text-[#5A946A] font-bold mt-0.5">{s.isOnOffer ? formatPrice((s.price || 0) * (1 - (s.discountPercentage || 0) / 100)) : (s.price ? formatPrice(s.price) : '')}</div>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))
+                    ) : (
+                      <div className="px-3 py-3 text-xs text-gray-500">No matching products</div>
+                    )}
                   </div>
                 )}
               </div>
@@ -158,17 +177,40 @@ export default function Header() {
           </div>
 
           {/* Mobile Search Bar (under main header if needed) */}
-          <div className="lg:hidden pb-3">
-            <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-md px-3 py-2 focus-within:border-[#5A946A] transition-colors">
+          <div className="lg:hidden pb-3" ref={mobileSearchRef}>
+            <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-md px-3 py-2 focus-within:border-[#5A946A] transition-colors relative">
               <input
                 type="text"
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => {
+                  if (searchQuery.trim().length >= 2 && suggestions.length > 0) setSuggestOpen(true)
+                }}
                 onKeyDown={(e) => { if (e.key === 'Enter') doSearch(searchQuery) }}
                 className="bg-transparent text-sm outline-none text-gray-800 placeholder-gray-500 flex-1"
               />
               <Search onClick={() => doSearch(searchQuery)} className="w-4 h-4 text-gray-400" />
+
+              {suggestOpen && (
+                <div className="absolute left-0 right-0 top-full mt-2 bg-white rounded-md shadow-lg border border-gray-200 overflow-hidden z-50">
+                  {loadingSuggest ? (
+                    <div className="px-3 py-3 text-xs text-gray-500">Searching...</div>
+                  ) : suggestions.length > 0 ? (
+                    suggestions.map((s) => (
+                      <div key={s._id} onClick={() => selectSuggestion(s._id)} className="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0 transition-colors">
+                        <img src={resolveImageSrc(s.image)} alt={s.name} className="w-10 h-10 object-cover rounded border border-gray-100" />
+                        <div className="flex-1 overflow-hidden">
+                          <div className="font-medium text-gray-800 text-xs truncate">{s.name}</div>
+                          <div className="text-xs text-[#5A946A] font-bold mt-0.5">{s.isOnOffer ? formatPrice((s.price || 0) * (1 - (s.discountPercentage || 0) / 100)) : (s.price ? formatPrice(s.price) : '')}</div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="px-3 py-3 text-xs text-gray-500">No matching products</div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

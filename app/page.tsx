@@ -81,16 +81,9 @@ export default function Home() {
               <p className="text-sm md:text-base text-white/95 mb-4 max-w-xl font-medium leading-relaxed">
                 Premium healthcare equipment and materials for professionals worldwide. Fast, reliable, and authentic.
               </p>
-              <div className="flex gap-2">
-                <Link href="/products" className="bg-[#2D2D2D] hover:bg-black text-white px-4 py-1.5 text-[10px] font-bold transition-colors uppercase tracking-wider shadow-sm">
-                  Shop Now
-                </Link>
-                <Link href="/news" className="bg-white hover:bg-gray-100 text-[#2D2D2D] px-4 py-1.5 text-[10px] font-bold transition-colors uppercase tracking-wider shadow-sm">
-                  Contact Us
-                </Link>
-              </div>
             </div>
           </div>
+
           {/* Products Section */}
           <div className="bg-white">
             <div className="flex items-center justify-between mb-6 pb-2 border-b-2 border-gray-100">
