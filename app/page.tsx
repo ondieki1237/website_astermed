@@ -63,7 +63,7 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
 
-      <main className="flex-1 flex gap-6 px-4 xl:px-8 py-6 pt-20 lg:pt-28 max-w-[1400px] mx-auto w-full">
+      <main className="flex-1 flex gap-6 px-4 xl:px-8 py-6 pt-28 md:pt-32 lg:pt-28 max-w-[1400px] mx-auto w-full">
         {/* Sidebar */}
         <div className="hidden lg:block w-[260px] flex-shrink-0">
           <CategorySidebar />
