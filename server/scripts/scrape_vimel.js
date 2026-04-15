@@ -44,6 +44,16 @@ function isPlaceholderLeadImage(url) {
   return false
 }
 
+function normalizeVimelImageQuality(url) {
+  let v = String(url || '')
+  if (!v) return ''
+
+  // Vimel image URLs often include low-res OSS resize parameters (h_120,w_120 or h_142,w_142).
+  // Upgrade all collected variants to a consistent higher quality similar to the lead image.
+  v = v.replace(/h_(100|120|142|250),w_(100|120|138|142|250)/g, 'h_460,w_460')
+  return v
+}
+
 function slugFromUrl(url) {
   try {
     const pathname = new URL(url).pathname
@@ -123,7 +133,9 @@ function extractDetailPage($, fallback) {
 
   const images = []
   $('.pro-main img, .item-pic img, .pro-slide img, img').each((_, img) => {
-    const src = absUrl($(img).attr('data-original') || $(img).attr('src') || '')
+    const src = normalizeVimelImageQuality(
+      absUrl($(img).attr('data-original') || $(img).attr('src') || '')
+    )
     if (!src) return
     if (src.startsWith('data:image')) return
     if (src.includes('/static/images/youtube-default')) return

@@ -126,24 +126,24 @@ export default function ProductDetailClient() {
         <div className="max-w-7xl mx-auto">
           {/* Breadcrumb */}
           <div className="flex gap-2 text-sm mb-8 items-center">
-            <Link href="/" className="text-gray-500 hover:text-[#d0dc36] transition-colors">Home</Link>
+            <Link href="/" className="text-gray-500 hover:text-[#5A946A] transition-colors">Home</Link>
             <span className="text-gray-300">•</span>
-            <Link href="/products" className="text-gray-500 hover:text-[#d0dc36] transition-colors">Products</Link>
+            <Link href="/products" className="text-gray-500 hover:text-[#5A946A] transition-colors">Products</Link>
             <span className="text-gray-300">•</span>
             <span className="text-gray-900 font-medium truncate max-w-xs">{product!.name}</span>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 mb-16">
+          <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 mb-16">
             {/* Product Images */}
             <div className="space-y-4">
-              <div className="relative bg-gradient-to-br from-white to-[#f9fbff] rounded-2xl overflow-hidden aspect-square flex items-center justify-center p-8 shadow-xl border border-gray-100 group">
+              <div className="relative bg-gradient-to-br from-white to-[#f9fbff] rounded-2xl overflow-hidden aspect-square flex items-center justify-center p-4 md:p-8 shadow-xl border border-gray-100 group">
                 <img
                   src={resolveImageSrc(product!.images?.[selectedImage] || product!.image)}
                   alt={product!.name}
                   className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                 />
                 {product!.discountPercentage && (
-                  <div className="absolute top-6 right-6 bg-gradient-to-br from-[#e53935] to-[#d32f2f] text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-lg shadow-xl animate-pulse">
+                  <div className="absolute top-3 right-3 md:top-6 md:right-6 bg-gradient-to-br from-[#e53935] to-[#d32f2f] text-white rounded-full w-12 h-12 md:w-16 md:h-16 flex items-center justify-center font-bold text-sm md:text-lg shadow-xl animate-pulse">
                     -{product!.discountPercentage}%
                   </div>
                 )}
@@ -158,8 +158,8 @@ export default function ProductDetailClient() {
                       onClick={() => setSelectedImage(idx)}
                       className={`flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all duration-200 ${
                         selectedImage === idx 
-                          ? 'border-[#d0dc36] shadow-lg shadow-[#d0dc36]/20 scale-105' 
-                          : 'border-gray-200 hover:border-[#d0dc36]/50 hover:shadow-md'
+                          ? 'border-[#5A946A] shadow-lg shadow-[#5A946A]/20 scale-105' 
+                          : 'border-gray-200 hover:border-[#5A946A]/50 hover:shadow-md'
                       }`}
                     >
                       <img src={resolveImageSrc(img)} alt={`View ${idx + 1}`} className="w-full h-full object-cover" />
@@ -170,12 +170,12 @@ export default function ProductDetailClient() {
             </div>
 
             {/* Product Info */}
-            <div className="space-y-6">
-              <div className="inline-block px-4 py-2 bg-gradient-to-r from-[#d0dc36]/10 to-[#c5d030]/10 text-[#d0dc36] rounded-full text-sm font-semibold">
+            <div className="space-y-5">
+              <div className="inline-block px-3 py-1.5 bg-gradient-to-r from-[#5A946A]/10 to-[#487a55]/10 text-[#5A946A] rounded-full text-xs md:text-sm font-semibold">
                 {product!.category}
               </div>
 
-              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">{product!.name}</h1>
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">{product!.name}</h1>
 
               <div className="flex items-center gap-3 pb-4 border-b border-gray-200">
                 <div className="flex items-center">
@@ -195,14 +195,14 @@ export default function ProductDetailClient() {
                 <div className="flex items-center border-2 border-gray-200 rounded-xl bg-white shadow-sm">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="px-5 py-3 hover:bg-gray-50 transition-colors text-lg font-semibold text-gray-600"
+                    className="px-4 py-2.5 hover:bg-gray-50 transition-colors text-base font-semibold text-gray-600"
                   >
                     −
                   </button>
-                  <span className="px-6 py-3 font-bold text-lg min-w-[60px] text-center">{quantity}</span>
+                  <span className="px-4 py-2.5 font-bold text-base min-w-[52px] text-center">{quantity}</span>
                   <button
                     onClick={() => setQuantity(quantity + 1)}
-                    className="px-5 py-3 hover:bg-gray-50 transition-colors text-lg font-semibold text-gray-600"
+                    className="px-4 py-2.5 hover:bg-gray-50 transition-colors text-base font-semibold text-gray-600"
                   >
                     +
                   </button>
@@ -221,7 +221,7 @@ export default function ProductDetailClient() {
                       quantity
                     )
                   }
-                  className="flex-1 bg-gradient-to-r from-[#d0dc36] to-[#c5d030] hover:shadow-xl hover:scale-105 transition-all duration-200 text-white py-6 text-lg font-bold rounded-xl"
+                  className="flex-1 bg-gradient-to-r from-[#5A946A] to-[#487a55] hover:shadow-xl transition-all duration-200 text-white py-3.5 md:py-4 text-sm md:text-base font-bold rounded-xl"
                 >
                   Add to Cart
                 </Button>
@@ -230,22 +230,22 @@ export default function ProductDetailClient() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setLiked(!liked)}
-                  className="flex-1 px-6 py-3 border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-[#d0dc36] transition-all duration-200 flex items-center justify-center gap-2 group"
+                  className="flex-1 px-4 py-2.5 border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-[#5A946A] transition-all duration-200 flex items-center justify-center gap-2 group"
                 >
                   <Heart className={`w-5 h-5 transition-all duration-200 ${liked ? 'fill-[#e53935] text-[#e53935]' : 'text-gray-600 group-hover:text-[#e53935]'}`} />
                   <span className="font-medium text-sm">{liked ? 'Saved' : 'Save'}</span>
                 </button>
 
-                <button onClick={handleShare} className="flex-1 px-6 py-3 border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-[#d0dc36] transition-all duration-200 flex items-center justify-center gap-2 group">
-                  <Share2 className="w-5 h-5 text-gray-600 group-hover:text-[#d0dc36] transition-colors" />
+                <button onClick={handleShare} className="flex-1 px-4 py-2.5 border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-[#5A946A] transition-all duration-200 flex items-center justify-center gap-2 group">
+                  <Share2 className="w-5 h-5 text-gray-600 group-hover:text-[#5A946A] transition-colors" />
                   <span className="font-medium text-sm">Share</span>
                 </button>
               </div>
 
-              <div className="grid grid-cols-3 gap-4 p-6 bg-gradient-to-br from-white to-[#f9fbff] rounded-2xl border border-gray-100 shadow-md">
+              <div className="grid grid-cols-3 gap-3 md:gap-4 p-4 md:p-6 bg-gradient-to-br from-white to-[#f9fbff] rounded-2xl border border-gray-100 shadow-md">
                 <div className="flex flex-col items-center gap-3 text-center">
-                  <div className="w-14 h-14 bg-gradient-to-br from-[#d0dc36]/10 to-[#c5d030]/10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Truck className="w-6 h-6 text-[#d0dc36]" />
+                  <div className="w-11 h-11 md:w-14 md:h-14 bg-gradient-to-br from-[#5A946A]/10 to-[#487a55]/10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Truck className="w-5 h-5 md:w-6 md:h-6 text-[#5A946A]" />
                   </div>
                   <div>
                     <p className="font-bold text-sm text-gray-900">Fast Shipping</p>
@@ -253,8 +253,8 @@ export default function ProductDetailClient() {
                   </div>
                 </div>
                 <div className="flex flex-col items-center gap-3 text-center">
-                  <div className="w-14 h-14 bg-gradient-to-br from-[#d0dc36]/10 to-[#c5d030]/10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Shield className="w-6 h-6 text-[#d0dc36]" />
+                  <div className="w-11 h-11 md:w-14 md:h-14 bg-gradient-to-br from-[#5A946A]/10 to-[#487a55]/10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Shield className="w-5 h-5 md:w-6 md:h-6 text-[#5A946A]" />
                   </div>
                   <div>
                     <p className="font-bold text-sm text-gray-900">Secure Payment</p>
@@ -262,8 +262,8 @@ export default function ProductDetailClient() {
                   </div>
                 </div>
                 <div className="flex flex-col items-center gap-3 text-center">
-                  <div className="w-14 h-14 bg-gradient-to-br from-[#d0dc36]/10 to-[#c5d030]/10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <RotateCcw className="w-6 h-6 text-[#d0dc36]" />
+                  <div className="w-11 h-11 md:w-14 md:h-14 bg-gradient-to-br from-[#5A946A]/10 to-[#487a55]/10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <RotateCcw className="w-5 h-5 md:w-6 md:h-6 text-[#5A946A]" />
                   </div>
                   <div>
                     <p className="font-bold text-sm text-gray-900">Easy Returns</p>
@@ -281,15 +281,15 @@ export default function ProductDetailClient() {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`py-4 px-8 border-b-2 transition-all duration-200 font-semibold text-sm capitalize relative ${
+                  className={`py-3 md:py-4 px-4 md:px-8 border-b-2 transition-all duration-200 font-semibold text-sm capitalize relative ${
                     activeTab === tab 
-                      ? 'border-[#d0dc36] text-[#d0dc36] bg-white' 
-                      : 'border-transparent text-gray-500 hover:text-[#d0dc36] hover:bg-white/50'
+                      ? 'border-[#5A946A] text-[#5A946A] bg-white' 
+                      : 'border-transparent text-gray-500 hover:text-[#5A946A] hover:bg-white/50'
                   }`}
                 >
                   {tab}
                   {activeTab === tab && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#d0dc36] to-[#e53935]"></div>
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#5A946A] to-[#487a55]"></div>
                   )}
                 </button>
               ))}
@@ -367,7 +367,7 @@ export default function ProductDetailClient() {
                   </div>
 
                   <Button 
-                    className="bg-gradient-to-r from-[#d0dc36] to-[#c5d030] hover:shadow-xl transition-all duration-200 text-white font-bold rounded-xl" 
+                    className="bg-gradient-to-r from-[#5A946A] to-[#487a55] hover:shadow-xl transition-all duration-200 text-white font-bold rounded-xl" 
                     onClick={() => setShowReviewModal(true)}
                   >
                     Write a Review

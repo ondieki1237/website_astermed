@@ -65,26 +65,25 @@ export default function Home() {
         {/* Main Content */}
         <div className="flex-1 space-y-8">
           {/* Hero Banner */}
-          <div className="relative bg-[#5A946A] p-12 lg:p-20 shadow-sm border border-[#487a55] rounded-sm">
+          <div className="relative bg-[#5A946A] p-4 md:p-6 lg:p-8 shadow-sm border border-[#487a55] rounded-sm">
             <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay"></div>
             <div className="relative z-10 flex flex-col items-start">
-              <h1 className="text-4xl lg:text-5xl font-black text-white mb-4 tracking-wider uppercase leading-tight">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mb-2 tracking-wider uppercase leading-tight">
                 AsterMed Medical Supplies
               </h1>
-              <p className="text-lg text-white/95 mb-10 max-w-2xl font-medium leading-relaxed">
+              <p className="text-sm md:text-base text-white/95 mb-4 max-w-xl font-medium leading-relaxed">
                 Premium healthcare equipment and materials for professionals worldwide. Fast, reliable, and authentic.
               </p>
-              <div className="flex gap-4">
-                <Link href="/products" className="bg-[#2D2D2D] hover:bg-black text-white px-10 py-3.5 text-sm font-bold transition-colors uppercase tracking-wider shadow-sm">
+              <div className="flex gap-2">
+                <Link href="/products" className="bg-[#2D2D2D] hover:bg-black text-white px-4 py-1.5 text-[10px] font-bold transition-colors uppercase tracking-wider shadow-sm">
                   Shop Now
                 </Link>
-                <Link href="/news" className="bg-white hover:bg-gray-100 text-[#2D2D2D] px-10 py-3.5 text-sm font-bold transition-colors uppercase tracking-wider shadow-sm">
+                <Link href="/news" className="bg-white hover:bg-gray-100 text-[#2D2D2D] px-4 py-1.5 text-[10px] font-bold transition-colors uppercase tracking-wider shadow-sm">
                   Contact Us
                 </Link>
               </div>
             </div>
           </div>
-
           {/* Products Section */}
           <div className="bg-white">
             <div className="flex items-center justify-between mb-6 pb-2 border-b-2 border-gray-100">
