@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Star, Heart, Share2, CheckCircle, Truck, Shield, RotateCcw } from 'lucide-react'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
-import { useParams } from 'next/navigation'
+import { useState, useEffect, useRef } from 'react'
+import { useParams, useRouter } from 'next/navigation'
 import { formatPrice } from '@/lib/currency'
 import { resolveImageSrc } from '@/lib/image'
 import { getApiBase } from '@/lib/api'
@@ -34,6 +34,7 @@ interface Product {
 
 export default function ProductDetailClient() {
   const params = useParams()
+  const router = useRouter()
   const id = params?.id
   const [product, setProduct] = useState<Product | null>(null)
   const [similarProducts, setSimilarProducts] = useState<Product[]>([])
@@ -46,6 +47,7 @@ export default function ProductDetailClient() {
   const [reviewSubmitting, setReviewSubmitting] = useState(false)
   const [reviewForm, setReviewForm] = useState({ username: '', rating: 5, comment: '' })
   const whatsappNumber = '254746999725'
+  const similarStripRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     if (!id) return
@@ -65,6 +67,21 @@ export default function ProductDetailClient() {
       })
       .finally(() => setLoading(false))
   }, [id])
+
+  useEffect(() => {
+    const strip = similarStripRef.current
+    if (!strip || similarProducts.length <= 1) return
+
+    const interval = window.setInterval(() => {
+      if (!strip) return
+      strip.scrollLeft += 1
+      if (strip.scrollLeft >= strip.scrollWidth / 2) {
+        strip.scrollLeft = 0
+      }
+    }, 20)
+
+    return () => window.clearInterval(interval)
+  }, [similarProducts])
 
   if (loading) return <div className="p-8">Loading...</div>
   if (!product) return <div className="p-8">Product not found</div>
@@ -126,11 +143,24 @@ export default function ProductDetailClient() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-white via-[#f9fbff] to-white">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-white via-[#f9fbff] to-white overflow-x-hidden">
       <Header />
 
-      <main className="flex-1 px-4 md:px-8 py-8 pt-24 lg:pt-28">
+      <main className="flex-1 px-4 md:px-8 py-8 pt-32 md:pt-32 lg:pt-28">
         <div className="max-w-7xl mx-auto">
+          {/* Mobile Back Button */}
+          <div className="mb-4 md:mb-6">
+            <button
+              onClick={() => {
+                if (window.history.length > 1) router.back()
+                else router.push('/products')
+              }}
+              className="inline-flex items-center gap-2 px-3 py-2 text-sm font-semibold text-[#5A946A] border border-[#5A946A]/30 rounded-lg bg-white hover:bg-[#5A946A]/5 transition-colors"
+            >
+              ← Back
+            </button>
+          </div>
+
           {/* Breadcrumb */}
           <div className="flex gap-2 text-sm mb-8 items-center">
             <Link href="/" className="text-gray-500 hover:text-[#5A946A] transition-colors">Home</Link>
@@ -158,7 +188,7 @@ export default function ProductDetailClient() {
 
               {/* Thumbnail Gallery */}
               {product!.images && product!.images.length > 1 && (
-                <div className="flex gap-3 overflow-x-auto pb-2">
+                <div className="flex flex-wrap gap-2 md:gap-3 pb-2">
                   {product!.images.map((img, idx) => (
                     <button
                       key={idx}
@@ -272,12 +302,12 @@ export default function ProductDetailClient() {
 
           {/* Tabs Section */}
           <div className="mb-16 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-            <div className="flex gap-0 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+            <div className="flex flex-wrap md:flex-nowrap gap-0 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
               {['description', 'specifications', 'reviews'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`py-3 md:py-4 px-4 md:px-8 border-b-2 transition-all duration-200 font-semibold text-sm capitalize relative ${
+                  className={`py-3 md:py-4 px-4 md:px-8 border-b-2 transition-all duration-200 font-semibold text-sm capitalize relative flex-1 md:flex-none min-w-[120px] ${
                     activeTab === tab 
                       ? 'border-[#5A946A] text-[#5A946A] bg-white' 
                       : 'border-transparent text-gray-500 hover:text-[#5A946A] hover:bg-white/50'
@@ -291,7 +321,7 @@ export default function ProductDetailClient() {
               ))}
             </div>
 
-            <div className="p-8">
+            <div className="p-4 md:p-8">
               {activeTab === 'description' && (
                 <div className="space-y-6 animate-fade-in">
                   <div>
@@ -318,12 +348,12 @@ export default function ProductDetailClient() {
 
               {activeTab === 'specifications' && (
                 <div className="animate-fade-in">
-                  <table className="w-full">
+                  <table className="w-full table-fixed">
                     <tbody>
                       {Object.entries(product!.specifications || {}).map(([key, value]) => (
                         <tr key={key} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                          <td className="py-4 font-semibold text-gray-700 w-1/3">{key}</td>
-                          <td className="py-4 text-gray-600">{value}</td>
+                          <td className="py-3 md:py-4 pr-3 font-semibold text-gray-700 w-1/3 align-top break-words">{key}</td>
+                          <td className="py-3 md:py-4 text-gray-600 align-top break-words">{value}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -377,9 +407,12 @@ export default function ProductDetailClient() {
           {similarProducts.length > 0 && (
             <div>
               <h2 className="text-2xl font-bold mb-6 tracking-tight">Similar Products</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                {similarProducts.map((product) => (
-                  <Link key={product._id} href={`/products/${product._id}`}>
+              <div
+                ref={similarStripRef}
+                className="flex gap-3 overflow-x-auto pb-2 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              >
+                {[...similarProducts, ...similarProducts].map((product, idx) => (
+                  <Link key={`${product._id}-${idx}`} href={`/products/${product._id}`} className="flex-shrink-0 w-[170px] md:w-[190px]">
                     <Card className="border border-gray-300 rounded-xl overflow-hidden hover:shadow-md transition cursor-pointer h-full flex flex-col">
                       <div className="relative aspect-square overflow-hidden bg-gray-100 flex items-center justify-center">
                         <img
@@ -393,10 +426,10 @@ export default function ProductDetailClient() {
                           </div>
                         )}
                       </div>
-                      <div className="p-4 flex flex-col flex-1">
+                      <div className="p-3 flex flex-col flex-1">
                         <p className="text-xs text-gray-500 mb-1">{product.category}</p>
-                        <h3 className="font-medium text-gray-800 text-xs mb-3 tracking-tight">{product.name}</h3>
-                        <div className="flex items-center gap-1 mb-3">
+                        <h3 className="font-medium text-gray-800 text-[11px] mb-2 tracking-tight line-clamp-2 min-h-[34px]">{product.name}</h3>
+                        <div className="flex items-center gap-1 mb-2">
                           <div className="flex">
                             {Array.from({ length: 5 }).map((_, i) => (
                               <Star
