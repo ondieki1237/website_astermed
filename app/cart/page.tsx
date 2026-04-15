@@ -21,6 +21,17 @@ interface CartItem {
 export default function CartPage() {
   const { items: cartItems, removeItem, updateQuantity, subtotal } = useCart()
   const [promoCode, setPromoCode] = useState('')
+  const whatsappNumber = '254746999725'
+
+  const openWhatsAppQuote = () => {
+    if (!cartItems.length) return
+    const itemLines = cartItems
+      .map((item, index) => `${index + 1}. ${item.name} x ${item.quantity}`)
+      .join('\n')
+    const message = `Hello AsterMed, I would like a quote for:\n${itemLines}`
+    const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
+    window.open(url, '_blank')
+  }
 
   // Shipping: free over KSH 5,000
   const shipping = subtotal > 5000 ? 0 : 200
@@ -106,11 +117,12 @@ export default function CartPage() {
               </div>
 
               {cartItems.length > 0 && (
-                <Link href="/checkout">
-                  <Button className="w-full bg-gradient-to-r from-[#e53935] to-[#d32f2f] hover:shadow-2xl hover:scale-105 transition-all duration-200 text-white text-lg py-6 font-bold rounded-xl">
-                    Request Quote
-                  </Button>
-                </Link>
+                <Button
+                  onClick={openWhatsAppQuote}
+                  className="w-full bg-gradient-to-r from-[#e53935] to-[#d32f2f] hover:shadow-2xl hover:scale-105 transition-all duration-200 text-white text-lg py-6 font-bold rounded-xl"
+                >
+                  Request Quote
+                </Button>
               )}
               
               <div className="mt-6 pt-6 border-t border-gray-200">

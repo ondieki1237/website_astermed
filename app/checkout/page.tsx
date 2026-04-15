@@ -5,17 +5,13 @@ import Footer from '@/components/footer'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import Link from 'next/link'
 import { useState } from 'react'
 import useCart from '@/hooks/use-cart'
 
 export default function CheckoutPage() {
-  const [quoteSubmitted, setQuoteSubmitted] = useState(false)
-  const { items, clearCart } = useCart()
-  const [loading, setLoading] = useState(false)
+  const { items } = useCart()
   const [error, setError] = useState('')
-
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://astermed.codewithseth.co.ke'
+  const whatsappNumber = '254746999725'
 
   const counties = [
     'Mombasa','Kwale','Kilifi','Tana River','Lamu','Taita-Taveta','Garissa','Wajir','Mandera','Marsabit','Isiolo','Meru','Tharaka-Nithi','Embu','Kitui','Machakos','Makueni','Nyandarua','Nyeri','Kirinyaga',"Murang'a",'Kiambu','Turkana','West Pokot','Samburu','Trans-Nzoia','Uasin Gishu','Elgeyo-Marakwet','Nandi','Baringo','Laikipia','Nakuru','Narok','Kajiado','Kericho','Bomet','Kakamega','Vihiga','Bungoma','Busia','Siaya','Kisumu','Homa Bay','Migori','Kisii','Nyamira','Nairobi'
@@ -31,97 +27,41 @@ export default function CheckoutPage() {
     location: '',
   })
 
-  // Submit quote request
-  const handleQuoteRequest = async () => {
-    try {
-      setLoading(true)
-      setError('')
-
-      // Validation
-      if (!form.name || !form.email || !form.contact) {
-        setError('Please fill in all required fields')
-        setLoading(false)
-        return
-      }
-
-      const quoteData = {
-        customer: {
-          name: form.name,
-          email: form.email,
-          phone: form.contact,
-          role: form.role,
-          facility: form.facility,
-          county: form.county,
-          location: form.location,
-        },
-        items: items.map(item => ({
-          productId: item.id,
-          name: item.name,
-          quantity: item.quantity,
-          image: item.image,
-        })),
-        status: 'quote_requested',
-        type: 'quote',
-      }
-
-      const response = await fetch(`${API_BASE}/api/orders`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(quoteData),
-      })
-
-      const data = await response.json()
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to submit quote request')
-      }
-
-      clearCart()
-      setQuoteSubmitted(true)
-      setLoading(false)
-    } catch (err: any) {
-      setError(err.message || 'Failed to submit quote request')
-      setLoading(false)
+  const handleQuoteRequest = () => {
+    setError('')
+    if (!form.name || !form.email || !form.contact) {
+      setError('Please fill in all required fields')
+      return
     }
-  }
+    if (!items || items.length === 0) {
+      setError('No items selected for quote')
+      return
+    }
 
-  if (quoteSubmitted) {
-    return (
-      <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        <main className="flex-1 container mx-auto px-4 py-12 flex items-center justify-center">
-          <Card className="p-12 text-center max-w-md border-none shadow-lg">
-            <div className="text-6xl mb-4">✓</div>
-            <h1 className="text-3xl font-bold mb-4">Quote Request Submitted!</h1>
-            <p className="text-muted-foreground mb-6">
-              Thank you for your interest! Our team will review your quote request and get back to you within 24 hours with pricing and availability.
-            </p>
-            <div className="space-y-2 mb-6 text-left bg-secondary/50 p-4 rounded">
-              <p><strong>What's Next?</strong></p>
-              <p className="text-sm">• Our team will review your request</p>
-              <p className="text-sm">• You'll receive a detailed quote via email</p>
-              <p className="text-sm">• We'll contact you to discuss delivery</p>
-            </div>
-            <div className="flex gap-4">
-              <Link href="/" className="flex-1">
-                <Button variant="outline" className="w-full bg-transparent">Home</Button>
-              </Link>
-              <Link href="/products" className="flex-1">
-                <Button className="w-full bg-primary hover:bg-primary/90">Browse More Products</Button>
-              </Link>
-            </div>
-          </Card>
-        </main>
-        <Footer />
-      </div>
-    )
+    const itemLines = items
+      .map((item, index) => `${index + 1}. ${item.name} x ${item.quantity}`)
+      .join('\n')
+
+    const contactDetails = [
+      `Name: ${form.name}`,
+      `Role: ${form.role || '-'}`,
+      `Phone: ${form.contact}`,
+      `Email: ${form.email}`,
+      `Facility: ${form.facility || '-'}`,
+      `County: ${form.county || '-'}`,
+      `Location: ${form.location || '-'}`,
+    ].join('\n')
+
+    const message = `Hello AsterMed, I would like to request a quote.\n\nContact Details:\n${contactDetails}\n\nItems:\n${itemLines}`
+    const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
+    window.open(url, '_blank')
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
 
-      <main className="flex-1 container mx-auto px-4 py-8">
+      <main className="flex-1 container mx-auto px-4 py-8 pt-32 md:pt-32 lg:pt-28">
         <h1 className="text-4xl font-bold mb-8">Request Quote</h1>
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -178,9 +118,8 @@ export default function CheckoutPage() {
                 <Button
                   onClick={handleQuoteRequest}
                   className="w-full bg-gradient-to-r from-[#e53935] to-[#d32f2f] hover:shadow-2xl hover:scale-105 transition-all duration-200 text-white text-lg py-6 font-bold rounded-xl mt-6"
-                  disabled={loading}
                 >
-                  {loading ? 'Submitting...' : 'Request Quote'}
+                  Request Quote
                 </Button>
               </div>
             </Card>

@@ -10,7 +10,7 @@ export default function NewsPage() {
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
 
-      <main className="flex-1 container mx-auto px-4 py-12">
+      <main className="flex-1 container mx-auto px-4 py-12 pt-32 md:pt-32 lg:pt-28">
         {/* Page Header */}
         <div className="mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Contact Us</h1>
