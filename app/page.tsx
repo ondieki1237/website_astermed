@@ -53,127 +53,114 @@ export default function Home() {
   }, [])
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-white via-[#f9fbff] to-white">
+    <div className="min-h-screen flex flex-col bg-white">
       <Header />
 
-      <main className="flex-1 flex gap-4 px-4 py-4 pt-20 lg:pt-24 max-w-[1800px] mx-auto w-full">
+      <main className="flex-1 flex gap-6 px-4 xl:px-8 py-6 pt-20 lg:pt-28 max-w-[1400px] mx-auto w-full">
         {/* Sidebar */}
-        <div className="hidden lg:block flex-shrink-0">
+        <div className="hidden lg:block w-[260px] flex-shrink-0">
           <CategorySidebar />
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 space-y-6">
+        <div className="flex-1 space-y-8">
           {/* Hero Banner */}
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#d0dc36] via-[#9FA80E] to-[#d0dc36] p-8 lg:p-12 shadow-xl">
-            <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]"></div>
-            <div className="relative z-10">
-              <h1 className="text-3xl lg:text-5xl font-bold text-white mb-4 tracking-tight">
-                Premium Medical Supplies
+          <div className="relative bg-[#5A946A] p-12 lg:p-20 shadow-sm border border-[#487a55] rounded-sm">
+            <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay"></div>
+            <div className="relative z-10 flex flex-col items-start">
+              <h1 className="text-4xl lg:text-5xl font-black text-white mb-4 tracking-wider uppercase leading-tight">
+                AsterMed Medical Supplies
               </h1>
-              <p className="text-lg text-white/90 mb-6 max-w-2xl">
-                Trusted healthcare equipment and supplies for professionals worldwide
+              <p className="text-lg text-white/95 mb-10 max-w-2xl font-medium leading-relaxed">
+                Premium healthcare equipment and materials for professionals worldwide. Fast, reliable, and authentic.
               </p>
               <div className="flex gap-4">
-                <Link href="/products" className="bg-[#e53935] hover:bg-[#d32f2f] text-white px-6 py-3 rounded-lg font-semibold transition-all transform hover:scale-105 shadow-lg">
+                <Link href="/products" className="bg-[#2D2D2D] hover:bg-black text-white px-10 py-3.5 text-sm font-bold transition-colors uppercase tracking-wider shadow-sm">
                   Shop Now
                 </Link>
-                <Link href="/news" className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white px-6 py-3 rounded-lg font-semibold transition-all border border-white/30">
+                <Link href="/news" className="bg-white hover:bg-gray-100 text-[#2D2D2D] px-10 py-3.5 text-sm font-bold transition-colors uppercase tracking-wider shadow-sm">
                   Contact Us
                 </Link>
               </div>
             </div>
-            {/* Decorative elements */}
-            <div className="absolute -right-8 -top-8 w-48 h-48 bg-white/5 rounded-full blur-3xl"></div>
-            <div className="absolute -left-8 -bottom-8 w-64 h-64 bg-[#e53935]/10 rounded-full blur-3xl"></div>
           </div>
 
           {/* Products Section */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold text-[#d0dc36] tracking-tight">
+          <div className="bg-white">
+            <div className="flex items-center justify-between mb-6 pb-2 border-b-2 border-gray-100">
+              <h2 className="text-lg font-bold text-gray-800 tracking-tight uppercase border-l-4 border-[#5A946A] pl-3 leading-none">
                 Featured Products
               </h2>
               {usedFallback && (
-                <Link href="/products" className="text-sm text-[#d0dc36] hover:text-[#162060] font-medium transition-colors">
-                  View All →
+                <Link href="/products" className="text-sm text-[#5A946A] hover:text-gray-900 font-medium transition-colors">
+                  View All Products →
                 </Link>
               )}
             </div>
 
             {loading ? (
-              <div className="text-center py-20">
-                <div className="inline-block w-12 h-12 border-4 border-[#d0dc36]/20 border-t-[#d0dc36] rounded-full animate-spin"></div>
-                <p className="text-sm text-gray-500 mt-4">Loading products...</p>
+              <div className="text-center py-24">
+                <div className="inline-block w-8 h-8 border-2 border-gray-200 border-t-[#5A946A] rounded-full animate-spin"></div>
               </div>
             ) : products.length === 0 ? (
-              <div className="text-center py-20 bg-white rounded-xl shadow-sm">
-                <p className="text-gray-500">No products available</p>
+              <div className="text-center py-20 border border-gray-200 bg-gray-50">
+                <p className="text-gray-500 text-sm">No products available at the moment.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-5">
                 {products.map((product) => (
-                  <div key={product.id || product._id}>
+                  <div key={product.id || product._id} className="group">
                     <div
                       onClick={() => router.push(`/products/${product._id || product.id}`)}
-                      className="bg-white border border-gray-100 rounded-xl overflow-hidden
-                  hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#d0dc36]/10 hover:border-[#d0dc36]/30
-                  transition-all duration-300 cursor-pointer flex flex-col h-full group"
+                      className="bg-white border border-gray-200 hover:border-[#5A946A] transition-colors cursor-pointer flex flex-col h-full rounded-sm"
                     >
-                      {/* Image – Fixed height aspect-square */}
-                      <div className="relative w-full aspect-square bg-gradient-to-br from-[#f3f6ff] to-white flex items-center justify-center p-3 overflow-hidden">
+                      {/* Image Frame */}
+                      <div className="relative w-full aspect-square bg-[#f8f9fa] flex items-center justify-center p-4 border-b border-gray-100">
                         <img
                           src={resolveImageSrc(product.image)}
                           alt={product.name}
-                          className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-110"
+                          className="max-w-full max-h-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
                         />
 
                         {product.isOnOffer && (
-                          <div className="absolute top-2 right-2 bg-gradient-to-br from-[#e53935] to-[#d32f2f] text-white
-                      rounded-full w-12 h-12 flex items-center justify-center
-                      font-bold text-xs shadow-lg animate-pulse">
-                            -{product.discountPercentage}%
+                          <div className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 text-[10px] font-bold uppercase tracking-wider">
+                            Sale {product.discountPercentage}%
                           </div>
                         )}
                       </div>
 
-                      {/* Info – consistent padding and fixed bottom area */}
-                      <div className="p-3 flex flex-col flex-1">
-                        <h3 className="font-semibold text-gray-900 text-xs leading-snug mb-2 line-clamp-2 min-h-[32px]">
+                      {/* Product Details */}
+                      <div className="p-4 flex flex-col flex-1">
+                        <h3 className="font-medium text-gray-800 text-[13px] leading-snug mb-3 line-clamp-2 min-h-[36px] group-hover:text-[#5A946A] transition-colors">
                           {product.name}
                         </h3>
 
-                        <div className="mt-auto pt-2">
-                          {/* Prices hidden - quote-based system */}
-
-                          <div className="flex gap-2">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                addItem(
-                                  {
-                                    id: product._id || product.id,
-                                    name: product.name,
-                                    price: product.price,
-                                    image: product.image,
-                                    quantity: 1,
-                                  },
-                                  1
-                                )
-                              }}
-                              className="flex-1 bg-gradient-to-r from-[#d0dc36] to-[#9FA80E] text-white text-xs font-bold px-3 py-2 rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-200"
-                            >
-                              Add to Cart
-                            </button>
-
-                            <Link
-                              href={`/products/${product._id || product.id}`}
-                              onClick={(e) => e.stopPropagation()}
-                              className="flex items-center justify-center border-2 border-[#d0dc36] text-[#d0dc36] text-xs font-bold px-3 py-2 rounded-lg hover:bg-[#d0dc36] hover:text-white transition-all duration-200"
-                            >
-                              View
-                            </Link>
-                          </div>
+                        <div className="mt-auto flex flex-col gap-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              addItem(
+                                {
+                                  id: product._id || product.id,
+                                  name: product.name,
+                                  price: product.price,
+                                  image: product.image,
+                                  quantity: 1,
+                                },
+                                1
+                              )
+                            }}
+                            className="w-full bg-[#5A946A] text-white text-[11px] font-bold uppercase tracking-wide py-2.5 hover:bg-[#487a55] transition-colors rounded-sm"
+                          >
+                            Add to Cart
+                          </button>
+                          <Link
+                            href={`/products/${product._id || product.id}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="w-full bg-gray-100 text-gray-700 text-[11px] font-bold uppercase tracking-wide py-2.5 text-center hover:bg-gray-200 transition-colors rounded-sm"
+                          >
+                            View Details
+                          </Link>
                         </div>
                       </div>
                     </div>

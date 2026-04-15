@@ -1,100 +1,88 @@
 'use client'
 
 import Link from 'next/link'
-import { Mail, Phone, MapPin, Facebook, Twitter, Linkedin } from 'lucide-react'
+import { Mail, Phone, MapPin, Facebook, Twitter, Linkedin, ChevronRight } from 'lucide-react'
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-br from-[#b8c92e] via-[#d0dc36] to-[#b8c92e] text-gray-800 mt-auto relative overflow-hidden">
-      {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-[#e53935]/5 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-0 left-0 w-80 h-80 bg-white/5 rounded-full blur-3xl"></div>
-      
-      <div className="relative px-6 py-12 max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-4 gap-10 mb-10">
+    <footer className="bg-[#2D2D2D] text-gray-300 mt-auto border-t-4 border-[#5A946A]">
+      <div className="px-4 xl:px-8 py-12 max-w-[1400px] mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
           {/* Company Info */}
-          <div className="space-y-4">
-            <img src="/astermedlogo.png" alt="AsterMed" className="h-10 mb-4 brightness-0 invert" />
-            <p className="text-sm opacity-90 leading-relaxed">
-              Premium medical supplies and equipment for healthcare professionals across Kenya and beyond.
+          <div>
+            <img src="/astermedlogo.png" alt="AsterMed" className="h-10 mb-6 brightness-0 invert" />
+            <p className="text-[13px] leading-relaxed mb-6 text-gray-400">
+              Premium medical supplies and equipment for healthcare professionals across Kenya and beyond. We verify the authenticity of all our professional tools.
             </p>
-            <div className="flex gap-4 pt-2">
-              <a href="https://facebook.com/astermedKe" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-110 group">
-                <Facebook className="w-5 h-5 group-hover:text-[#e53935] transition-colors" />
+            <div className="flex gap-3">
+              <a href="https://facebook.com/astermedKe" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-[#3d3d3d] hover:bg-[#5A946A] text-white flex items-center justify-center transition-colors">
+                <Facebook className="w-4 h-4" />
               </a>
-              <a href="https://twitter.com/astermedKe" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-110 group">
-                <Twitter className="w-5 h-5 group-hover:text-[#e53935] transition-colors" />
+              <a href="https://twitter.com/astermedKe" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-[#3d3d3d] hover:bg-[#5A946A] text-white flex items-center justify-center transition-colors">
+                <Twitter className="w-4 h-4" />
               </a>
-              <a href="https://linkedin.com/company/astermedKe" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-110 group">
-                <Linkedin className="w-5 h-5 group-hover:text-[#e53935] transition-colors" />
+              <a href="https://linkedin.com/company/astermedKe" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-[#3d3d3d] hover:bg-[#5A946A] text-white flex items-center justify-center transition-colors">
+                <Linkedin className="w-4 h-4" />
               </a>
             </div>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-bold text-base mb-5 tracking-tight">Quick Links</h4>
-            <ul className="space-y-3 text-sm opacity-90">
-              <li><Link href="/products" className="hover:text-[#e53935] transition-all hover:translate-x-1 inline-block">Products</Link></li>
-              <li><Link href="/blogs" className="hover:text-[#e53935] transition-all hover:translate-x-1 inline-block">Blog</Link></li>
-              <li><Link href="/news" className="hover:text-[#e53935] transition-all hover:translate-x-1 inline-block">News</Link></li>
-              <li><Link href="/jobs" className="hover:text-[#e53935] transition-all hover:translate-x-1 inline-block">Career</Link></li>
+            <h4 className="font-bold text-white text-[15px] mb-5 tracking-wide uppercase border-l-2 border-[#5A946A] pl-3">Quick Links</h4>
+            <ul className="space-y-2 text-[13px]">
+              <li><Link href="/products" className="hover:text-[#5A946A] transition-colors flex items-center gap-2"><ChevronRight className="w-3 h-3 text-[#5A946A]"/> Products Catalog</Link></li>
+              <li><Link href="/blogs" className="hover:text-[#5A946A] transition-colors flex items-center gap-2"><ChevronRight className="w-3 h-3 text-[#5A946A]"/> Blog & News</Link></li>
+              <li><Link href="/news" className="hover:text-[#5A946A] transition-colors flex items-center gap-2"><ChevronRight className="w-3 h-3 text-[#5A946A]"/> Contact Us</Link></li>
+              <li><Link href="/jobs" className="hover:text-[#5A946A] transition-colors flex items-center gap-2"><ChevronRight className="w-3 h-3 text-[#5A946A]"/> Careers</Link></li>
             </ul>
           </div>
 
-          {/* Support */}
+          {/* Customer Service */}
           <div>
-            <h4 className="font-bold text-base mb-5 tracking-tight">Support</h4>
-            <ul className="space-y-3 text-sm opacity-90">
-              <li><Link href="#" className="hover:text-[#e53935] transition-all hover:translate-x-1 inline-block">FAQ</Link></li>
-              <li><Link href="#" className="hover:text-[#e53935] transition-all hover:translate-x-1 inline-block">Contact Us</Link></li>
-              <li><Link href="#" className="hover:text-[#e53935] transition-all hover:translate-x-1 inline-block">Shipping Info</Link></li>
-              <li><Link href="#" className="hover:text-[#e53935] transition-all hover:translate-x-1 inline-block">Returns</Link></li>
+            <h4 className="font-bold text-white text-[15px] mb-5 tracking-wide uppercase border-l-2 border-[#5A946A] pl-3">Customer Service</h4>
+            <ul className="space-y-2 text-[13px]">
+              <li><Link href="#" className="hover:text-[#5A946A] transition-colors flex items-center gap-2"><ChevronRight className="w-3 h-3 text-[#5A946A]"/> Frequently Asked Questions</Link></li>
+              <li><Link href="#" className="hover:text-[#5A946A] transition-colors flex items-center gap-2"><ChevronRight className="w-3 h-3 text-[#5A946A]"/> Shipping & Delivery Info</Link></li>
+              <li><Link href="#" className="hover:text-[#5A946A] transition-colors flex items-center gap-2"><ChevronRight className="w-3 h-3 text-[#5A946A]"/> Returns & Exchanges</Link></li>
+              <li><Link href="#" className="hover:text-[#5A946A] transition-colors flex items-center gap-2"><ChevronRight className="w-3 h-3 text-[#5A946A]"/> Privacy Policy</Link></li>
             </ul>
           </div>
 
           {/* Contact Info */}
           <div>
-            <h4 className="font-bold text-base mb-5 tracking-tight">Get in Touch</h4>
-            <div className="space-y-4 text-sm opacity-90">
-              <div className="flex gap-3 items-start group">
-                <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-[#e53935] transition-all duration-200">
-                  <Phone className="w-4 h-4" />
-                </div>
-                <div>
-                  <p className="font-semibold text-white/95 mb-1">Phone</p>
-                  <p>+254746 999 725</p>
-                </div>
+            <h4 className="font-bold text-white text-[15px] mb-5 tracking-wide uppercase border-l-2 border-[#5A946A] pl-3">Contact Information</h4>
+            <div className="space-y-4 text-[13px]">
+              <div className="flex gap-3 items-start">
+                <MapPin className="w-4 h-4 text-[#5A946A] mt-1 shrink-0" />
+                <p className="text-gray-400">123 Medical Drive<br />Healthcare City, HC 12345</p>
               </div>
-              <div className="flex gap-3 items-start group">
-                <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-[#e53935] transition-all duration-200">
-                  <Mail className="w-4 h-4" />
-                </div>
-                <div>
-                  <p className="font-semibold text-white/95 mb-1">Email</p>
-                  <p className="break-all">info@astermedsupplies.co.ke</p>
-                </div>
+              <div className="flex gap-3 items-start">
+                <Phone className="w-4 h-4 text-[#5A946A] mt-0.5 shrink-0" />
+                <p className="text-gray-400">+254 746 999 725</p>
               </div>
-              <div className="flex gap-3 items-start group">
-                <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-[#e53935] transition-all duration-200">
-                  <MapPin className="w-4 h-4" />
-                </div>
-                <div>
-                  <p className="font-semibold text-white/95 mb-1">Location</p>
-                  <p>123 Medical Drive<br />Healthcare City, HC 12345</p>
-                </div>
+              <div className="flex gap-3 items-start">
+                <Mail className="w-4 h-4 text-[#5A946A] mt-0.5 shrink-0" />
+                <p className="text-gray-400 break-all">info@astermedsupplies.co.ke</p>
               </div>
+            </div>
+            
+            <div className="mt-6">
+              <Link href="/news" className="inline-block bg-[#5A946A] text-white text-[12px] font-bold uppercase tracking-wider px-6 py-2.5 hover:bg-[#487a55] transition-colors">
+                Request a Quote
+              </Link>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Bottom Bar */}
-        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-sm opacity-90">
-          <p className="mb-4 md:mb-0">&copy; 2024 AsterMed. All rights reserved.</p>
-          <div className="flex gap-8">
-            <Link href="#" className="hover:text-[#e53935] transition-colors">Privacy Policy</Link>
-            <Link href="#" className="hover:text-[#e53935] transition-colors">Terms of Service</Link>
-            <Link href="#" className="hover:text-[#e53935] transition-colors">Cookies</Link>
+      {/* Bottom Bar */}
+      <div className="border-t border-[#3d3d3d] bg-[#222222]">
+        <div className="max-w-[1400px] mx-auto px-4 xl:px-8 py-4 flex flex-col md:flex-row justify-between items-center text-[12px] text-gray-500">
+          <p>&copy; {new Date().getFullYear()} AsterMed Medical Supplies. All rights reserved.</p>
+          <div className="flex gap-6 mt-4 md:mt-0">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png?20191120100524" alt="M-Pesa" className="h-6 opacity-60 filter grayscale hover:grayscale-0 transition-all" />
+            <span className="flex items-center gap-1"><span className="text-lg">🔒</span> SSL Secure Checkout</span>
           </div>
         </div>
       </div>
