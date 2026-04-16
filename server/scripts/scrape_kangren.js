@@ -15,14 +15,45 @@ const SERVER_DIR = path.resolve(__dirname, '..')
 dotenv.config({ path: path.join(SERVER_DIR, '.env') })
 
 const BASE_URL = 'http://shkangren.net'
-const START_URL = `${BASE_URL}/products/jjzy/`
+const START_URL = `${BASE_URL}/products/`
 const CATEGORY_NAME = 'Training Materials'
 const SUBCATEGORY_NAME = 'Emergency Skills Training Models'
 const MANUFACTURER = 'Shanghai Kangren Medical Science Instrument Equipment Co.Ltd'
 const KNOWN_LEAD_IMAGE_PATTERNS = [/d2a6d3b943ac886\.jpg/i]
+const MAX_PRODUCTS = 30
 
-const INCLUDE_RE = /(manikin|cpr|training vest|training combination)/i
+const INCLUDE_RE = /(manikin|cpr|training vest|training combination|compression board|face shield)/i
 const EXCLUDE_RE = /(defibrillator|aed|wound assessment|module|digital training system|simulation|simulator|equipment)/i
+
+const SUBCATEGORY_LABEL_MAP = {
+  '急救专业技能训练模型': 'Emergency Skills Training Models',
+  '护理专业技能训练模型': 'Nursing Skills Training Models',
+  '临床综合专科技能训练模型': 'Clinical Comprehensive Specialty Training Models',
+  '妇幼专科技能训练模型': 'Maternal and Child Specialty Training Models',
+  '临床诊断专业技能训练模型': 'Clinical Diagnostic Skills Training Models',
+  '医学多媒体系列': 'Medical Multimedia Series',
+  '虚拟医学技能训练系统': 'Virtual Medical Skills Training Systems',
+  '高级人体解剖医学训练模型': 'Advanced Human Anatomy Medical Training Models',
+  '中医专科医学训练模型': 'Traditional Chinese Medicine Training Models',
+  '医学急救培训器材': 'Medical Emergency Training Equipment',
+  '口腔专科医学训练模型': 'Oral Specialty Medical Training Models',
+  '医学彩色教学挂图及软件': 'Medical Teaching Charts and Software',
+}
+
+const SUBCATEGORY_CODE_MAP = {
+  jjzy: 'Emergency Skills Training Models',
+  hlzy: 'Nursing Skills Training Models',
+  lczh: 'Clinical Comprehensive Specialty Training Models',
+  fyzk: 'Maternal and Child Specialty Training Models',
+  lczd: 'Clinical Diagnostic Skills Training Models',
+  yxdmt: 'Medical Multimedia Series',
+  xnyx: 'Virtual Medical Skills Training Systems',
+  gjrt: 'Advanced Human Anatomy Medical Training Models',
+  zyzk: 'Traditional Chinese Medicine Training Models',
+  yxjj: 'Medical Emergency Training Equipment',
+  kqzk: 'Oral Specialty Medical Training Models',
+  yxcs: 'Medical Teaching Charts and Software',
+}
 
 function absUrl(url) {
   if (!url) return ''
@@ -53,6 +84,21 @@ function translateKnownChineseName(name) {
     '一次性CPR训练屏障消毒面膜（50张/盒）': 'Disposable CPR Training Barrier Face Shield (50 pcs/box)',
   }
   return map[text] || text
+}
+
+function toEnglishSubcategory(raw) {
+  const text = cleanText(raw)
+  if (!text) return SUBCATEGORY_NAME
+  return SUBCATEGORY_LABEL_MAP[text] || text
+}
+
+function subcategoryFromUrl(detailUrl, breadcrumbText) {
+  const codeMatch = String(detailUrl || '').match(/\/products\/([a-z0-9]+)\//i)
+  if (codeMatch && codeMatch[1]) {
+    const code = codeMatch[1].toLowerCase()
+    if (SUBCATEGORY_CODE_MAP[code]) return SUBCATEGORY_CODE_MAP[code]
+  }
+  return toEnglishSubcategory(breadcrumbText)
 }
 
 function isKnownLeadImage(url) {
@@ -124,17 +170,19 @@ function extractListing($, sourceUrl) {
   const items = []
   const seen = new Set()
 
-  $('a[href*="/products/jjzy/show"]').each((_, el) => {
+  $('a[href*="/products/"][href*="/show"]').each((_, el) => {
     const anchor = $(el)
     const href = absUrl(anchor.attr('href') || '')
     const title = cleanText(anchor.text() || anchor.attr('title') || '')
-    if (!href || !href.includes('/products/jjzy/show')) return
+    if (!href || !/\/products\/[^/]+\/show\d+\.html$/i.test(href)) return
     if (seen.has(href)) return
     seen.add(href)
 
     if (!isManikinTitle(title)) return
 
-    const img = anchor.find('img').first()
+    const img = anchor.find('img').first().length
+      ? anchor.find('img').first()
+      : anchor.closest('li,div').find('img').first()
     const image = absUrl(img.attr('data-original') || img.attr('src') || '')
 
     items.push({
@@ -146,9 +194,10 @@ function extractListing($, sourceUrl) {
   })
 
   const nextPages = []
-  $('a[href*="/products/jjzy/list"]').each((_, el) => {
+  $('a[href*="/products/list"], a[href*="/products/"][href*="/list"], a[href^="/products/"]').each((_, el) => {
     const href = absUrl($(el).attr('href') || '')
     if (!href) return
+    if (!/\/products\/(list\d+\.html|[a-z0-9]+\/?|[a-z0-9]+\/list\d+\.html)$/i.test(href)) return
     if (!nextPages.includes(href)) nextPages.push(href)
   })
 
@@ -164,8 +213,9 @@ function extractDetail($, fallback) {
   )
 
   const breadcrumb = cleanText($('.site,.bread,.crumb,.breadcrumb').text())
+  const breadcrumbCategory = cleanText($('.site a, .bread a, .crumb a, .breadcrumb a').last().text())
   const category = CATEGORY_NAME
-  const subcategory = SUBCATEGORY_NAME || cleanText(breadcrumb)
+  const subcategory = subcategoryFromUrl(fallback.detailUrl, breadcrumbCategory || breadcrumb)
 
   const descriptionCandidates = [
     $('.pro-main .content').text(),
@@ -307,6 +357,24 @@ async function seedProducts(listItems) {
   return { created, updated, skipped, failed }
 }
 
+async function keepTopRatedProducts(limit = MAX_PRODUCTS) {
+  const ranked = await Product.find({
+    category: CATEGORY_NAME,
+    manufacturerInfo: /Kangren/i,
+  })
+    .sort({ rating: -1, reviewCount: -1, views: -1, updatedAt: -1, _id: 1 })
+    .select('_id')
+    .lean()
+
+  const keepIds = ranked.slice(0, limit).map((doc) => doc._id)
+  const removeIds = ranked.slice(limit).map((doc) => doc._id)
+
+  if (!removeIds.length) return { kept: keepIds.length, removed: 0 }
+
+  const result = await Product.deleteMany({ _id: { $in: removeIds } })
+  return { kept: keepIds.length, removed: result.deletedCount || 0 }
+}
+
 async function main() {
   if (!process.env.MONGODB_URI) {
     throw new Error('MONGODB_URI is not set in server/.env')
@@ -327,8 +395,10 @@ async function main() {
     const result = await seedProducts(listItems)
     console.log('Import complete:', result)
 
-    const count = await Product.countDocuments({ category: CATEGORY_NAME })
-    console.log(`Database now has ${count} products in category "${CATEGORY_NAME}"`)
+    const topResult = await keepTopRatedProducts(MAX_PRODUCTS)
+    const count = await Product.countDocuments({ category: CATEGORY_NAME, manufacturerInfo: /Kangren/i })
+    console.log('Top products enforcement:', topResult)
+    console.log(`Database now has ${count} Kangren products in category "${CATEGORY_NAME}"`)
   } finally {
     await mongoose.disconnect()
   }

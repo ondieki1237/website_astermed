@@ -17,6 +17,29 @@ export default function Home() {
   const router = useRouter()
   const whatsappNumber = '254746999725'
 
+  const pickBalancedProducts = (allProducts: any[], limit = 12) => {
+    const byCategory = new Map<string, any[]>()
+
+    allProducts.forEach((product) => {
+      const key = String(product?.category || 'Other').trim() || 'Other'
+      if (!byCategory.has(key)) byCategory.set(key, [])
+      byCategory.get(key)!.push(product)
+    })
+
+    const buckets = Array.from(byCategory.values())
+    const selected: any[] = []
+    let index = 0
+
+    while (selected.length < limit && buckets.some((bucket) => bucket.length > 0)) {
+      const bucket = buckets[index % buckets.length]
+      const next = bucket.shift()
+      if (next) selected.push(next)
+      index += 1
+    }
+
+    return selected.slice(0, limit)
+  }
+
   const orderViaWhatsApp = (product: any) => {
     const productId = product?._id || product?.id
     const productUrl = `${window.location.origin}/products/${productId}`
@@ -31,23 +54,22 @@ export default function Home() {
       setLoading(true)
       try {
         const API_BASE = getApiBase()
-        // First try to load featured (offers) - limit to 12 for square grid
-        const fRes = await fetch(`${API_BASE}/api/products/featured?limit=12`)
-        if (!fRes.ok) throw new Error('failed to load featured')
-        const featured = await fRes.json()
-        if (mounted && Array.isArray(featured) && featured.length > 0) {
-          setProducts(featured.map((p: any) => ({ ...p, id: p._id || p.id })))
-          setUsedFallback(false)
-        } else {
-          // fallback: recent products (limit 12 for 4x3 grid)
-          const rRes = await fetch(`${API_BASE}/api/products?limit=12&sort=-createdAt`)
-          if (!rRes.ok) throw new Error('failed to load recent')
-          const rData = await rRes.json()
-          const recent = rData.products || []
-          if (mounted) {
-            setProducts(recent.map((p: any) => ({ ...p, id: p._id || p.id })))
-            setUsedFallback(true)
-          }
+        // Pull a larger ranked pool, then balance categories while preserving ranking priority.
+        const params = new URLSearchParams({
+          limit: '120',
+          sort: '-reviewCount -views -rating -createdAt',
+        })
+
+        const rankedRes = await fetch(`${API_BASE}/api/products?${params.toString()}`)
+        if (!rankedRes.ok) throw new Error('failed to load ranked products')
+
+        const rankedData = await rankedRes.json()
+        const rankedProducts = Array.isArray(rankedData?.products) ? rankedData.products : []
+        const balanced = pickBalancedProducts(rankedProducts, 12)
+
+        if (mounted) {
+          setProducts(balanced.map((p: any) => ({ ...p, id: p._id || p.id })))
+          setUsedFallback(true)
         }
       } catch (err) {
         console.error('Failed to load homepage products', err)
