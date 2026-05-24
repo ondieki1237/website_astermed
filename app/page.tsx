@@ -1,99 +1,25 @@
-'use client'
-
 import Header from '@/components/header'
 import Footer from '@/components/footer'
-import CategorySidebar from '@/components/category-sidebar'
 import Link from 'next/link'
-import { formatPrice } from '@/lib/currency'
 import { resolveImageSrc } from '@/lib/image'
-import { getApiBase } from '@/lib/api'
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { getFeaturedStaticProducts } from '@/lib/static-catalog'
 
 export default function Home() {
-  const [products, setProducts] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
-  const [usedFallback, setUsedFallback] = useState(false)
-  const router = useRouter()
+  const products = getFeaturedStaticProducts(12)
   const whatsappNumber = '254746999725'
 
-  const pickBalancedProducts = (allProducts: any[], limit = 12) => {
-    const byCategory = new Map<string, any[]>()
-
-    allProducts.forEach((product) => {
-      const key = String(product?.category || 'Other').trim() || 'Other'
-      if (!byCategory.has(key)) byCategory.set(key, [])
-      byCategory.get(key)!.push(product)
-    })
-
-    const buckets = Array.from(byCategory.values())
-    const selected: any[] = []
-    let index = 0
-
-    while (selected.length < limit && buckets.some((bucket) => bucket.length > 0)) {
-      const bucket = buckets[index % buckets.length]
-      const next = bucket.shift()
-      if (next) selected.push(next)
-      index += 1
-    }
-
-    return selected.slice(0, limit)
+  const orderViaWhatsApp = (product: (typeof products)[number]) => {
+    const productUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://astermed.codewithseth.co.ke'}/products/${product._id}`
+    const message = `Hello AsterMed, I'd like to order ${product.name}.\n${productUrl}`
+    return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
   }
-
-  const orderViaWhatsApp = (product: any) => {
-    const productId = product?._id || product?.id
-    const productUrl = `${window.location.origin}/products/${productId}`
-    const message = `Hello AsterMed, I'd like to order ${product?.name || 'this product'}.\n${productUrl}`
-    const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
-    window.open(url, '_blank')
-  }
-
-  useEffect(() => {
-    let mounted = true
-    const load = async () => {
-      setLoading(true)
-      try {
-        const API_BASE = getApiBase()
-        // Pull a larger ranked pool, then balance categories while preserving ranking priority.
-        const params = new URLSearchParams({
-          limit: '120',
-          sort: '-reviewCount -views -rating -createdAt',
-        })
-
-        const rankedRes = await fetch(`${API_BASE}/api/products?${params.toString()}`)
-        if (!rankedRes.ok) throw new Error('failed to load ranked products')
-
-        const rankedData = await rankedRes.json()
-        const rankedProducts = Array.isArray(rankedData?.products) ? rankedData.products : []
-        const balanced = pickBalancedProducts(rankedProducts, 12)
-
-        if (mounted) {
-          setProducts(balanced.map((p: any) => ({ ...p, id: p._id || p.id })))
-          setUsedFallback(true)
-        }
-      } catch (err) {
-        console.error('Failed to load homepage products', err)
-      } finally {
-        if (mounted) setLoading(false)
-      }
-    }
-    load()
-    return () => { mounted = false }
-  }, [])
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
 
       <main className="flex-1 flex gap-6 px-4 xl:px-8 py-6 pt-28 md:pt-32 lg:pt-28 max-w-[1400px] mx-auto w-full">
-        {/* Sidebar */}
-        <div className="hidden lg:block w-[260px] flex-shrink-0">
-          <CategorySidebar />
-        </div>
-
-        {/* Main Content */}
-        <div className="flex-1 space-y-8">
-          {/* Hero Banner */}
+        <div className="flex-1 space-y-8 w-full">
           <div className="relative bg-[#5A946A] p-4 md:p-6 lg:p-8 shadow-sm border border-[#487a55] rounded-sm">
             <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay"></div>
             <div className="relative z-10 flex flex-col items-start">
@@ -106,36 +32,25 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Products Section */}
           <div className="bg-white">
             <div className="flex items-center justify-between mb-6 pb-2 border-b-2 border-gray-100">
               <h2 className="text-lg font-bold text-gray-800 tracking-tight uppercase border-l-4 border-[#5A946A] pl-3 leading-none">
                 Featured Products
               </h2>
-              {usedFallback && (
-                <Link href="/products" className="text-sm text-[#5A946A] hover:text-gray-900 font-medium transition-colors">
-                  View All Products →
-                </Link>
-              )}
+              <Link href="/products" className="text-sm text-[#5A946A] hover:text-gray-900 font-medium transition-colors">
+                View All Products →
+              </Link>
             </div>
 
-            {loading ? (
-              <div className="text-center py-24">
-                <div className="inline-block w-8 h-8 border-2 border-gray-200 border-t-[#5A946A] rounded-full animate-spin"></div>
-              </div>
-            ) : products.length === 0 ? (
+            {products.length === 0 ? (
               <div className="text-center py-20 border border-gray-200 bg-gray-50">
                 <p className="text-gray-500 text-sm">No products available at the moment.</p>
               </div>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-5">
                 {products.map((product) => (
-                  <div key={product.id || product._id} className="group">
-                    <div
-                      onClick={() => router.push(`/products/${product._id || product.id}`)}
-                      className="bg-white border border-gray-200 hover:border-[#5A946A] transition-colors cursor-pointer flex flex-col h-full rounded-sm"
-                    >
-                      {/* Image Frame */}
+                  <div key={product._id} className="group bg-white border border-gray-200 hover:border-[#5A946A] transition-colors flex flex-col h-full rounded-sm">
+                    <Link href={`/products/${product._id}`} className="block">
                       <div className="relative w-full aspect-square bg-[#f8f9fa] flex items-center justify-center p-4 border-b border-gray-100">
                         <img
                           src={resolveImageSrc(product.image)}
@@ -149,31 +64,27 @@ export default function Home() {
                           </div>
                         )}
                       </div>
+                    </Link>
 
-                      {/* Product Details */}
-                      <div className="p-4 flex flex-col flex-1">
+                    <div className="p-4 flex flex-col flex-1">
+                      <Link href={`/products/${product._id}`}>
                         <h3 className="font-medium text-gray-800 text-[13px] leading-snug mb-3 line-clamp-2 min-h-[36px] group-hover:text-[#5A946A] transition-colors">
                           {product.name}
                         </h3>
+                      </Link>
 
-                        <div className="mt-auto flex flex-col gap-2">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              orderViaWhatsApp(product)
-                            }}
-                            className="w-full bg-[#5A946A] text-white text-[11px] font-bold uppercase tracking-wide py-2.5 hover:bg-[#487a55] transition-colors rounded-sm"
-                          >
-                            Order via WhatsApp
-                          </button>
-                          <Link
-                            href={`/products/${product._id || product.id}`}
-                            onClick={(e) => e.stopPropagation()}
-                            className="w-full bg-gray-100 text-gray-700 text-[11px] font-bold uppercase tracking-wide py-2.5 text-center hover:bg-gray-200 transition-colors rounded-sm"
-                          >
-                            View Details
-                          </Link>
-                        </div>
+                      <div className="mt-auto flex flex-col gap-2">
+                        <a
+                          href={orderViaWhatsApp(product)}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="w-full bg-[#5A946A] text-white text-[11px] font-bold uppercase tracking-wide py-2.5 hover:bg-[#487a55] transition-colors rounded-sm text-center"
+                        >
+                          Order via WhatsApp
+                        </a>
+                        <Link href={`/products/${product._id}`} className="w-full bg-gray-100 text-gray-700 text-[11px] font-bold uppercase tracking-wide py-2.5 text-center hover:bg-gray-200 transition-colors rounded-sm">
+                          View Details
+                        </Link>
                       </div>
                     </div>
                   </div>

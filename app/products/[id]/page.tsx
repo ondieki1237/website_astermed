@@ -1,40 +1,46 @@
 import ProductDetailClient from './client'
+import { getStaticProductById, getStaticProducts } from '@/lib/static-catalog'
 
 interface Product {
   _id: string
+  id: string
+  slug: string
   name: string
-  price: number
-  discountPrice?: number
-  discountPercentage?: number
-  image?: string
-  images?: string[]
   category: string
-  rating: number
-  reviewCount: number
-  stock: number
-  description: string
-  features?: string[]
-  specifications?: Record<string, string>
-  warranty?: string
-  manufacturerInfo?: string
+}
+
+interface ProductDetailPageProps {
+  params: {
+    id: string
+  } | Promise<{
+    id: string
+  }>
 }
 
 // Generate static params for all products at build time
 export async function generateStaticParams() {
-  try {
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://astermed.codewithseth.co.ke'
-    const res = await fetch(`${API_BASE}/api/products`, { cache: 'no-store' })
-    const products = await res.json()
-    
-    return products.map((product: Product) => ({
-      id: product._id,
-    }))
-  } catch (error) {
-    console.error('Error generating static params:', error)
-    return []
-  }
+  return getStaticProducts().map((product) => ({
+    id: product.slug || product.id || product._id,
+  }))
 }
 
-export default function ProductDetailPage() {
-  return <ProductDetailClient />
+function normalizeSlug(value: string) {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
+  const resolvedParams = await params
+  const routeId = decodeURIComponent(resolvedParams.id)
+  const product =
+    getStaticProductById(routeId) ||
+    getStaticProducts().find((item) => normalizeSlug(item.slug || item.id || item._id) === normalizeSlug(routeId)) ||
+    null
+  const similarProducts = product
+    ? getStaticProducts().filter((item) => item._id !== product._id && item.category === product.category).slice(0, 12)
+    : []
+
+  return <ProductDetailClient initialProduct={product} initialSimilarProducts={similarProducts} />
 }

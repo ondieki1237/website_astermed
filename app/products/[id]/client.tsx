@@ -7,10 +7,9 @@ import { Card } from '@/components/ui/card'
 import { Star, Heart, Share2, CheckCircle, Truck, Shield, RotateCcw } from 'lucide-react'
 import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { formatPrice } from '@/lib/currency'
 import { resolveImageSrc } from '@/lib/image'
-import { getApiBase } from '@/lib/api'
 
 interface Product {
   _id: string
@@ -32,13 +31,16 @@ interface Product {
   reviews?: any[]
 }
 
-export default function ProductDetailClient() {
-  const params = useParams()
+interface ProductDetailClientProps {
+  initialProduct: Product | null
+  initialSimilarProducts: Product[]
+}
+
+export default function ProductDetailClient({ initialProduct, initialSimilarProducts }: ProductDetailClientProps) {
   const router = useRouter()
-  const id = params?.id
-  const [product, setProduct] = useState<Product | null>(null)
-  const [similarProducts, setSimilarProducts] = useState<Product[]>([])
-  const [loading, setLoading] = useState(true)
+  const [product] = useState<Product | null>(initialProduct)
+  const [similarProducts] = useState<Product[]>(initialSimilarProducts)
+  const [loading] = useState(false)
   const [quantity, setQuantity] = useState(1)
   const [selectedImage, setSelectedImage] = useState(0)
   const [liked, setLiked] = useState(false)
@@ -49,24 +51,6 @@ export default function ProductDetailClient() {
   const whatsappNumber = '254746999725'
   const similarStripRef = useRef<HTMLDivElement | null>(null)
 
-  useEffect(() => {
-    if (!id) return
-    const API_BASE = getApiBase()
-    setLoading(true)
-    fetch(`${API_BASE}/api/products/${id}`)
-      .then((res) => {
-        if (!res.ok) throw new Error('Product not found')
-        return res.json()
-      })
-      .then((data) => {
-        setProduct(data.product || data)
-        setSimilarProducts(data.similarProducts || [])
-      })
-      .catch((err) => {
-        console.error(err)
-      })
-      .finally(() => setLoading(false))
-  }, [id])
 
   useEffect(() => {
     const strip = similarStripRef.current
@@ -101,30 +85,12 @@ export default function ProductDetailClient() {
   }
 
   async function submitReview() {
-    if (!product) return
     setReviewSubmitting(true)
     try {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null
-      const API_BASE = getApiBase()
-      const res = await fetch(`${API_BASE}/api/products/${product._id}/reviews`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({ 
-          username: reviewForm.username || 'Anonymous', 
-          rating: reviewForm.rating, 
-          comment: reviewForm.comment 
-        }),
-      })
-      if (!res.ok) throw new Error('Failed')
-      const updated = await res.json()
-      setProduct(updated)
+      await new Promise((resolve) => window.setTimeout(resolve, 300))
       setShowReviewModal(false)
       setReviewForm({ username: '', rating: 5, comment: '' })
-    } catch (e) {
-      alert('Failed to submit review')
+      alert('Reviews are unavailable in frontend-only mode.')
     } finally {
       setReviewSubmitting(false)
     }
