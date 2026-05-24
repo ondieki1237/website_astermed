@@ -18,11 +18,22 @@ interface ProductDetailPageProps {
 }
 
 // Generate static params for all products at build time
+// Skip products with slugs that are too long to avoid ENAMETOOLONG errors
 export async function generateStaticParams() {
-  return getStaticProducts().map((product) => ({
-    id: product.slug || product.id || product._id,
-  }))
+  const MAX_SLUG_LENGTH = 180 // Conservative limit to avoid filesystem path length issues
+  
+  return getStaticProducts()
+    .filter((product) => {
+      const slug = product.slug || product.id || product._id
+      return slug.length <= MAX_SLUG_LENGTH
+    })
+    .map((product) => ({
+      id: product.slug || product.id || product._id,
+    }))
 }
+
+// Enable ISR for routes with long slugs - revalidate every 24 hours
+export const revalidate = 86400 // 24 hours
 
 function normalizeSlug(value: string) {
   return String(value || '')
